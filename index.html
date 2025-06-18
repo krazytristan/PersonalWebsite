@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tristan Jorge Cuartero</title>
+  <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            poppins: ['Poppins', 'sans-serif']
+          },
+          colors: {
+            primary: '#7f5af0',
+            secondary: '#2cb67d',
+            dark: '#16161a',
+            light: '#fffffe',
+            accent: '#d4d4f7',
+            subtle: '#72757e'
+          },
+          keyframes: {
+            typing: {
+              '0%': { width: '0ch' },
+              '100%': { width: '26ch' }
+            },
+            blink: {
+              '0%, 100%': { borderColor: 'transparent' },
+              '50%': { borderColor: 'white' }
+            },
+            gradient: {
+              '0%': { backgroundPosition: '0% 50%' },
+              '50%': { backgroundPosition: '100% 50%' },
+              '100%': { backgroundPosition: '0% 50%' },
+            },
+            orbit: {
+              '0%': { transform: 'rotate(0deg)' },
+              '100%': { transform: 'rotate(360deg)' }
+            }
+          },
+          animation: {
+            typing: 'typing 6s steps(26, end) infinite, blink 0.75s step-end infinite',
+            gradient: 'gradient 10s ease infinite',
+            orbit: 'orbit 30s linear infinite'
+          },
+          backgroundImage: {
+            'gradient-animated': 'linear-gradient(-45deg, #7f5af0, #2cb67d, #16161a, #d4d4f7)'
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; }
+    main { flex: 1 0 auto; }
+    footer { flex-shrink: 0; }
+    .solar-orbit { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: radial-gradient(circle at center, #0d0d2b, #16161a); overflow: hidden; z-index: 0; pointer-events: none; }
+    .orbit-container { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+    .orbit { position: absolute; border-radius: 50%; animation: orbit linear infinite; border: 1px dashed rgba(255,255,255,0.2); }
+    .planet { position: absolute; border-radius: 50%; transition: transform 0.2s ease-in-out; }
+    .planet:hover { transform: translateX(-50%) scale(1.2); }
+    .earth-orbit { width: 200px; height: 200px; animation-duration: 20s; }
+    .mars-orbit { width: 300px; height: 300px; animation-duration: 30s; }
+    .jupiter-orbit { width: 400px; height: 400px; animation-duration: 45s; }
+    .saturn-orbit { width: 500px; height: 500px; animation-duration: 60s; }
+    .earth { width: 20px; height: 20px; background: #2cb67d; top: 0; left: 50%; transform: translateX(-50%); cursor: pointer; }
+    .mars { width: 14px; height: 14px; background: #ff6b6b; top: 0; left: 50%; transform: translateX(-50%); cursor: pointer; }
+    .jupiter { width: 26px; height: 26px; background: #f0a500; top: 0; left: 50%; transform: translateX(-50%); cursor: pointer; }
+    .saturn { width: 22px; height: 22px; background: #deb887; top: 0; left: 50%; transform: translateX(-50%); cursor: pointer; }
+    main section { display: none; }
+    main section.active { display: block; }
+  </style>
+</head>
+<body class="bg-light font-poppins text-dark">
+  <div class="solar-orbit">
+    <div class="orbit-container">
+      <div class="orbit earth-orbit"><div class="planet earth" onclick="showSection('about')"></div></div>
+      <div class="orbit mars-orbit"><div class="planet mars" onclick="showSection('projects')"></div></div>
+      <div class="orbit jupiter-orbit"><div class="planet jupiter" onclick="showSection('skills')"></div></div>
+      <div class="orbit saturn-orbit"><div class="planet saturn" onclick="showSection('contact')"></div></div>
+    </div>
+  </div>
+
+  <header class="text-white fixed top-0 left-0 w-full z-50 shadow-lg bg-gradient-animated bg-[length:400%_400%] animate-gradient">
+    <div class="text-center py-6">
+      <h1 class="text-3xl font-bold overflow-hidden whitespace-nowrap border-r-4 border-white w-[26ch] mx-auto animate-typing">TRISTAN JORGE CUARTERO</h1>
+      <p class="text-sm mt-1 text-accent">Educator | Full Stacks Developer | Innovator</p>
+    </div>
+    <nav class="bg-primary text-white flex justify-center flex-wrap gap-6 py-3 px-4">
+      <button onclick="showSection('home')" class="hover:text-secondary">Home</button>
+      <button onclick="showSection('about')" class="hover:text-secondary">About</button>
+      <button onclick="showSection('projects')" class="hover:text-secondary">Projects</button>
+      <button onclick="showSection('skills')" class="hover:text-secondary">Skills</button>
+      <button onclick="showSection('contact')" class="hover:text-secondary">Contact</button>
+    </nav>
+  </header>
+
+  <main class="relative z-10 max-w-4xl mx-auto px-6 pt-[200px] pb-12 space-y-16">
+    <section id="home" class="text-center active">
+      <h2 class="text-4xl font-bold text-primary mb-4">🌌 Welcome to My Universe</h2>
+      <p class="text-lg text-subtle max-w-3xl mx-auto text-left">Navigate through a digital cosmos crafted by a passionate developer and educator. Explore the orbits of innovation, creativity, and technology.</p>
+    </section>
+
+    <section id="about" class="text-center">
+      <h2 class="text-4xl font-bold text-primary mb-4">🚀 About Me</h2>
+      <img src="https://avatars.githubusercontent.com/u/000000?v=4" alt="Tristan's Photo" class="w-32 h-32 rounded-full mx-auto mb-4 shadow-lg">
+      <p class="text-lg text-subtle max-w-3xl mx-auto text-left">A tech-savvy educator and developer passionate about transforming ideas into reality through code. Enthusiastic about space-era technology, artificial intelligence, and innovation in education.</p>
+      <a href="resume.pdf" download class="mt-4 inline-block bg-primary text-white px-5 py-2 rounded hover:bg-secondary">📄 Download Resume</a>
+    </section>
+
+    <section id="projects" class="text-center">
+      <h2 class="text-4xl font-bold text-primary mb-4">🪐 Projects</h2>
+      <p class="text-lg text-subtle max-w-3xl mx-auto text-left">Explore my universe of projects—from educational platforms to intelligent automation tools.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white shadow-md p-4 rounded-lg">
+          <h3 class="text-xl font-semibold text-primary">LibrarySys</h3>
+          <p class="text-subtle text-left">Library management with barcode scanning and attendance features.</p>
+        </div>
+        <div class="bg-white shadow-md p-4 rounded-lg">
+          <h3 class="text-xl font-semibold text-primary">WiFi Connect</h3>
+          <p class="text-subtle text-left">Smart waste management system for Batangas City using IoT and analytics.</p>
+        </div>
+        <div class="bg-white shadow-md p-4 rounded-lg">
+          <h3 class="text-xl font-semibold text-primary">AMATrack</h3>
+          <p class="text-subtle text-left">Attendance tracking web app integrated with barcode scanner.</p>
+        </div>
+        <div class="bg-white shadow-md p-4 rounded-lg">
+          <h3 class="text-xl font-semibold text-primary">Portfolio Universe</h3>
+          <p class="text-subtle text-left">Your current portfolio with orbiting planets as navigation!</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills" class="text-center">
+      <h2 class="text-4xl font-bold text-primary mb-4">🔧 Skills</h2>
+      <p class="text-lg text-subtle max-w-3xl mx-auto text-left">Web Development, Python, JavaScript, Machine Learning, UX/UI, Cloud Services, Educational Tech</p>
+    </section>
+
+    <section id="contact" class="text-center">
+      <h2 class="text-4xl font-bold text-primary mb-4">📡 Contact</h2>
+      <p class="text-lg text-subtle max-w-3xl mx-auto text-left">Let's connect! Reach out via email or follow me on social media.</p>
+      <div class="mt-4 space-y-3 text-subtle text-left max-w-fit mx-auto">
+        <p><img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" class="inline-block w-5 h-5 mr-2"> Email: <a href="mailto:trstnjorge@gmail.com" class="text-primary underline">trstnjorge@gmail.com</a></p>
+        <p><img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" class="inline-block w-5 h-5 mr-2"> GitHub: <a href="https://github.com/krazytristan" target="_blank" class="text-primary underline">github.com/krazytristan</a></p>
+        <p><img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" class="inline-block w-5 h-5 mr-2"> LinkedIn: <a href="https://linkedin.com/in/tristan-jorge-cuartero" target="_blank" class="text-primary underline">linkedin.com/in/tristan-jorge-cuartero</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-dark text-accent text-center py-4 z-10 mt-auto">
+    <p>&copy; 2025 Tristan Jorge Cuartero. All rights reserved.</p>
+  </footer>
+
+  <script>
+    function showSection(id) {
+      document.querySelectorAll('main section').forEach(sec => sec.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      history.replaceState(null, null, '#' + id);
+    }
+    window.addEventListener('load', () => {
+      const hash = location.hash.replace('#', '') || 'home';
+      showSection(hash);
+    });
+  </script>
+</body>
+</html>
