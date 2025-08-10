@@ -2,9 +2,54 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+
+    <!-- Viewport & color scheme -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
+    <meta name="color-scheme" content="light dark" />
+
+    <!-- Title & basic SEO -->
+    <title>Tristan Jorge Cuartero — Portfolio</title>
+    <meta
+      name="description"
+      content="Full-stack developer & educator from Batangas, PH. I build modern, accessible web apps with React, Tailwind, and Node."
+    />
+    <meta name="robots" content="index,follow" />
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Tristan Jorge Cuartero — Portfolio" />
+    <meta property="og:description" content="Full-stack developer & educator from Batangas, PH." />
+    <meta property="og:image" content="/images/BSU_6102.jpg" />
+    <meta property="og:url" content="/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Tristan Jorge Cuartero — Portfolio" />
+    <meta name="twitter:description" content="Full-stack developer & educator from Batangas, PH." />
+    <meta name="twitter:image" content="/images/BSU_6102.jpg" />
+
+    <!-- Theme color (light/dark). Your main.jsx also updates this dynamically. -->
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b0b0d" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" />
+
+    <!-- Icons -->
+    <link rel="icon" href="/vite.svg" type="image/svg+xml" />
+    <!-- Optional: add real favicons when available
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+    -->
+
+    <!-- Preload hero image for faster LCP -->
+    <link rel="preload" as="image" href="/images/BSU_6102.jpg" imagesrcset="/images/BSU_6102.jpg 1x" />
+
+    <!-- Canonical (adjust if you have a real URL) -->
+    <link rel="canonical" href="/" />
+
+    <!-- No-JS fallback to avoid permanent opacity:0 -->
+    <noscript>
+      <style>
+        html { opacity: 1 !important; }
+      </style>
+    </noscript>
   </head>
   <body>
     <div id="root"></div>

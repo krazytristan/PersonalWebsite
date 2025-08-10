@@ -1,5 +1,6 @@
+// Tailwind v4 PostCSS plugin
 export default {
   plugins: {
-    '@tailwindcss/postcss': {},   // ✅ v4 plugin
+    '@tailwindcss/postcss': {},
   },
-}
+};

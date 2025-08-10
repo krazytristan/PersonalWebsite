@@ -61,20 +61,20 @@ export default function BlogSection() {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search posts..."
+            placeholder="Search posts…"
             className="w-full px-4 py-3 rounded-xl bg-white/80 dark:bg-zinc-900/70 ring-1 ring-black/10 dark:ring-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+            aria-label="Search posts"
           />
-          <span className="absolute right-3 top-2.5 opacity-60">⌘K</span>
+          <span className="absolute right-3 top-2.5 opacity-60 text-xs select-none">⌘K</span>
         </div>
+
         <div className="flex flex-wrap gap-2">
           {tags.map((t) => (
             <button
               key={t}
               onClick={() => setActiveTag(t)}
-              className={`rounded-full px-3 py-1 text-sm ring-1 ring-black/10 dark:ring-white/20 ${
-                activeTag === t
-                  ? "bg-indigo-600 text-white"
-                  : "bg-white/70 dark:bg-white/10"
+              className={`rounded-full px-3 py-1 text-sm ring-1 ring-black/10 dark:ring-white/20 transition ${
+                activeTag === t ? "bg-indigo-600 text-white" : "bg-white/70 dark:bg-white/10"
               }`}
             >
               {t}
@@ -85,7 +85,10 @@ export default function BlogSection() {
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
         {results.map((p) => (
-          <article key={p.id} className="rounded-2xl overflow-hidden ring-1 ring-black/5 dark:ring-white/10 bg-white/80 dark:bg-zinc-900/70 shadow-xl backdrop-blur hover:-translate-y-1 hover:shadow-2xl transition">
+          <article
+            key={p.id}
+            className="card overflow-hidden hover:-translate-y-1 hover:shadow-2xl transition"
+          >
             <div className="h-40 bg-zinc-100 dark:bg-zinc-800">
               <img
                 src={p.cover}
@@ -101,12 +104,18 @@ export default function BlogSection() {
               <p className="text-sm text-zinc-600 dark:text-zinc-300 mt-2">{p.excerpt}</p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {p.tags.map((t) => (
-                  <span key={t} className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-black/10 dark:ring-white/20 bg-white/70 dark:bg-white/10 text-zinc-700 dark:text-zinc-300">
+                  <span
+                    key={t}
+                    className="badge bg-white/70 dark:bg-white/10 text-zinc-700 dark:text-zinc-300"
+                  >
                     {t}
                   </span>
                 ))}
               </div>
-              <a href={p.link} className="inline-block mt-4 text-indigo-600 dark:text-indigo-400 font-medium hover:underline">
+              <a
+                href={p.link}
+                className="inline-block mt-4 text-indigo-600 dark:text-indigo-400 font-medium hover:underline"
+              >
                 Read →
               </a>
             </div>
