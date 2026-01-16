@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, useRef } from "react";
 
 export default function ResumeViewer({
-  src = "/resume.pdf",                             // put your PDF in /public
+  src = "/dist/images/resume.pdf",                             // put your PDF in /public
   filename = "Tristan-Cuartero-Resume.pdf",
   thumbnail = "/images/resume-thumb.jpg",          // optional image fallback
   height = "72vh",
