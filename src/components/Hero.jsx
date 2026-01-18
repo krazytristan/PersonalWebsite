@@ -8,6 +8,13 @@ import {
   useSpring,
 } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaTiktok,
+  FaGithub,
+  FaLinkedinIn,
+} from "react-icons/fa";
 
 /* -------------------- TYPEWRITER -------------------- */
 function Typewriter({ text }) {
@@ -73,7 +80,7 @@ function useCountUp(target, duration = 1200) {
 export default function Hero() {
   const reduceMotion = useReducedMotion();
 
-  /* Scroll effects */
+  /* Scroll fade */
   const { scrollY } = useScroll();
   const fadeOut = useTransform(scrollY, [0, 420], [1, 0.85]);
 
@@ -188,6 +195,7 @@ export default function Hero() {
             strong UX and clean architecture.
           </p>
 
+          {/* CTA */}
           <div className="mt-8 flex gap-4">
             <motion.a
               href="#projects"
@@ -206,6 +214,39 @@ export default function Hero() {
             </a>
           </div>
 
+          {/* SOCIAL LINKS */}
+          <div className="mt-6 flex items-center gap-4">
+            {[
+              { icon: <FaFacebookF />, href: "https://facebook.com/yourprofile" },
+              { icon: <FaInstagram />, href: "https://instagram.com/yourprofile" },
+              { icon: <FaTiktok />, href: "https://tiktok.com/@yourprofile" },
+              { icon: <FaGithub />, href: "https://github.com/yourprofile" },
+              { icon: <FaLinkedinIn />, href: "https://linkedin.com/in/yourprofile" },
+            ].map((item, i) => (
+              <motion.a
+                key={i}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ y: -4, scale: 1.08 }}
+                whileTap={{ scale: 0.95 }}
+                className="
+                  w-11 h-11 flex items-center justify-center
+                  rounded-full
+                  bg-brand-surface
+                  ring-1 ring-black/10
+                  text-brand-primary
+                  hover:bg-brand-primary hover:text-white
+                  transition
+                  shadow-md
+                "
+              >
+                {item.icon}
+              </motion.a>
+            ))}
+          </div>
+
+          {/* STATS */}
           <div className="mt-10 grid grid-cols-3 gap-6 max-w-md">
             <div ref={yearsRef}>
               <Stat value={`${years}+`} label="Years Teaching" />

@@ -15,6 +15,8 @@ import ScrollToTop from "../components/ScrollToTop";
 import Modal from "../components/ui/Modal";
 import ResumeViewer from "../components/ResumeViewer";
 import CursorSpotlight from "../components/ui/CursorSpotlight";
+import PageTransition from "../components/ui/PageTransition";
+import SEO from "../components/SEO";
 
 export default function Portfolio() {
   const prefersReducedMotion = useReducedMotion();
@@ -25,6 +27,12 @@ export default function Portfolio() {
 
   return (
     <div className="relative min-h-screen bg-brand-bg text-brand-text overflow-x-hidden">
+      {/* ================= SEO ================= */}
+      <SEO
+        title="Tristan Cuartero | Systems Architect & Educator"
+        description="I design and build scalable systems, dashboards, and human-centered platforms."
+      />
+
       {/* ================= GLOBAL EFFECTS ================= */}
       {!prefersReducedMotion && <CursorSpotlight />}
 
@@ -33,19 +41,35 @@ export default function Portfolio() {
 
       {/* ================= MAIN CONTENT ================= */}
       <main className="relative">
-        <Hero />
-        <About />
-        <Achievements />
+        <PageTransition>
+          <Hero />
+        </PageTransition>
 
-        <Projects onOpen={(project) => setActiveProject(project)} />
+        <PageTransition delay={0.05}>
+          <About />
+        </PageTransition>
 
-        <Skills />
+        <PageTransition delay={0.1}>
+          <Achievements />
+        </PageTransition>
 
-        <section className="py-28">
-          <BlogSection />
-        </section>
+        <PageTransition delay={0.15}>
+          <Projects onOpen={(project) => setActiveProject(project)} />
+        </PageTransition>
 
-        <Contact />
+        <PageTransition delay={0.2}>
+          <Skills />
+        </PageTransition>
+
+        <PageTransition delay={0.25}>
+          <section className="py-28">
+            <BlogSection />
+          </section>
+        </PageTransition>
+
+        <PageTransition delay={0.3}>
+          <Contact />
+        </PageTransition>
       </main>
 
       {/* ================= UTILITIES ================= */}
@@ -54,10 +78,7 @@ export default function Portfolio() {
 
       {/* ================= RESUME MODAL ================= */}
       <AnimatePresence>
-        <Modal
-          open={resumeOpen}
-          onClose={() => setResumeOpen(false)}
-        >
+        <Modal open={resumeOpen} onClose={() => setResumeOpen(false)}>
           <ResumeViewer />
         </Modal>
       </AnimatePresence>
