@@ -1,32 +1,33 @@
 import { useEffect, useMemo, useState, useRef } from "react";
+import { motion } from "framer-motion";
 
 export default function ResumeViewer({
-  src = "/dist/images/resume.pdf",                             // put your PDF in /public
+  src = "/resume.pdf",
   filename = "Tristan-Cuartero-Resume.pdf",
-  thumbnail = "/images/resume-thumb.jpg",          // optional image fallback
+  thumbnail = "/images/resume-thumb.jpg",
   height = "72vh",
-  forceFallback = false,                           // set true to always disable inline preview
+  forceFallback = false,
 }) {
   const [exists, setExists] = useState(true);
   const [loading, setLoading] = useState(true);
   const [inlineAllowed, setInlineAllowed] = useState(true);
-  const [viewer, setViewer] = useState("object");  // "object" | "iframe" | "fallback"
+  const [viewer, setViewer] = useState("object"); // object | iframe | fallback
   const styleInjected = useRef(false);
 
-  // UA buckets that commonly block/break inline PDF
+  /* ---------------- UA CHECK ---------------- */
   const problematicUA = useMemo(() => {
     const ua = navigator.userAgent || "";
     const iOS = /iPad|iPhone|iPod/.test(ua);
-    const android = /Android/.test(ua) && /Mobile/.test(ua);
-    const firefoxAndroid = android && /Firefox/.test(ua);
-    return iOS || firefoxAndroid;
+    const androidFirefox = /Android/.test(ua) && /Firefox/.test(ua);
+    return iOS || androidFirefox;
   }, []);
 
-  // HEAD check so a bad path doesn’t render a huge empty box
+  /* ---------------- FILE EXISTS ---------------- */
   useEffect(() => {
-    let abort = new AbortController();
+    const controller = new AbortController();
     setLoading(true);
-    fetch(src, { method: "HEAD", signal: abort.signal })
+
+    fetch(src, { method: "HEAD", signal: controller.signal })
       .then((r) => {
         setExists(r.ok);
         setLoading(false);
@@ -35,19 +36,19 @@ export default function ResumeViewer({
         setExists(false);
         setLoading(false);
       });
-    return () => abort.abort();
+
+    return () => controller.abort();
   }, [src]);
 
-  // Decide if inline is allowed & choose default viewer
+  /* ---------------- INLINE DECISION ---------------- */
   useEffect(() => {
     if (forceFallback || problematicUA) {
       setInlineAllowed(false);
       setViewer("fallback");
       return;
     }
-    // Chrome exposes this; others might not. False => hard block.
-    const hint = (navigator && navigator.pdfViewerEnabled);
-    if (hint === false) {
+
+    if (navigator.pdfViewerEnabled === false) {
       setInlineAllowed(false);
       setViewer("fallback");
     } else {
@@ -56,7 +57,12 @@ export default function ResumeViewer({
     }
   }, [forceFallback, problematicUA]);
 
-  const openNewTab = () => window.open(src, "_blank", "noopener,noreferrer");
+  /* ---------------- ACTIONS ---------------- */
+  const openNewTab = () => {
+    try {
+      window.open(src, "_blank", "noopener,noreferrer");
+    } catch {}
+  };
 
   const download = async () => {
     try {
@@ -71,160 +77,137 @@ export default function ResumeViewer({
       a.remove();
       URL.revokeObjectURL(url);
     } catch {
-      const a = document.createElement("a");
-      a.href = src;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
+      openNewTab();
     }
   };
 
   const printPdf = () => {
     const w = window.open(src, "_blank", "noopener,noreferrer");
-    if (!w) return;
     setTimeout(() => {
-      try { w.focus(); w.print(); } catch {}
+      try {
+        w?.focus();
+        w?.print();
+      } catch {}
     }, 800);
   };
 
-  // Inject once: hide scrollbars for object/iframe (Chrome/Safari/Opera)
+  /* ---------------- SCROLLBAR HIDE ---------------- */
   useEffect(() => {
     if (styleInjected.current) return;
-    const css = `
+
+    const style = document.createElement("style");
+    style.textContent = `
       object::-webkit-scrollbar,
-      iframe::-webkit-scrollbar {
-        display: none;
-      }
+      iframe::-webkit-scrollbar { display: none; }
     `;
-    const tag = document.createElement("style");
-    tag.setAttribute("data-resumeviewer-scrollbar", "true");
-    tag.textContent = css;
-    document.head.appendChild(tag);
+    document.head.appendChild(style);
     styleInjected.current = true;
-    // no cleanup needed; keep it for the session
   }, []);
 
+  /* ---------------- UI ---------------- */
   const Toolbar = () => (
-    <div className="flex items-center justify-between">
-      <div className="text-left">
-        <h3 className="font-semibold">My Resume</h3>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400">{filename}</p>
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl
+        bg-white/80 dark:bg-zinc-900/80 backdrop-blur
+        ring-1 ring-black/10 dark:ring-white/10"
+    >
+      <div>
+        <h3 className="font-semibold leading-tight">Resume</h3>
+        <p className="text-xs text-zinc-500">{filename}</p>
       </div>
 
       <div className="flex items-center gap-2">
         {inlineAllowed && (
-          <div
-            className="hidden sm:flex items-center rounded-lg ring-1 ring-black/10 dark:ring-white/10 overflow-hidden"
-            role="tablist"
-            aria-label="PDF viewer mode"
-          >
-            <button
-              type="button"
-              role="tab"
-              aria-selected={viewer === "object"}
-              onClick={() => setViewer("object")}
-              className={`px-3 py-2 text-sm ${
-                viewer === "object" ? "bg-black/5 dark:bg-white/10" : ""
-              }`}
-              title="Use <object> viewer"
-            >
-              Object
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={viewer === "iframe"}
-              onClick={() => setViewer("iframe")}
-              className={`px-3 py-2 text-sm ${
-                viewer === "iframe" ? "bg-black/5 dark:bg-white/10" : ""
-              }`}
-              title="Use <iframe> viewer"
-            >
-              iFrame
-            </button>
+          <div className="hidden sm:flex rounded-lg overflow-hidden ring-1 ring-black/10 dark:ring-white/10">
+            {["object", "iframe"].map((v) => (
+              <button
+                key={v}
+                onClick={() => setViewer(v)}
+                aria-label={`Use ${v} viewer`}
+                className={`px-3 py-2 text-sm transition ${
+                  viewer === v
+                    ? "bg-black/5 dark:bg-white/10 font-medium"
+                    : "opacity-70 hover:opacity-100"
+                }`}
+              >
+                {v}
+              </button>
+            ))}
           </div>
         )}
 
         <button
           onClick={openNewTab}
-          className="px-3 py-2 rounded-lg ring-1 ring-black/10 dark:ring-white/10 hover:bg-black/5 dark:hover:bg-white/10"
+          className="px-3 py-2 rounded-lg ring-1 ring-black/10 dark:ring-white/10 hover:bg-black/5 transition"
         >
-          Open in new tab
+          Open
         </button>
+
         <button
           onClick={download}
-          className="px-3 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
+          className="px-3 py-2 rounded-lg bg-brand-primary text-white font-semibold hover:opacity-90 transition"
         >
           Download
         </button>
+
         <button
           onClick={printPdf}
-          className="px-3 py-2 rounded-lg ring-1 ring-black/10 dark:ring-white/10 hover:bg-black/5 dark:hover:bg-white/10"
+          className="px-3 py-2 rounded-lg ring-1 ring-black/10 dark:ring-white/10 hover:bg-black/5 transition"
         >
           Print
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 
-  const FallbackPanel = ({ reason }) => (
-    <div className="grid gap-3">
+  const Fallback = ({ reason }) => (
+    <div className="grid place-items-center p-6 text-center">
       {thumbnail ? (
-        <a href={src} target="_blank" rel="noreferrer" className="block">
+        <a href={src} target="_blank" rel="noreferrer">
           <img
             src={thumbnail}
             alt="Resume preview"
-            className="w-full rounded-xl ring-1 ring-black/10 dark:ring-white/10 object-cover"
-            loading="lazy"
+            className="rounded-xl shadow-lg ring-1 ring-black/10 dark:ring-white/10 hover:scale-[1.01] transition"
           />
         </a>
       ) : (
-        <div className="p-6 rounded-xl ring-1 ring-black/10 dark:ring-white/10 text-center text-sm text-zinc-500 dark:text-zinc-400">
-          {reason || "Preview not supported here."} Use the buttons above to open or download the PDF.
-        </div>
+        <p className="text-sm opacity-70">{reason}</p>
       )}
     </div>
   );
 
-  // If the file is missing
   if (!loading && !exists) {
     return (
-      <div className="flex flex-col gap-3">
-        <Toolbar />
-        <div className="p-6 rounded-xl ring-1 ring-black/10 dark:ring-white/10 text-center text-sm text-red-600 dark:text-red-400">
-          Couldn’t find the file at <code className="font-mono">{src}</code>. Place your PDF in
-          <code className="font-mono"> /public{src}</code> (then restart the dev server).
-        </div>
+      <div className="p-6 rounded-xl ring-1 ring-red-400/30 text-sm text-red-600">
+        Resume not found at <code className="font-mono">{src}</code>.  
+        Place the file inside <code className="font-mono">/public</code> and restart Vite.
       </div>
     );
   }
 
-  // Shared style for hiding scrollbars + no overflow chrome
-  const noScrollStyle = {
+  const viewerStyle = {
     height,
     border: 0,
     overflow: "hidden",
-    scrollbarWidth: "none",  // Firefox
-    msOverflowStyle: "none", // old Edge/IE
+    scrollbarWidth: "none",
   };
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-4">
       <Toolbar />
 
-      {/* Loading */}
+      {/* Loading skeleton */}
       {loading && (
         <div
-          className="overflow-hidden rounded-xl ring-1 ring-black/10 dark:ring-white/10 bg-white/70 dark:bg-zinc-900/70 grid place-items-center"
+          className="rounded-xl ring-1 ring-black/10 dark:ring-white/10
+            bg-zinc-100 dark:bg-zinc-900 animate-pulse"
           style={{ height }}
-          aria-busy="true"
-        >
-          <div className="text-sm opacity-70">Loading preview…</div>
-        </div>
+        />
       )}
 
-      {/* Viewer */}
       {!loading && exists && (
         inlineAllowed ? (
           <div className="overflow-hidden rounded-xl ring-1 ring-black/10 dark:ring-white/10 bg-white dark:bg-zinc-950">
@@ -233,16 +216,15 @@ export default function ResumeViewer({
                 data={`${src}#view=FitH`}
                 type="application/pdf"
                 className="w-full"
-                style={noScrollStyle}
+                style={viewerStyle}
               >
-                {/* If <object> fails, try iframe automatically */}
                 <iframe
                   src={src}
                   title="Resume PDF"
                   className="w-full"
-                  style={noScrollStyle}
+                  style={viewerStyle}
                 />
-                <FallbackPanel reason="Inline PDF preview isn’t available in this browser." />
+                <Fallback reason="Inline preview unavailable." />
               </object>
             )}
 
@@ -251,22 +233,19 @@ export default function ResumeViewer({
                 src={src}
                 title="Resume PDF"
                 className="w-full"
-                style={noScrollStyle}
+                style={viewerStyle}
               />
             )}
           </div>
         ) : (
-          <div
-            className="overflow-hidden rounded-xl ring-1 ring-black/10 dark:ring-white/10 bg-white dark:bg-zinc-950"
-            style={{ minHeight: height }}
-          >
-            <FallbackPanel reason="This browser blocks inline PDF viewers." />
+          <div className="rounded-xl ring-1 ring-black/10 dark:ring-white/10 bg-white dark:bg-zinc-950">
+            <Fallback reason="This browser blocks inline PDF previews." />
           </div>
         )
       )}
 
-      <p className="text-[11px] text-zinc-500 dark:text-zinc-400 text-center">
-        Tip: If the preview doesn’t load, click “Open in new tab”—some mobile browsers block inline PDFs.
+      <p className="text-[11px] text-center text-zinc-500">
+        If the preview doesn’t load, use “Open” or “Download”.
       </p>
     </div>
   );

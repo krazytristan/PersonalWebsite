@@ -5,83 +5,162 @@ import App from "./App.jsx";
 import "./index.css";
 
 /**
- * UI bootstrap (runs before React):
- * - Hydrate theme (light/dark/system) with zero flash
- * - Expose helpers for toggling + reading theme
- * - Syncs with OS theme + reduced-motion + other tabs
- * - Ensures <meta name="theme-color"> stays in sync
+ * =====================================================
+ * UI BOOTSTRAP (executes BEFORE React renders)
+ * =====================================================
+ * - Zero-flash theme hydration (light / dark / system)
+ * - Reduced motion sync (OS + storage)
+ * - Cross-tab + OS change sync
+ * - <meta name="theme-color"> synchronization
+ * - Minimal, safe global theme API
+ * =====================================================
  */
 (function bootstrapUI() {
-  const THEME_KEY = "theme-mode";       // "light" | "dark" | "system"
-  const REDUCED_KEY = "reduced-motion"; // "reduce"
+  if (typeof window === "undefined") return;
+
+  const THEME_KEY = "theme-mode";        // "light" | "dark" | "system"
+  const REDUCED_KEY = "reduced-motion";  // "reduce"
   const root = document.documentElement;
 
-  const mqDark = window.matchMedia?.("(prefers-color-scheme: dark)");
-  const mqReduced = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+  const mqDark =
+    window.matchMedia?.("(prefers-color-scheme: dark)") || null;
+  const mqReduced =
+    window.matchMedia?.("(prefers-reduced-motion: reduce)") || null;
 
+  /* -------------------- Safe Storage -------------------- */
+  const safeGet = (key) => {
+    try {
+      return localStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  };
+
+  const safeSet = (key, val) => {
+    try {
+      localStorage.setItem(key, val);
+    } catch {}
+  };
+
+  const safeRemove = (key) => {
+    try {
+      localStorage.removeItem(key);
+    } catch {}
+  };
+
+  /* -------------------- Theme Helpers -------------------- */
   const ensureThemeMeta = () => {
     let meta = document.querySelector('meta[name="theme-color"]');
     if (!meta) {
       meta = document.createElement("meta");
-      meta.setAttribute("name", "theme-color");
+      meta.name = "theme-color";
       document.head.appendChild(meta);
     }
     return meta;
   };
 
   const getStoredMode = () => {
-    try {
-      const saved = localStorage.getItem(THEME_KEY);
-      return saved === "light" || saved === "dark" || saved === "system" ? saved : "system";
-    } catch { return "system"; }
+    const m = safeGet(THEME_KEY);
+    return m === "light" || m === "dark" || m === "system"
+      ? m
+      : "system";
   };
-  const setStoredMode = (m) => { try { localStorage.setItem(THEME_KEY, m); } catch {} };
-  const resolveTheme = (mode) => (mode === "light" || mode === "dark")
-    ? mode
-    : (mqDark?.matches ? "dark" : "light");
 
+  const resolveTheme = (mode) => {
+    if (mode === "light" || mode === "dark") return mode;
+    return mqDark?.matches ? "dark" : "light";
+  };
+
+  /* -------------------- Apply Theme -------------------- */
   const applyTheme = (mode) => {
-    const actual = resolveTheme(mode);
-    root.classList.toggle("dark", actual === "dark");
-    root.setAttribute("data-theme", actual);
-    root.setAttribute("data-theme-mode", mode);
-    root.style.colorScheme = actual;
+    const resolved = resolveTheme(mode);
+
+    root.classList.toggle("dark", resolved === "dark");
+    root.dataset.theme = resolved;
+    root.dataset.themeMode = mode;
+    root.style.colorScheme = resolved;
+
     try {
-      const meta = ensureThemeMeta();
-      meta.setAttribute("content", actual === "dark" ? "#050508" : "#ffffff");
+      ensureThemeMeta().setAttribute(
+        "content",
+        resolved === "dark" ? "#050508" : "#ffffff"
+      );
     } catch {}
   };
 
-  const applyReduced = () => {
-    const reduced = (mqReduced && mqReduced.matches) || localStorage.getItem(REDUCED_KEY) === "reduce";
-    root.classList.toggle("reduced-motion", !!reduced);
-    root.setAttribute("data-reduced-motion", reduced ? "reduce" : "no-preference");
+  /* -------------------- Reduced Motion -------------------- */
+  const applyReducedMotion = () => {
+    const reduced =
+      mqReduced?.matches || safeGet(REDUCED_KEY) === "reduce";
+
+    root.classList.toggle("reduced-motion", reduced);
+    root.dataset.reducedMotion = reduced
+      ? "reduce"
+      : "no-preference";
+
+    // Disable smooth scroll if reduced motion is requested
+    root.style.scrollBehavior = reduced ? "auto" : "smooth";
   };
 
-  // initial (no flash)
+  /* -------------------- Initial Run (NO FLASH) -------------------- */
   applyTheme(getStoredMode());
-  applyReduced();
-  root.style.scrollBehavior = "smooth";
+  applyReducedMotion();
 
-  // helpers
-  window.__getThemeMode = () => getStoredMode();
-  window.__getResolvedTheme = () => resolveTheme(getStoredMode());
-  window.__setThemeMode = (mode) => { setStoredMode(mode === "dark" || mode === "light" ? mode : "system"); applyTheme(getStoredMode()); };
-  window.__toggleTheme = () => { const next = resolveTheme(getStoredMode()) === "dark" ? "light" : "dark"; setStoredMode(next); applyTheme(next); };
-  window.__setReducedMotion = (reduce) => { try { reduce ? localStorage.setItem(REDUCED_KEY, "reduce") : localStorage.removeItem(REDUCED_KEY); } catch {} applyReduced(); };
+  /* -------------------- Global Theme API -------------------- */
+  window.__theme = Object.freeze({
+    getMode: () => getStoredMode(),
+    getResolved: () => resolveTheme(getStoredMode()),
 
-  // listeners
-  const onSystemThemeChange = () => { if (getStoredMode() === "system") applyTheme("system"); };
-  const onReducedChange = () => applyReduced();
-  mqDark?.addEventListener?.("change", onSystemThemeChange) ?? mqDark?.addListener?.(onSystemThemeChange);
-  mqReduced?.addEventListener?.("change", onReducedChange) ?? mqReduced?.addListener?.(onReducedChange);
+    setMode: (mode) => {
+      safeSet(
+        THEME_KEY,
+        mode === "light" || mode === "dark" ? mode : "system"
+      );
+      applyTheme(getStoredMode());
+    },
+
+    toggle: () => {
+      const next =
+        resolveTheme(getStoredMode()) === "dark"
+          ? "light"
+          : "dark";
+      safeSet(THEME_KEY, next);
+      applyTheme(next);
+    },
+
+    setReducedMotion: (reduce) => {
+      reduce
+        ? safeSet(REDUCED_KEY, "reduce")
+        : safeRemove(REDUCED_KEY);
+      applyReducedMotion();
+    },
+  });
+
+  /* -------------------- System + Cross-Tab Sync -------------------- */
+  const onDarkChange = () => {
+    if (getStoredMode() === "system") applyTheme("system");
+  };
+
+  const onReducedChange = () => applyReducedMotion();
+
+  try {
+    mqDark?.addEventListener?.("change", onDarkChange);
+    mqReduced?.addEventListener?.("change", onReducedChange);
+  } catch {
+    // Safari < 14 fallback
+    mqDark?.addListener?.(onDarkChange);
+    mqReduced?.addListener?.(onReducedChange);
+  }
 
   window.addEventListener("storage", (e) => {
     if (e.key === THEME_KEY) applyTheme(getStoredMode());
-    if (e.key === REDUCED_KEY) applyReduced();
+    if (e.key === REDUCED_KEY) applyReducedMotion();
   });
 })();
 
+/* =====================================================
+ * React Mount
+ * ===================================================== */
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
@@ -90,5 +169,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   </React.StrictMode>
 );
 
-// fade-in after mount (pairs with html.app-ready CSS)
-requestAnimationFrame(() => document.documentElement.classList.add("app-ready"));
+/* -------------------- App Ready (CSS Fade-in Hook) -------------------- */
+requestAnimationFrame(() => {
+  document.documentElement.classList.add("app-ready");
+});

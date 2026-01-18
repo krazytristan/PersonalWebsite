@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 
 const POSTS = [
   {
@@ -10,6 +11,7 @@ const POSTS = [
       "My practical checklist for going from idea → production with clean UX, strong structure, and minimal regrets.",
     cover: "/images/blog/react-ship.jpg",
     link: "#",
+    featured: true,
   },
   {
     id: "teaching-tech",
@@ -36,6 +38,19 @@ const POSTS = [
 export default function BlogSection() {
   const [query, setQuery] = useState("");
   const [activeTag, setActiveTag] = useState("All");
+  const inputRef = useRef(null);
+
+  /* ⌘K / Ctrl+K focus */
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        inputRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   const tags = useMemo(() => {
     const t = new Set(["All"]);
@@ -54,27 +69,61 @@ export default function BlogSection() {
     return matchesTag && matchesQuery;
   });
 
+  const featured = results.find((p) => p.featured);
+
   return (
-    <div className="max-w-6xl mx-auto px-4">
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+    <section className="relative max-w-7xl mx-auto px-4 py-36 bg-brand-bg">
+      {/* Ambient glow */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute top-28 left-1/2 -translate-x-1/2 w-[640px] h-[640px] rounded-full bg-brand-primary/15 blur-3xl" />
+      </div>
+
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="text-center mb-20"
+      >
+        <span className="inline-block mb-3 text-sm font-semibold tracking-wide text-brand-primary">
+          BLOG
+        </span>
+        <h2 className="text-4xl xl:text-5xl font-black text-brand-dark mb-4">
+          Writing & Insights
+        </h2>
+        <p className="text-lg text-zinc-600 max-w-2xl mx-auto">
+          Field notes on building systems, teaching technology, and shipping
+          real-world software.
+        </p>
+      </motion.div>
+
+      {/* Controls */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+        {/* Search */}
         <div className="relative w-full sm:max-w-sm">
           <input
+            ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search posts…"
-            className="w-full px-4 py-3 rounded-xl bg-white/80 dark:bg-zinc-900/70 ring-1 ring-black/10 dark:ring-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-600"
-            aria-label="Search posts"
+            placeholder="Search articles…"
+            className="w-full px-4 py-3 rounded-xl bg-white/80 backdrop-blur ring-1 ring-black/10 focus:outline-none focus:ring-2 focus:ring-brand-primary"
           />
-          <span className="absolute right-3 top-2.5 opacity-60 text-xs select-none">⌘K</span>
+          <span className="absolute right-3 top-3 text-xs opacity-50">
+            ⌘K / Ctrl+K
+          </span>
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        {/* Tags */}
+        <div className="flex flex-wrap gap-2 justify-center">
           {tags.map((t) => (
             <button
               key={t}
               onClick={() => setActiveTag(t)}
-              className={`rounded-full px-3 py-1 text-sm ring-1 ring-black/10 dark:ring-white/20 transition ${
-                activeTag === t ? "bg-indigo-600 text-white" : "bg-white/70 dark:bg-white/10"
+              className={`px-4 py-1.5 rounded-full text-sm font-medium transition ring-1 ${
+                activeTag === t
+                  ? "bg-brand-primary text-white shadow ring-transparent"
+                  : "bg-white/80 ring-black/10 hover:bg-white"
               }`}
             >
               {t}
@@ -83,54 +132,113 @@ export default function BlogSection() {
         </div>
       </div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
-        {results.map((p) => (
-          <article
-            key={p.id}
-            className="card overflow-hidden hover:-translate-y-1 hover:shadow-2xl transition"
-          >
-            <div className="h-40 bg-zinc-100 dark:bg-zinc-800">
-              <img
-                src={p.cover}
-                alt=""
-                className="w-full h-full object-cover"
-                loading="lazy"
-                onError={(e) => (e.currentTarget.style.display = "none")}
-              />
-            </div>
-            <div className="p-5">
-              <time className="text-xs opacity-60">{formatDate(p.date)}</time>
-              <h3 className="text-lg font-semibold mt-1">{p.title}</h3>
-              <p className="text-sm text-zinc-600 dark:text-zinc-300 mt-2">{p.excerpt}</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {p.tags.map((t) => (
-                  <span
-                    key={t}
-                    className="badge bg-white/70 dark:bg-white/10 text-zinc-700 dark:text-zinc-300"
-                  >
-                    {t}
-                  </span>
-                ))}
+      {/* Featured */}
+      {featured && (
+        <motion.article
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mt-20 mb-24 grid md:grid-cols-2 gap-12 rounded-3xl bg-white shadow-2xl ring-1 ring-black/5 overflow-hidden"
+        >
+          <img
+            src={featured.cover}
+            alt=""
+            className="h-full w-full object-cover"
+          />
+
+          <div className="p-10 flex flex-col justify-center">
+            <span className="text-sm font-semibold text-brand-primary">
+              Featured Article
+            </span>
+            <h3 className="mt-3 text-2xl xl:text-3xl font-black text-brand-dark">
+              {featured.title}
+            </h3>
+            <p className="mt-4 text-zinc-600">
+              {featured.excerpt}
+            </p>
+            <a
+              href={featured.link}
+              className="mt-6 inline-flex items-center gap-2 font-semibold text-brand-primary hover:underline"
+            >
+              Read article →
+            </a>
+          </div>
+        </motion.article>
+      )}
+
+      {/* Grid */}
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
+        {results
+          .filter((p) => !p.featured)
+          .map((p, i) => (
+            <motion.article
+              key={p.id}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.06 }}
+              whileHover={{ y: -6 }}
+              className="group relative rounded-3xl overflow-hidden bg-white ring-1 ring-black/5 shadow-lg hover:shadow-2xl transition"
+            >
+              <div className="relative h-44 overflow-hidden">
+                <img
+                  src={p.cover}
+                  alt=""
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
+                />
               </div>
-              <a
-                href={p.link}
-                className="inline-block mt-4 text-indigo-600 dark:text-indigo-400 font-medium hover:underline"
-              >
-                Read →
-              </a>
-            </div>
-          </article>
-        ))}
+
+              <div className="p-6">
+                <time className="text-xs text-zinc-500">
+                  {formatDate(p.date)}
+                </time>
+
+                <h3 className="mt-1 text-lg font-bold text-brand-dark">
+                  {p.title}
+                </h3>
+
+                <p className="mt-2 text-sm text-zinc-600">
+                  {p.excerpt}
+                </p>
+
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {p.tags.map((t) => (
+                    <span
+                      key={t}
+                      className="px-2.5 py-1 rounded-full text-xs bg-brand-primary/10 text-brand-dark"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+
+                <a
+                  href={p.link}
+                  className="inline-block mt-5 font-medium text-brand-primary group-hover:underline"
+                >
+                  Read article →
+                </a>
+              </div>
+
+              {/* Hover glow */}
+              <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition bg-brand-primary/5" />
+            </motion.article>
+          ))}
       </div>
 
       {results.length === 0 && (
-        <p className="text-center opacity-70 mt-10">No posts match your search.</p>
+        <p className="text-center opacity-70 mt-20">
+          No posts match your search.
+        </p>
       )}
-    </div>
+    </section>
   );
 }
 
 function formatDate(iso) {
-  const d = new Date(iso);
-  return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+  return new Date(iso).toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 }
