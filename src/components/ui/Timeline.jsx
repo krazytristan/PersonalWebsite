@@ -1,5 +1,10 @@
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "framer-motion";
+import { useRef, useMemo } from "react";
 
 const items = [
   {
@@ -23,19 +28,34 @@ export default function Timeline() {
   const reduceMotion = useReducedMotion();
   const ref = useRef(null);
 
-  /* Scroll-linked line growth */
+  /* ================= DEVICE GUARD ================= */
+  const isDesktop = useMemo(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia("(min-width: 768px)").matches;
+  }, []);
+
+  const enableFX = !reduceMotion && isDesktop;
+
+  /* ================= SCROLL LINE ================= */
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
   });
-  const lineScale = useTransform(scrollYProgress, [0, 1], [0, 1]);
+
+  const lineScale = enableFX
+    ? useTransform(scrollYProgress, [0, 1], [0, 1])
+    : 1;
 
   return (
-    <div ref={ref} className="relative mt-16 pl-8">
-      {/* ================= VERTICAL LINE ================= */}
+    <div
+      ref={ref}
+      className="relative mt-16 pl-8 sm:pl-10"
+    >
+      {/* ================= BASE LINE ================= */}
       <div className="absolute left-[14px] top-0 h-full w-[2px] bg-brand-primary/20" />
 
-      {!reduceMotion && (
+      {/* ================= ANIMATED LINE (DESKTOP ONLY) ================= */}
+      {enableFX && (
         <motion.div
           className="absolute left-[14px] top-0 h-full w-[2px] bg-brand-primary origin-top"
           style={{ scaleY: lineScale }}
@@ -55,25 +75,31 @@ export default function Timeline() {
             ease: "easeOut",
           }}
           whileHover={
-            !reduceMotion
+            enableFX
               ? {
                   y: -4,
                 }
               : {}
           }
-          className="relative mb-12"
+          className="relative mb-14"
         >
           {/* ================= NODE ================= */}
           <motion.span
-            initial={!reduceMotion ? { scale: 0.8, opacity: 0 } : false}
+            initial={!reduceMotion ? { scale: 0.85, opacity: 0 } : false}
             whileInView={!reduceMotion ? { scale: 1, opacity: 1 } : false}
             viewport={{ once: true }}
             transition={{ delay: i * 0.15 }}
-            className="absolute left-[6px] top-1.5 w-4 h-4 rounded-full bg-brand-primary ring-4 ring-brand-bg shadow-[0_0_0_6px_rgba(255,109,31,0.15)]"
+            className="
+              absolute left-[6px] top-2
+              w-4 h-4 rounded-full
+              bg-brand-primary
+              ring-4 ring-brand-bg
+              shadow-[0_0_0_6px_rgba(255,109,31,0.15)]
+            "
           />
 
           {/* ================= CONTENT ================= */}
-          <div className="ml-6">
+          <div className="ml-8 sm:ml-10">
             <p className="text-xs tracking-widest uppercase text-brand-primary font-semibold">
               {item.year}
             </p>
@@ -82,7 +108,7 @@ export default function Timeline() {
               {item.title}
             </h4>
 
-            <p className="mt-1 text-sm text-zinc-600 max-w-md leading-relaxed">
+            <p className="mt-2 text-sm text-zinc-600 max-w-md leading-relaxed">
               {item.desc}
             </p>
           </div>

@@ -7,7 +7,7 @@ import {
   useMotionValue,
   useSpring,
 } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import {
   FaFacebookF,
   FaInstagram,
@@ -80,37 +80,51 @@ function useCountUp(target, duration = 1200) {
 export default function Hero() {
   const reduceMotion = useReducedMotion();
 
-  /* Scroll fade */
-  const { scrollY } = useScroll();
-  const fadeOut = useTransform(scrollY, [0, 420], [1, 0.85]);
+  /* ================= DEVICE GUARD ================= */
+  const isDesktop = useMemo(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia("(min-width: 768px)").matches;
+  }, []);
 
-  /* Cursor spotlight */
+  const enableFX = !reduceMotion && isDesktop;
+
+  /* ================= SCROLL FADE ================= */
+  const { scrollY } = useScroll();
+  const fadeOut = enableFX
+    ? useTransform(scrollY, [0, 420], [1, 0.85])
+    : 1;
+
+  /* ================= CURSOR SPOTLIGHT ================= */
   const mx = useMotionValue(50);
   const my = useMotionValue(50);
 
-  /* Tilt */
+  /* ================= TILT ================= */
   const tx = useMotionValue(0);
   const ty = useMotionValue(0);
-  const rotateX = useSpring(useTransform(ty, [-40, 40], [10, -10]), {
-    stiffness: 120,
-    damping: 18,
-  });
-  const rotateY = useSpring(useTransform(tx, [-40, 40], [-10, 10]), {
-    stiffness: 120,
-    damping: 18,
-  });
 
-  /* Roles */
+  const rotateX = useSpring(
+    useTransform(ty, [-40, 40], [10, -10]),
+    { stiffness: 120, damping: 18 }
+  );
+  const rotateY = useSpring(
+    useTransform(tx, [-40, 40], [-10, 10]),
+    { stiffness: 120, damping: 18 }
+  );
+
+  /* ================= ROLES ================= */
   const roles = ["Educator", "Developer", "Architect"];
   const [role, setRole] = useState(0);
 
   useEffect(() => {
-    if (reduceMotion) return;
-    const id = setInterval(() => setRole((i) => (i + 1) % roles.length), 2600);
+    if (!enableFX) return;
+    const id = setInterval(
+      () => setRole((i) => (i + 1) % roles.length),
+      2600
+    );
     return () => clearInterval(id);
-  }, [reduceMotion]);
+  }, [enableFX]);
 
-  /* Stats */
+  /* ================= STATS ================= */
   const [years, yearsRef] = useCountUp(5);
   const [systems, systemsRef] = useCountUp(15);
 
@@ -119,13 +133,14 @@ export default function Hero() {
       id="home"
       className="relative min-h-[95vh] flex items-center overflow-hidden bg-brand-bg text-brand-text"
       onMouseMove={(e) => {
+        if (!enableFX) return;
         const r = e.currentTarget.getBoundingClientRect();
         mx.set(((e.clientX - r.left) / r.width) * 100);
         my.set(((e.clientY - r.top) / r.height) * 100);
       }}
     >
-      {/* Ambient spotlight */}
-      {!reduceMotion && (
+      {/* ================= SPOTLIGHT ================= */}
+      {enableFX && (
         <motion.div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -138,8 +153,8 @@ export default function Hero() {
         />
       )}
 
-      {/* Background video */}
-      {!reduceMotion && (
+      {/* ================= VIDEO (DESKTOP ONLY) ================= */}
+      {enableFX && (
         <video
           className="absolute inset-0 w-full h-full object-cover opacity-[0.05]"
           autoPlay
@@ -158,7 +173,7 @@ export default function Hero() {
         style={{ opacity: fadeOut }}
         className="relative z-10 max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-14 items-center"
       >
-        {/* LEFT */}
+        {/* ================= LEFT ================= */}
         <motion.div
           initial={{ opacity: 0, y: 60 }}
           animate={{ opacity: 1, y: 0 }}
@@ -199,7 +214,7 @@ export default function Hero() {
           <div className="mt-8 flex gap-4">
             <motion.a
               href="#projects"
-              whileHover={!reduceMotion ? { scale: 1.05 } : {}}
+              whileHover={enableFX ? { scale: 1.05 } : {}}
               whileTap={{ scale: 0.97 }}
               className="px-7 py-3 rounded-xl bg-brand-primary text-white font-semibold shadow-lg"
             >
@@ -214,7 +229,7 @@ export default function Hero() {
             </a>
           </div>
 
-          {/* SOCIAL LINKS */}
+          {/* SOCIALS */}
           <div className="mt-6 flex items-center gap-4">
             {[
               { icon: <FaFacebookF />, href: "https://facebook.com/yourprofile" },
@@ -228,18 +243,11 @@ export default function Hero() {
                 href={item.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                whileHover={{ y: -4, scale: 1.08 }}
+                whileHover={enableFX ? { y: -4, scale: 1.08 } : {}}
                 whileTap={{ scale: 0.95 }}
-                className="
-                  w-11 h-11 flex items-center justify-center
-                  rounded-full
-                  bg-brand-surface
-                  ring-1 ring-black/10
-                  text-brand-primary
-                  hover:bg-brand-primary hover:text-white
-                  transition
-                  shadow-md
-                "
+                className="w-11 h-11 flex items-center justify-center rounded-full
+                  bg-brand-surface ring-1 ring-black/10 text-brand-primary
+                  hover:bg-brand-primary hover:text-white transition shadow-md"
               >
                 {item.icon}
               </motion.a>
@@ -258,10 +266,11 @@ export default function Hero() {
           </div>
         </motion.div>
 
-        {/* RIGHT */}
+        {/* ================= RIGHT (DESKTOP ONLY) ================= */}
         <motion.div
           className="relative hidden md:block perspective-[1200px]"
           onMouseMove={(e) => {
+            if (!enableFX) return;
             const r = e.currentTarget.getBoundingClientRect();
             tx.set(e.clientX - r.left - r.width / 2);
             ty.set(e.clientY - r.top - r.height / 2);
@@ -271,7 +280,7 @@ export default function Hero() {
             ty.set(0);
           }}
         >
-          {!reduceMotion && (
+          {enableFX && (
             <motion.div
               className="absolute -inset-8 rounded-[2.5rem]"
               style={{
@@ -286,8 +295,8 @@ export default function Hero() {
           )}
 
           <motion.div
-            style={!reduceMotion ? { rotateX, rotateY } : {}}
-            whileHover={!reduceMotion ? { scale: 1.05 } : {}}
+            style={enableFX ? { rotateX, rotateY } : {}}
+            whileHover={enableFX ? { scale: 1.05 } : {}}
             transition={{ type: "spring", stiffness: 120, damping: 16 }}
             className="relative rounded-3xl overflow-hidden shadow-2xl"
           >

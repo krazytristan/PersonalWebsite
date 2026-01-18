@@ -5,41 +5,54 @@ export default function Contact() {
   const reduceMotion = useReducedMotion();
   const [copied, setCopied] = useState(false);
 
+  const email = "trstnjorge@gmail.com";
+
   const copyEmail = async () => {
     try {
-      await navigator.clipboard.writeText("trstnjorge@gmail.com");
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1600);
-    } catch {}
+      await navigator.clipboard.writeText(email);
+    } catch {
+      // iOS fallback
+      const textarea = document.createElement("textarea");
+      textarea.value = email;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+    }
+
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1600);
   };
 
   return (
     <section
       id="contact"
-      className="relative py-36 text-center bg-brand-bg overflow-hidden"
+      className="relative py-24 sm:py-32 text-center bg-brand-bg overflow-hidden"
     >
       {/* ================= AMBIENT GLOW ================= */}
       <div className="absolute inset-0 -z-10 pointer-events-none">
-        <div className="absolute bottom-[-220px] left-1/2 -translate-x-1/2 w-[760px] h-[760px] rounded-full bg-brand-primary/15 blur-3xl" />
+        <div className="absolute bottom-[-240px] left-1/2 -translate-x-1/2 w-[520px] h-[520px] sm:w-[760px] sm:h-[760px] rounded-full bg-brand-primary/15 blur-3xl" />
       </div>
 
       {/* ================= HEADER ================= */}
       <motion.div
-        initial={!reduceMotion ? { opacity: 0, y: 40 } : false}
+        initial={!reduceMotion ? { opacity: 0, y: 24 } : false}
         whileInView={!reduceMotion ? { opacity: 1, y: 0 } : false}
         viewport={{ once: true }}
-        transition={{ duration: 0.7, ease: "easeOut" }}
-        className="mb-16"
+        transition={{ duration: 0.6 }}
+        className="mb-14 px-4"
       >
-        <span className="inline-block mb-4 text-xs font-bold tracking-widest text-brand-primary">
+        <span className="inline-block mb-3 text-xs font-bold tracking-widest text-brand-primary">
           CONTACT
         </span>
 
-        <h2 className="text-4xl xl:text-5xl font-black text-brand-dark mb-6">
+        <h2 className="text-3xl sm:text-4xl xl:text-5xl font-black mb-5">
           Let’s Build Something Meaningful
         </h2>
 
-        <p className="text-lg text-zinc-600 max-w-2xl mx-auto">
+        <p className="text-base sm:text-lg text-zinc-600 max-w-2xl mx-auto">
           Interested in collaboration, consulting, or building systems that
           actually get used? I’m always open to thoughtful conversations.
         </p>
@@ -47,87 +60,75 @@ export default function Contact() {
 
       {/* ================= CONTACT CARDS ================= */}
       <motion.div
-        initial={!reduceMotion ? { opacity: 0, y: 30 } : false}
+        initial={!reduceMotion ? { opacity: 0, y: 24 } : false}
         whileInView={!reduceMotion ? { opacity: 1, y: 0 } : false}
         viewport={{ once: true }}
-        transition={{ duration: 0.6, delay: 0.1 }}
-        className="flex flex-wrap justify-center gap-8"
+        transition={{ duration: 0.6 }}
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto px-4"
       >
         {/* ================= EMAIL ================= */}
-        <motion.button
+        <button
           onClick={copyEmail}
-          whileHover={!reduceMotion ? { y: -6, scale: 1.03 } : {}}
-          transition={{ type: "spring", stiffness: 180, damping: 18 }}
-          className="group w-72 p-7 rounded-3xl bg-white
-            shadow-xl ring-1 ring-black/5
-            hover:shadow-2xl focus:outline-none"
+          className="rounded-3xl bg-white p-7 text-left shadow-xl ring-1 ring-black/5 focus:outline-none active:scale-[0.98] transition"
         >
-          <div className="text-3xl mb-4">📧</div>
-          <div className="font-semibold text-brand-dark">Email</div>
-          <div className="text-sm text-zinc-600 mt-1">
-            trstnjorge@gmail.com
+          <div className="text-3xl mb-3">📧</div>
+          <div className="font-semibold">Email</div>
+          <div className="text-sm text-zinc-600 mt-1 break-all">
+            {email}
           </div>
 
-          <div className="mt-4 text-xs font-semibold text-brand-primary transition">
-            {copied ? "Copied ✓" : "Click to copy →"}
+          <div className="mt-4 text-xs font-semibold text-brand-primary">
+            {copied ? "Copied ✓" : "Tap to copy"}
           </div>
-        </motion.button>
+        </button>
 
         {/* ================= GITHUB ================= */}
-        <motion.a
+        <a
           href="https://github.com/krazytristan"
           target="_blank"
           rel="noopener noreferrer"
-          whileHover={!reduceMotion ? { y: -6, scale: 1.03 } : {}}
-          transition={{ type: "spring", stiffness: 180, damping: 18 }}
-          className="group w-72 p-7 rounded-3xl bg-white
-            shadow-xl ring-1 ring-black/5
-            hover:shadow-2xl"
+          className="rounded-3xl bg-white p-7 text-left shadow-xl ring-1 ring-black/5 active:scale-[0.98] transition"
         >
-          <div className="text-3xl mb-4">🐙</div>
-          <div className="font-semibold text-brand-dark">GitHub</div>
+          <div className="text-3xl mb-3">🐙</div>
+          <div className="font-semibold">GitHub</div>
           <div className="text-sm text-zinc-600 mt-1">
             github.com/krazytristan
           </div>
 
-          <div className="mt-4 text-xs font-semibold text-brand-primary opacity-0 group-hover:opacity-100 transition">
+          <div className="mt-4 text-xs font-semibold text-brand-primary">
             View repositories →
           </div>
-        </motion.a>
+        </a>
 
         {/* ================= LINKEDIN ================= */}
-        <motion.a
+        <a
           href="https://linkedin.com/in/tristan-jorge-cuartero"
           target="_blank"
           rel="noopener noreferrer"
-          whileHover={!reduceMotion ? { y: -6, scale: 1.03 } : {}}
-          transition={{ type: "spring", stiffness: 180, damping: 18 }}
-          className="group w-72 p-7 rounded-3xl bg-white
-            shadow-xl ring-1 ring-black/5
-            hover:shadow-2xl"
+          className="rounded-3xl bg-white p-7 text-left shadow-xl ring-1 ring-black/5 active:scale-[0.98] transition"
         >
-          <div className="text-3xl mb-4">🔗</div>
-          <div className="font-semibold text-brand-dark">LinkedIn</div>
+          <div className="text-3xl mb-3">🔗</div>
+          <div className="font-semibold">LinkedIn</div>
           <div className="text-sm text-zinc-600 mt-1">
             tristan-jorge-cuartero
           </div>
 
-          <div className="mt-4 text-xs font-semibold text-brand-primary opacity-0 group-hover:opacity-100 transition">
+          <div className="mt-4 text-xs font-semibold text-brand-primary">
             Connect professionally →
           </div>
-        </motion.a>
+        </a>
       </motion.div>
 
       {/* ================= DIVIDER ================= */}
-      <div className="mt-24 mx-auto h-px w-24 bg-brand-primary/40" />
+      <div className="mt-20 mx-auto h-px w-20 bg-brand-primary/40" />
 
       {/* ================= FOOTER ================= */}
       <motion.div
         initial={!reduceMotion ? { opacity: 0 } : false}
         whileInView={!reduceMotion ? { opacity: 1 } : false}
         viewport={{ once: true }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-        className="mt-12 text-sm text-zinc-500"
+        transition={{ duration: 0.5 }}
+        className="mt-10 text-sm text-zinc-500 px-4"
       >
         © {new Date().getFullYear()} Tristan Jorge Cuartero
         <span className="block mt-1">

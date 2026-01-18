@@ -40,7 +40,6 @@ const achievements = [
     title: "IoT & Web Systems Instructor",
     desc: "Delivered real-world IoT + dashboard projects.",
     badge: { icon: "🔌", label: "IoT" },
-    category: "IoT",
   },
 ];
 
@@ -48,17 +47,20 @@ const filters = ["All", "Architecture", "Research", "IoT"];
 
 export default function Achievements() {
   const reduceMotion = useReducedMotion();
+  const isMobile =
+    typeof window !== "undefined" &&
+    window.matchMedia("(pointer: coarse)").matches;
+
   const [activeCert, setActiveCert] = useState(null);
   const [filter, setFilter] = useState("All");
   const sectionRef = useRef(null);
 
-  /* Scroll-linked spine */
+  /* Scroll-linked spine (desktop only) */
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
   });
   const spineScale = useTransform(scrollYProgress, [0, 1], [0, 1]);
-  const bgDrift = useTransform(scrollYProgress, [0, 1], [0, -120]);
 
   /* Filtered data */
   const filtered = useMemo(() => {
@@ -70,29 +72,27 @@ export default function Achievements() {
     <section
       ref={sectionRef}
       id="achievements"
-      className="relative py-36 min-h-[80vh] bg-brand-bg overflow-hidden"
+      className="relative py-28 min-h-[80vh] bg-brand-bg"
     >
-      {/* NAVBAR BUFFER */}
-      <span aria-hidden className="absolute top-[30vh]" />
-
-      {/* ================= BRAND BACKGROUND ================= */}
-      <motion.div
-        style={!reduceMotion ? { y: bgDrift } : {}}
-        className="absolute inset-0 -z-10 pointer-events-none"
-      >
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[720px] h-[720px] rounded-full bg-brand-primary/20 blur-3xl" />
-        <div className="absolute bottom-24 right-[-200px] w-[520px] h-[520px] rounded-full bg-brand-secondary/20 blur-3xl" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-brand-bg/70 to-brand-bg" />
-      </motion.div>
+      {/* ================= BACKGROUND (DESKTOP ONLY) ================= */}
+      {!isMobile && (
+        <div className="absolute inset-0 -z-10 pointer-events-none">
+          <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[720px] h-[720px] rounded-full bg-brand-primary/20 blur-3xl" />
+          <div className="absolute bottom-24 right-[-200px] w-[520px] h-[520px] rounded-full bg-brand-secondary/20 blur-3xl" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-brand-bg/70 to-brand-bg" />
+        </div>
+      )}
 
       <div className="max-w-6xl mx-auto px-4">
         {/* ================= HEADER ================= */}
         <motion.div
-          initial={!reduceMotion ? { opacity: 0, y: 24 } : false}
-          whileInView={!reduceMotion ? { opacity: 1, y: 0 } : false}
-          viewport={{ once: true, margin: "-120px" }}
+          initial={!reduceMotion && !isMobile ? { opacity: 0, y: 24 } : false}
+          whileInView={
+            !reduceMotion && !isMobile ? { opacity: 1, y: 0 } : false
+          }
+          viewport={{ once: true }}
           transition={{ duration: 0.7 }}
-          className="text-center mb-16"
+          className="text-center mb-14"
         >
           <span className="block mb-3 text-xs font-bold tracking-widest text-brand-primary">
             MILESTONES
@@ -109,7 +109,7 @@ export default function Achievements() {
         </motion.div>
 
         {/* ================= FILTER ================= */}
-        <div className="flex justify-center gap-3 mb-20 flex-wrap">
+        <div className="flex justify-center gap-3 mb-16 flex-wrap">
           {filters.map((f) => (
             <button
               key={f}
@@ -118,7 +118,7 @@ export default function Achievements() {
                 ${
                   filter === f
                     ? "bg-brand-primary text-white ring-brand-primary"
-                    : "bg-white/70 hover:bg-white ring-black/10"
+                    : "bg-white/80 hover:bg-white ring-black/10"
                 }`}
             >
               {f}
@@ -127,10 +127,10 @@ export default function Achievements() {
         </div>
 
         {/* ================= TIMELINE ================= */}
-        <div className="relative pl-12 space-y-20">
+        <div className="relative pl-10 space-y-16">
           {/* Spine */}
           <div className="absolute left-[10px] top-0 bottom-0 w-px bg-brand-primary/25" />
-          {!reduceMotion && (
+          {!reduceMotion && !isMobile && (
             <motion.div
               className="absolute left-[10px] top-0 bottom-0 w-px bg-brand-primary origin-top"
               style={{ scaleY: spineScale }}
@@ -141,19 +141,19 @@ export default function Achievements() {
             {filtered.map((a, i) => (
               <motion.article
                 key={a.title}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 30 }}
-                transition={{ duration: 0.4, delay: i * 0.06 }}
+                initial={!reduceMotion && !isMobile ? { opacity: 0, y: 30 } : false}
+                animate={!reduceMotion && !isMobile ? { opacity: 1, y: 0 } : false}
+                exit={!reduceMotion && !isMobile ? { opacity: 0, y: 30 } : false}
+                transition={{ duration: 0.4, delay: i * 0.05 }}
                 className="relative"
               >
                 {/* NODE */}
-                <span className="absolute left-[2px] top-5 w-4 h-4 rounded-full bg-brand-primary ring-4 ring-brand-bg shadow-[0_0_18px_rgba(255,109,31,0.75)]" />
+                <span className="absolute left-[2px] top-5 w-4 h-4 rounded-full bg-brand-primary ring-4 ring-brand-bg shadow-[0_0_12px_rgba(255,109,31,0.6)]" />
 
                 {/* CARD */}
                 <motion.div
                   whileHover={
-                    a.certificate && !reduceMotion
+                    a.certificate && !reduceMotion && !isMobile
                       ? {
                           y: -6,
                           boxShadow:
@@ -166,9 +166,7 @@ export default function Achievements() {
                     a.certificate && setActiveCert(a.certificate)
                   }
                   className={`rounded-2xl p-7 bg-white/90 backdrop-blur shadow-lg ring-1 ring-black/5 transition ${
-                    a.certificate
-                      ? "cursor-pointer hover:shadow-xl"
-                      : ""
+                    a.certificate ? "cursor-pointer" : ""
                   }`}
                 >
                   <div className="flex items-center gap-4">
@@ -178,7 +176,7 @@ export default function Achievements() {
                     <Badge {...a.badge} />
                   </div>
 
-                  <h3 className="mt-4 text-xl font-black text-brand-dark">
+                  <h3 className="mt-4 text-xl font-black">
                     {a.title}
                   </h3>
 

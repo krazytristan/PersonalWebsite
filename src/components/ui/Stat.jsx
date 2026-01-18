@@ -1,30 +1,48 @@
 import { motion, useReducedMotion } from "framer-motion";
+import { useMemo } from "react";
 
 export default function Stat({ value, label }) {
   const reduceMotion = useReducedMotion();
 
+  /* ================= DEVICE GUARD ================= */
+  const isDesktop = useMemo(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia("(hover: hover)").matches;
+  }, []);
+
+  const enableHover = !reduceMotion && isDesktop;
+
   return (
     <motion.div
-      initial={!reduceMotion ? { opacity: 0, y: 16 } : false}
+      initial={!reduceMotion ? { opacity: 0, y: 14 } : false}
       whileInView={!reduceMotion ? { opacity: 1, y: 0 } : false}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.45, ease: "easeOut" }}
       whileHover={
-        !reduceMotion
+        enableHover
           ? {
-              y: -4,
-              scale: 1.04,
+              y: -3,
+              scale: 1.03,
             }
           : {}
       }
-      className="group text-center transition"
+      className="group text-center will-change-transform"
     >
       {/* ================= VALUE ================= */}
-      <div className="relative text-2xl font-black text-brand-dark">
+      <div className="relative inline-block text-2xl font-black text-brand-dark">
         {value}
 
         {/* Glow underline */}
-        <span className="absolute left-1/2 -bottom-1 h-[2px] w-0 -translate-x-1/2 bg-brand-primary/70 transition-all duration-300 group-hover:w-8" />
+        <span
+          className="
+            absolute left-1/2 -bottom-1 h-[2px] w-6
+            -translate-x-1/2
+            bg-brand-primary/70
+            scale-x-0 origin-center
+            transition-transform duration-300
+            group-hover:scale-x-100
+          "
+        />
       </div>
 
       {/* ================= LABEL ================= */}

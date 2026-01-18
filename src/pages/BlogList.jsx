@@ -1,17 +1,20 @@
-import { motion, useReducedMotion } from "framer-motion";
-import BlogSection from "../components/BlogSection.jsx";
+import { useReducedMotion } from "framer-motion";
+import BlogSection from "../components/BlogSection";
 
 export default function BlogList() {
   const reduceMotion = useReducedMotion();
 
+  const isMobile =
+    typeof window !== "undefined" &&
+    window.matchMedia("(pointer: coarse)").matches;
+
   return (
     <main className="relative py-28 bg-brand-bg text-brand-text">
       {/* ================= HEADER ================= */}
-      <motion.header
-        initial={!reduceMotion ? { opacity: 0, y: 30 } : false}
-        animate={!reduceMotion ? { opacity: 1, y: 0 } : false}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="max-w-4xl mx-auto text-center px-6 mb-20"
+      <header
+        className={`max-w-4xl mx-auto text-center px-6 mb-20 ${
+          !reduceMotion && !isMobile ? "animate-fade-in-up" : ""
+        }`}
       >
         <span className="block mb-4 text-xs font-bold tracking-widest text-brand-primary">
           WRITINGS
@@ -21,11 +24,11 @@ export default function BlogList() {
           Blog Posts
         </h1>
 
-        <p className="text-lg text-zinc-600 dark:text-zinc-400">
+        <p className="text-lg text-text-muted">
           Thoughts on systems design, development, education,
           and building software that lasts.
         </p>
-      </motion.header>
+      </header>
 
       {/* ================= CONTENT ================= */}
       <section className="max-w-6xl mx-auto px-6">

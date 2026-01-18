@@ -10,7 +10,6 @@ import Skills from "../components/Skills";
 import BlogSection from "../components/BlogSection";
 import Contact from "../components/Contact";
 import StickyCTA from "../components/StickyCTA";
-import ScrollToTop from "../components/ScrollToTop";
 
 import Modal from "../components/ui/Modal";
 import ResumeViewer from "../components/ResumeViewer";
@@ -21,12 +20,16 @@ import SEO from "../components/SEO";
 export default function Portfolio() {
   const prefersReducedMotion = useReducedMotion();
 
+  const isMobile =
+    typeof window !== "undefined" &&
+    window.matchMedia("(pointer: coarse)").matches;
+
   /* ================= MODAL STATE ================= */
   const [resumeOpen, setResumeOpen] = useState(false);
   const [activeProject, setActiveProject] = useState(null);
 
   return (
-    <div className="relative min-h-screen bg-brand-bg text-brand-text overflow-x-hidden">
+    <div className="relative min-h-screen bg-brand-bg text-brand-text">
       {/* ================= SEO ================= */}
       <SEO
         title="Tristan Cuartero | Systems Architect & Educator"
@@ -34,7 +37,7 @@ export default function Portfolio() {
       />
 
       {/* ================= GLOBAL EFFECTS ================= */}
-      {!prefersReducedMotion && <CursorSpotlight />}
+      {!prefersReducedMotion && !isMobile && <CursorSpotlight />}
 
       {/* ================= NAVBAR ================= */}
       <Navbar onResume={() => setResumeOpen(true)} />
@@ -54,7 +57,7 @@ export default function Portfolio() {
         </PageTransition>
 
         <PageTransition delay={0.15}>
-          <Projects onOpen={(project) => setActiveProject(project)} />
+          <Projects onOpen={setActiveProject} />
         </PageTransition>
 
         <PageTransition delay={0.2}>
@@ -73,23 +76,21 @@ export default function Portfolio() {
       </main>
 
       {/* ================= UTILITIES ================= */}
-      <ScrollToTop />
       <StickyCTA onResume={() => setResumeOpen(true)} />
 
       {/* ================= RESUME MODAL ================= */}
       <AnimatePresence>
-        <Modal open={resumeOpen} onClose={() => setResumeOpen(false)}>
-          <ResumeViewer />
-        </Modal>
+        {resumeOpen && (
+          <Modal open onClose={() => setResumeOpen(false)}>
+            <ResumeViewer />
+          </Modal>
+        )}
       </AnimatePresence>
 
       {/* ================= PROJECT MODAL ================= */}
       <AnimatePresence>
-        <Modal
-          open={!!activeProject}
-          onClose={() => setActiveProject(null)}
-        >
-          {activeProject && (
+        {activeProject && (
+          <Modal open onClose={() => setActiveProject(null)}>
             <div className="p-6 max-w-lg">
               <h2 className="text-2xl font-black mb-2">
                 {activeProject.title}
@@ -105,8 +106,8 @@ export default function Portfolio() {
                     <span
                       key={tech}
                       className="px-2.5 py-1 rounded-full text-xs
-                        bg-brand-primary/10 text-brand-primary
-                        ring-1 ring-brand-primary/30"
+                      bg-brand-primary/10 text-brand-primary
+                      ring-1 ring-brand-primary/30"
                     >
                       {tech}
                     </span>
@@ -114,8 +115,8 @@ export default function Portfolio() {
                 </div>
               )}
             </div>
-          )}
-        </Modal>
+          </Modal>
+        )}
       </AnimatePresence>
     </div>
   );

@@ -3,25 +3,36 @@
 @tailwind utilities;
 
 /* ================================
-   GLOBAL SCROLLBAR HIDE (CLEAN)
+   THEME BACKGROUND SAFETY
+   ================================ */
+:root {
+  background-color: #ffffff;
+}
+
+:root[data-theme="dark"] {
+  background-color: #050508;
+}
+
+/* ================================
+   GLOBAL SCROLLBAR HIDE (DESKTOP ONLY)
    ================================ */
 
 /* Chrome, Edge, Safari */
-::-webkit-scrollbar {
-  width: 0px;
-  height: 0px;
-}
+@media (pointer: fine) {
+  ::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
 
-/* Firefox */
-* {
-  scrollbar-width: none;
-  -ms-overflow-style: none; /* IE / old Edge */
+  * {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
 }
 
 /* ================================
    APP READY FADE-IN (NO FLASH)
    ================================ */
-
 html {
   opacity: 0;
 }
@@ -31,15 +42,25 @@ html.app-ready {
   transition: opacity 0.35s ease-out;
 }
 
-/* Disable transition for reduced motion */
+/* ================================
+   REDUCED MOTION (FULL COMPLIANCE)
+   ================================ */
 html.reduced-motion {
   transition: none !important;
+}
+
+html.reduced-motion *,
+html.reduced-motion *::before,
+html.reduced-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
 }
 
 /* ================================
    SUBTLE NOISE OVERLAY
    ================================ */
-
 .noise-overlay {
   pointer-events: none;
   position: absolute;
@@ -48,12 +69,18 @@ html.reduced-motion {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
 }
 
+/* Disable heavy effects on mobile */
+@media (pointer: coarse), (max-width: 768px) {
+  .noise-overlay {
+    display: none !important;
+  }
+}
+
 /* ================================
    CURSOR SPOTLIGHT SAFETY
    ================================ */
-
 @media (pointer: coarse) {
   .cursor-spotlight {
-    display: none;
+    display: none !important;
   }
 }

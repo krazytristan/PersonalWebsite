@@ -10,6 +10,7 @@ import "./index.css";
  * =====================================================
  * - Zero-flash theme hydration (light / dark / system)
  * - Reduced motion sync (OS + storage)
+ * - Mobile-safe scroll behavior
  * - Cross-tab + OS change sync
  * - <meta name="theme-color"> synchronization
  * - Minimal, safe global theme API
@@ -26,6 +27,8 @@ import "./index.css";
     window.matchMedia?.("(prefers-color-scheme: dark)") || null;
   const mqReduced =
     window.matchMedia?.("(prefers-reduced-motion: reduce)") || null;
+  const mqCoarse =
+    window.matchMedia?.("(pointer: coarse)") || null;
 
   /* -------------------- Safe Storage -------------------- */
   const safeGet = (key) => {
@@ -88,7 +91,7 @@ import "./index.css";
     } catch {}
   };
 
-  /* -------------------- Reduced Motion -------------------- */
+  /* -------------------- Reduced Motion + Scroll -------------------- */
   const applyReducedMotion = () => {
     const reduced =
       mqReduced?.matches || safeGet(REDUCED_KEY) === "reduce";
@@ -98,8 +101,13 @@ import "./index.css";
       ? "reduce"
       : "no-preference";
 
-    // Disable smooth scroll if reduced motion is requested
-    root.style.scrollBehavior = reduced ? "auto" : "smooth";
+    // IMPORTANT:
+    // - Disable smooth scroll for reduced motion
+    // - Disable smooth scroll on mobile (pointer: coarse)
+    const disableSmooth =
+      reduced || mqCoarse?.matches;
+
+    root.style.scrollBehavior = disableSmooth ? "auto" : "smooth";
   };
 
   /* -------------------- Initial Run (NO FLASH) -------------------- */
@@ -146,10 +154,11 @@ import "./index.css";
   try {
     mqDark?.addEventListener?.("change", onDarkChange);
     mqReduced?.addEventListener?.("change", onReducedChange);
+    mqCoarse?.addEventListener?.("change", applyReducedMotion);
   } catch {
-    // Safari < 14 fallback
     mqDark?.addListener?.(onDarkChange);
     mqReduced?.addListener?.(onReducedChange);
+    mqCoarse?.addListener?.(applyReducedMotion);
   }
 
   window.addEventListener("storage", (e) => {

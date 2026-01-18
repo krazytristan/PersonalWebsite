@@ -1,26 +1,39 @@
-import { useEffect, useMemo, useState, useRef } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useMemo, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 
 export default function ResumeViewer({
   src = "/resume.pdf",
   filename = "Tristan-Cuartero-Resume.pdf",
   thumbnail = "/images/resume-thumb.jpg",
-  height = "72vh",
   forceFallback = false,
 }) {
+  const reduceMotion = useReducedMotion();
   const [exists, setExists] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [inlineAllowed, setInlineAllowed] = useState(true);
-  const [viewer, setViewer] = useState("object"); // object | iframe | fallback
-  const styleInjected = useRef(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-  /* ---------------- UA CHECK ---------------- */
-  const problematicUA = useMemo(() => {
-    const ua = navigator.userAgent || "";
-    const iOS = /iPad|iPhone|iPod/.test(ua);
-    const androidFirefox = /Android/.test(ua) && /Firefox/.test(ua);
-    return iOS || androidFirefox;
+  /* ---------------- DEVICE DETECTION (RESPONSIVE) ---------------- */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const check = () => {
+      const isTouch =
+        "ontouchstart" in window || navigator.maxTouchPoints > 0;
+      const smallScreen = window.innerWidth < 768;
+      setIsMobile(isTouch && smallScreen);
+    };
+
+    check();
+    window.addEventListener("resize", check);
+    window.addEventListener("orientationchange", check);
+
+    return () => {
+      window.removeEventListener("resize", check);
+      window.removeEventListener("orientationchange", check);
+    };
   }, []);
+
+  const inlineAllowed = !forceFallback && !isMobile;
 
   /* ---------------- FILE EXISTS ---------------- */
   useEffect(() => {
@@ -40,28 +53,9 @@ export default function ResumeViewer({
     return () => controller.abort();
   }, [src]);
 
-  /* ---------------- INLINE DECISION ---------------- */
-  useEffect(() => {
-    if (forceFallback || problematicUA) {
-      setInlineAllowed(false);
-      setViewer("fallback");
-      return;
-    }
-
-    if (navigator.pdfViewerEnabled === false) {
-      setInlineAllowed(false);
-      setViewer("fallback");
-    } else {
-      setInlineAllowed(true);
-      setViewer("object");
-    }
-  }, [forceFallback, problematicUA]);
-
   /* ---------------- ACTIONS ---------------- */
   const openNewTab = () => {
-    try {
-      window.open(src, "_blank", "noopener,noreferrer");
-    } catch {}
+    window.open(src, "_blank", "noopener,noreferrer");
   };
 
   const download = async () => {
@@ -81,119 +75,76 @@ export default function ResumeViewer({
     }
   };
 
-  const printPdf = () => {
-    const w = window.open(src, "_blank", "noopener,noreferrer");
-    setTimeout(() => {
-      try {
-        w?.focus();
-        w?.print();
-      } catch {}
-    }, 800);
-  };
-
-  /* ---------------- SCROLLBAR HIDE ---------------- */
-  useEffect(() => {
-    if (styleInjected.current) return;
-
-    const style = document.createElement("style");
-    style.textContent = `
-      object::-webkit-scrollbar,
-      iframe::-webkit-scrollbar { display: none; }
-    `;
-    document.head.appendChild(style);
-    styleInjected.current = true;
-  }, []);
-
-  /* ---------------- UI ---------------- */
+  /* ---------------- TOOLBAR ---------------- */
   const Toolbar = () => (
     <motion.div
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-      className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl
-        bg-white/80 dark:bg-zinc-900/80 backdrop-blur
-        ring-1 ring-black/10 dark:ring-white/10"
+      initial={!reduceMotion ? { opacity: 0, y: -10 } : false}
+      animate={!reduceMotion ? { opacity: 1, y: 0 } : false}
+      transition={{ duration: 0.3 }}
+      className="
+        flex flex-wrap items-center justify-between gap-3
+        p-4 rounded-xl
+        bg-white/90 dark:bg-zinc-900/90 backdrop-blur
+        ring-1 ring-black/10 dark:ring-white/10
+      "
     >
       <div>
-        <h3 className="font-semibold leading-tight">Resume</h3>
+        <h3 className="font-semibold">Resume</h3>
         <p className="text-xs text-zinc-500">{filename}</p>
       </div>
 
       <div className="flex items-center gap-2">
-        {inlineAllowed && (
-          <div className="hidden sm:flex rounded-lg overflow-hidden ring-1 ring-black/10 dark:ring-white/10">
-            {["object", "iframe"].map((v) => (
-              <button
-                key={v}
-                onClick={() => setViewer(v)}
-                aria-label={`Use ${v} viewer`}
-                className={`px-3 py-2 text-sm transition ${
-                  viewer === v
-                    ? "bg-black/5 dark:bg-white/10 font-medium"
-                    : "opacity-70 hover:opacity-100"
-                }`}
-              >
-                {v}
-              </button>
-            ))}
-          </div>
-        )}
-
         <button
           onClick={openNewTab}
-          className="px-3 py-2 rounded-lg ring-1 ring-black/10 dark:ring-white/10 hover:bg-black/5 transition"
+          className="px-4 py-2 rounded-lg ring-1 ring-black/10 dark:ring-white/10 hover:bg-black/5 transition"
         >
           Open
         </button>
 
         <button
           onClick={download}
-          className="px-3 py-2 rounded-lg bg-brand-primary text-white font-semibold hover:opacity-90 transition"
+          className="px-4 py-2 rounded-lg bg-brand-primary text-white font-semibold hover:opacity-90 transition"
         >
           Download
-        </button>
-
-        <button
-          onClick={printPdf}
-          className="px-3 py-2 rounded-lg ring-1 ring-black/10 dark:ring-white/10 hover:bg-black/5 transition"
-        >
-          Print
         </button>
       </div>
     </motion.div>
   );
 
-  const Fallback = ({ reason }) => (
+  /* ---------------- FALLBACK ---------------- */
+  const Fallback = () => (
     <div className="grid place-items-center p-6 text-center">
       {thumbnail ? (
-        <a href={src} target="_blank" rel="noreferrer">
+        <button
+          onClick={openNewTab}
+          className="focus:outline-none active:scale-[0.98] transition"
+        >
           <img
             src={thumbnail}
             alt="Resume preview"
-            className="rounded-xl shadow-lg ring-1 ring-black/10 dark:ring-white/10 hover:scale-[1.01] transition"
+            className="rounded-xl shadow-lg ring-1 ring-black/10 hover:scale-[1.01] transition"
           />
-        </a>
+          <p className="mt-4 text-sm text-brand-primary font-semibold">
+            Tap to open resume →
+          </p>
+        </button>
       ) : (
-        <p className="text-sm opacity-70">{reason}</p>
+        <p className="text-sm opacity-70">
+          Inline preview unavailable on this device.
+        </p>
       )}
     </div>
   );
 
+  /* ---------------- ERROR ---------------- */
   if (!loading && !exists) {
     return (
       <div className="p-6 rounded-xl ring-1 ring-red-400/30 text-sm text-red-600">
-        Resume not found at <code className="font-mono">{src}</code>.  
-        Place the file inside <code className="font-mono">/public</code> and restart Vite.
+        Resume not found at <code className="font-mono">{src}</code>.
+        Place the file inside <code className="font-mono">/public</code>.
       </div>
     );
   }
-
-  const viewerStyle = {
-    height,
-    border: 0,
-    overflow: "hidden",
-    scrollbarWidth: "none",
-  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -201,51 +152,29 @@ export default function ResumeViewer({
 
       {/* Loading skeleton */}
       {loading && (
-        <div
-          className="rounded-xl ring-1 ring-black/10 dark:ring-white/10
-            bg-zinc-100 dark:bg-zinc-900 animate-pulse"
-          style={{ height }}
-        />
+        <div className="h-[50vh] rounded-xl ring-1 ring-black/10 dark:ring-white/10 bg-zinc-100 dark:bg-zinc-900 animate-pulse" />
       )}
 
       {!loading && exists && (
         inlineAllowed ? (
           <div className="overflow-hidden rounded-xl ring-1 ring-black/10 dark:ring-white/10 bg-white dark:bg-zinc-950">
-            {viewer === "object" && (
-              <object
-                data={`${src}#view=FitH`}
-                type="application/pdf"
-                className="w-full"
-                style={viewerStyle}
-              >
-                <iframe
-                  src={src}
-                  title="Resume PDF"
-                  className="w-full"
-                  style={viewerStyle}
-                />
-                <Fallback reason="Inline preview unavailable." />
-              </object>
-            )}
-
-            {viewer === "iframe" && (
-              <iframe
-                src={src}
-                title="Resume PDF"
-                className="w-full"
-                style={viewerStyle}
-              />
-            )}
+            <object
+              data={`${src}#view=FitH`}
+              type="application/pdf"
+              className="w-full h-[65vh]"
+            >
+              <Fallback />
+            </object>
           </div>
         ) : (
           <div className="rounded-xl ring-1 ring-black/10 dark:ring-white/10 bg-white dark:bg-zinc-950">
-            <Fallback reason="This browser blocks inline PDF previews." />
+            <Fallback />
           </div>
         )
       )}
 
       <p className="text-[11px] text-center text-zinc-500">
-        If the preview doesn’t load, use “Open” or “Download”.
+        On mobile, the resume opens in a new tab for the best experience.
       </p>
     </div>
   );
