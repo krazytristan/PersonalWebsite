@@ -22,7 +22,6 @@ const achievements = [
     certificate: {
       title: "Systems Architecture Recognition",
       src: "/certificates/architecture.pdf",
-      type: "pdf",
     },
   },
   {
@@ -34,7 +33,6 @@ const achievements = [
     certificate: {
       title: "Action Research Certificate",
       src: "/certificates/research.pdf",
-      type: "pdf",
     },
   },
   {
@@ -104,7 +102,7 @@ export default function Achievements() {
       </div>
 
       {/* ================= FILTER ================= */}
-      <div className="flex justify-center gap-3 mb-20 flex-wrap">
+      <div className="flex justify-center gap-3 mb-20 flex-wrap px-4">
         {filters.map((f) => (
           <button
             key={f}
@@ -124,13 +122,13 @@ export default function Achievements() {
       {/* ================= FEATURED ================= */}
       {featured && (
         <motion.div
-          initial={!reduceMotion ? { opacity: 0, y: 30 } : false}
+          initial={!reduceMotion ? { opacity: 0, y: 24 } : false}
           whileInView={!reduceMotion ? { opacity: 1, y: 0 } : false}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.55, ease: "easeOut" }}
           className="max-w-4xl mx-auto mb-24 px-4"
         >
-          <div className="relative rounded-3xl p-10 bg-white/90 backdrop-blur ring-1 ring-black/5 shadow-2xl">
+          <div className="relative rounded-3xl p-8 sm:p-10 bg-white/90 backdrop-blur ring-1 ring-black/5 shadow-2xl">
             <span className="absolute -top-3 left-6 px-3 py-1 rounded-full text-xs font-bold bg-brand-primary text-white">
               FEATURED
             </span>
@@ -146,7 +144,7 @@ export default function Achievements() {
               {featured.title}
             </h3>
 
-            <p className="text-text-muted">
+            <p className="text-text-muted leading-relaxed">
               {featured.desc}
             </p>
 
@@ -163,7 +161,7 @@ export default function Achievements() {
       )}
 
       {/* ================= TIMELINE ================= */}
-      <div className="relative max-w-6xl mx-auto px-4 pl-10 space-y-16">
+      <div className="relative max-w-6xl mx-auto px-4 pl-8 sm:pl-10 space-y-20">
         {/* Spine */}
         <div className="absolute left-[10px] top-0 bottom-0 w-px bg-brand-primary/25" />
 
@@ -178,10 +176,10 @@ export default function Achievements() {
           {filtered.map((a, i) => (
             <motion.article
               key={a.title}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 28 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.06 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.45, delay: i * 0.06 }}
               className="relative"
             >
               {/* Node */}
@@ -189,10 +187,10 @@ export default function Achievements() {
 
               <div
                 onClick={() => a.certificate && setActiveCert(a.certificate)}
-                className={`rounded-2xl p-7 bg-white shadow-lg ring-1 ring-black/5 transition
+                className={`rounded-2xl p-7 sm:p-8 bg-white shadow-lg ring-1 ring-black/5 transition
                   ${
                     a.certificate
-                      ? "cursor-pointer hover:shadow-xl"
+                      ? "cursor-pointer hover:shadow-xl hover:-translate-y-1"
                       : ""
                   }`}
               >
@@ -207,7 +205,7 @@ export default function Achievements() {
                   {a.title}
                 </h3>
 
-                <p className="mt-2 text-text-muted">
+                <p className="mt-2 text-text-muted leading-relaxed">
                   {a.desc}
                 </p>
 

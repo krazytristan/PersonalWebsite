@@ -41,11 +41,10 @@ export default function Modal({ open, onClose, children }) {
           ref={overlayRef}
           role="dialog"
           aria-modal="true"
-          aria-label="Modal"
           className="
             fixed inset-0 z-[1000]
             bg-black/60 backdrop-blur-sm
-            flex items-center justify-center
+            grid place-items-center
             px-4
           "
           initial={{ opacity: 0 }}
@@ -56,21 +55,22 @@ export default function Modal({ open, onClose, children }) {
             if (e.target === overlayRef.current) onClose?.();
           }}
         >
+          {/* ================= MODAL CARD ================= */}
           <motion.div
             onClick={(e) => e.stopPropagation()}
             initial={
               !reduceMotion
-                ? { opacity: 0, y: 20, scale: 0.96 }
+                ? { opacity: 0, scale: 0.96, y: 20 }
                 : false
             }
             animate={
               !reduceMotion
-                ? { opacity: 1, y: 0, scale: 1 }
+                ? { opacity: 1, scale: 1, y: 0 }
                 : false
             }
             exit={
               !reduceMotion
-                ? { opacity: 0, y: 20, scale: 0.96 }
+                ? { opacity: 0, scale: 0.96, y: 20 }
                 : false
             }
             transition={{
@@ -81,13 +81,12 @@ export default function Modal({ open, onClose, children }) {
               relative
               w-full max-w-5xl
               max-h-[90vh]
-              overflow-auto
+              overflow-y-auto
               rounded-2xl
               bg-white dark:bg-zinc-900
               shadow-2xl
               ring-1 ring-black/10 dark:ring-white/10
               p-6
-              focus:outline-none
             "
           >
             {/* ================= CLOSE BUTTON ================= */}

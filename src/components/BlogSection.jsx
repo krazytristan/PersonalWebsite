@@ -1,6 +1,11 @@
-import { useMemo, useState, useEffect, useRef } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useState, useEffect, useMemo } from "react";
+import {
+  motion,
+  AnimatePresence,
+  useReducedMotion,
+} from "framer-motion";
 
+/* ================= DATA ================= */
 const POSTS = [
   {
     id: "ship-fast-react",
@@ -10,8 +15,7 @@ const POSTS = [
     excerpt:
       "My practical checklist for going from idea → production with clean UX, strong structure, and minimal regrets.",
     cover: "/images/React-app.jpg",
-    link: "#",
-    featured: true,
+    link: "/blog/ship-fast-react",
   },
   {
     id: "teaching-tech",
@@ -21,7 +25,7 @@ const POSTS = [
     excerpt:
       "Lessons from years of teaching IT & CS — how to keep students motivated and shipping real projects.",
     cover: "/images/tech.jpg",
-    link: "#",
+    link: "/blog/teaching-tech",
   },
   {
     id: "iot-in-batangas",
@@ -31,202 +35,155 @@ const POSTS = [
     excerpt:
       "A candid field note from deploying small-scale sensors — what surprised us and what to avoid.",
     cover: "/images/IoT.webp",
-    link: "#",
+    link: "/blog/iot-in-batangas",
   },
 ];
 
+const AUTO_DELAY = 5200;
+
+/* ================= COMPONENT ================= */
 export default function BlogSection() {
   const reduceMotion = useReducedMotion();
-  const isMobile =
-    typeof window !== "undefined" &&
-    window.matchMedia("(pointer: coarse)").matches;
+  const [index, setIndex] = useState(0);
 
-  const [query, setQuery] = useState("");
-  const [activeTag, setActiveTag] = useState("All");
-  const inputRef = useRef(null);
+  const active = POSTS[index];
 
-  /* ⌘K / Ctrl+K focus */
+  /* ================= AUTO PLAY ================= */
   useEffect(() => {
-    const onKey = (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        inputRef.current?.focus();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
+    if (reduceMotion) return;
 
-  const tags = useMemo(() => {
-    const t = new Set(["All"]);
-    POSTS.forEach((p) => p.tags.forEach((tag) => t.add(tag)));
-    return Array.from(t);
-  }, []);
+    const id = setInterval(() => {
+      setIndex((i) => (i + 1) % POSTS.length);
+    }, AUTO_DELAY);
 
-  const results = POSTS.filter((p) => {
-    const matchesTag = activeTag === "All" || p.tags.includes(activeTag);
-    const q = query.trim().toLowerCase();
-    const matchesQuery =
-      !q ||
-      p.title.toLowerCase().includes(q) ||
-      p.excerpt.toLowerCase().includes(q);
-    return matchesTag && matchesQuery;
-  });
+    return () => clearInterval(id);
+  }, [reduceMotion]);
 
-  const featured = results.find((p) => p.featured);
+  const go = (dir) => {
+    setIndex((i) =>
+      dir === "next"
+        ? (i + 1) % POSTS.length
+        : (i - 1 + POSTS.length) % POSTS.length
+    );
+  };
 
   return (
-    <section className="relative max-w-7xl mx-auto px-4 py-24 bg-brand-bg">
+    <section className="relative max-w-7xl mx-auto px-4 py-28 bg-brand-bg overflow-hidden">
       {/* ================= HEADER ================= */}
-      <motion.div
-        initial={!reduceMotion ? { opacity: 0, y: 24 } : false}
-        whileInView={!reduceMotion ? { opacity: 1, y: 0 } : false}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="text-center mb-16"
-      >
-        <span className="inline-block mb-3 text-xs font-bold tracking-widest text-brand-primary">
+      <div className="text-center mb-20">
+        <span className="block mb-3 text-xs font-bold tracking-widest text-brand-primary">
           BLOG
         </span>
-
-        <h2 className="text-4xl xl:text-5xl font-black mb-4">
+        <h2 className="text-4xl sm:text-5xl font-black mb-4">
           Writing & Insights
         </h2>
-
         <p className="text-lg text-zinc-600 max-w-2xl mx-auto">
           Field notes on building systems, teaching technology, and shipping
           real-world software.
         </p>
-      </motion.div>
-
-      {/* ================= CONTROLS ================= */}
-      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between mb-14">
-        <div className="relative w-full sm:max-w-sm">
-          <input
-            ref={inputRef}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search articles…"
-            className="w-full px-4 py-3 rounded-xl bg-white ring-1 ring-black/10 focus:outline-none focus:ring-2 focus:ring-brand-primary"
-          />
-          <span className="absolute right-3 top-3 text-xs opacity-50">
-            ⌘K
-          </span>
-        </div>
-
-        <div className="flex flex-wrap gap-2 justify-center">
-          {tags.map((t) => (
-            <button
-              key={t}
-              onClick={() => setActiveTag(t)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition ring-1 ${
-                activeTag === t
-                  ? "bg-brand-primary text-white ring-transparent"
-                  : "bg-white ring-black/10 hover:bg-black/5"
-              }`}
-            >
-              {t}
-            </button>
-          ))}
-        </div>
       </div>
 
-      {/* ================= FEATURED ================= */}
-      {featured && (
-        <article className="mb-20 rounded-3xl overflow-hidden bg-white shadow-xl ring-1 ring-black/5">
-          <div className="grid md:grid-cols-2">
-            <img
-              src={featured.cover}
-              alt=""
-              className="w-full h-64 md:h-full object-cover"
-            />
+      {/* ================= CAROUSEL ================= */}
+      <div className="grid lg:grid-cols-2 gap-14 items-center">
+        {/* =================================================
+            LEFT COLUMN – CONTENT
+        ================================================= */}
+        <div className="relative min-h-[260px]">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active.id}
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -24 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+            >
+              <time className="text-xs font-semibold text-brand-primary tracking-widest">
+                {formatDate(active.date)}
+              </time>
 
-            <div className="p-8 flex flex-col justify-center">
-              <span className="text-xs font-bold tracking-widest text-brand-primary">
-                FEATURED
-              </span>
-
-              <h3 className="mt-3 text-2xl font-black">
-                {featured.title}
+              <h3 className="mt-3 text-3xl font-black leading-tight">
+                {active.title}
               </h3>
 
-              <p className="mt-4 text-zinc-600">
-                {featured.excerpt}
+              <div className="mt-4 flex flex-wrap gap-2">
+                {active.tags.map((t) => (
+                  <span
+                    key={t}
+                    className="px-3 py-1 rounded-full text-xs bg-brand-primary/10 text-brand-primary font-semibold"
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+
+              <p className="mt-6 text-lg text-zinc-700 max-w-xl">
+                {active.excerpt}
               </p>
 
               <a
-                href={featured.link}
-                className="mt-6 inline-flex font-semibold text-brand-primary"
+                href={active.link}
+                className="inline-flex items-center gap-2 mt-8 font-semibold text-brand-primary hover:underline"
               >
                 Read article →
               </a>
-            </div>
-          </div>
-        </article>
-      )}
+            </motion.div>
+          </AnimatePresence>
 
-      {/* ================= GRID ================= */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {results
-          .filter((p) => !p.featured)
-          .map((p) => (
-            <article
-              key={p.id}
-              className="rounded-3xl overflow-hidden bg-white shadow-lg ring-1 ring-black/5"
+          {/* NAV BUTTONS */}
+          <div className="mt-10 flex gap-3">
+            <button
+              onClick={() => go("prev")}
+              className="h-10 w-10 rounded-full ring-1 ring-black/10 hover:bg-black/5 transition"
             >
-              <div className="h-44">
-                <img
-                  src={p.cover}
-                  alt=""
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                />
-              </div>
+              ←
+            </button>
+            <button
+              onClick={() => go("next")}
+              className="h-10 w-10 rounded-full ring-1 ring-black/10 hover:bg-black/5 transition"
+            >
+              →
+            </button>
+          </div>
+        </div>
 
-              <div className="p-6">
-                <time className="text-xs text-zinc-500">
-                  {formatDate(p.date)}
-                </time>
-
-                <h3 className="mt-1 text-lg font-bold">
-                  {p.title}
-                </h3>
-
-                <p className="mt-2 text-sm text-zinc-600">
-                  {p.excerpt}
-                </p>
-
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {p.tags.map((t) => (
-                    <span
-                      key={t}
-                      className="px-2.5 py-1 rounded-full text-xs bg-brand-primary/10"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-
-                <a
-                  href={p.link}
-                  className="inline-block mt-5 font-medium text-brand-primary"
-                >
-                  Read article →
-                </a>
-              </div>
-            </article>
-          ))}
+        {/* =================================================
+            RIGHT COLUMN – IMAGE
+        ================================================= */}
+        <div className="relative h-[320px] sm:h-[420px] rounded-3xl overflow-hidden shadow-2xl ring-1 ring-black/5">
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={active.cover}
+              src={active.cover}
+              alt={active.title}
+              initial={{ opacity: 0, scale: 1.05 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          </AnimatePresence>
+        </div>
       </div>
 
-      {results.length === 0 && (
-        <p className="text-center opacity-70 mt-20">
-          No posts match your search.
-        </p>
-      )}
+      {/* ================= DOTS ================= */}
+      <div className="flex justify-center gap-3 mt-14">
+        {POSTS.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setIndex(i)}
+            className={`h-2.5 w-2.5 rounded-full transition ${
+              i === index
+                ? "bg-brand-primary scale-125"
+                : "bg-black/20"
+            }`}
+          />
+        ))}
+      </div>
     </section>
   );
 }
 
+/* ================= UTILS ================= */
 function formatDate(iso) {
   return new Date(iso).toLocaleDateString(undefined, {
     year: "numeric",

@@ -1,7 +1,9 @@
 import { motion, useReducedMotion } from "framer-motion";
+import { useState } from "react";
 
 export default function CertificateViewer({ title, src }) {
   const reduceMotion = useReducedMotion();
+  const [loaded, setLoaded] = useState(false);
 
   return (
     <motion.div
@@ -11,7 +13,7 @@ export default function CertificateViewer({ title, src }) {
       className="w-full flex flex-col"
     >
       {/* ================= HEADER ================= */}
-      <div className="mb-3">
+      <div className="mb-4">
         <h3 className="text-lg sm:text-xl font-black text-brand-dark">
           {title}
         </h3>
@@ -20,24 +22,33 @@ export default function CertificateViewer({ title, src }) {
         </p>
       </div>
 
-      {/* ================= PDF WRAPPER ================= */}
+      {/* ================= PDF CONTAINER ================= */}
       <div
         className="
           relative w-full
           flex-1
           min-h-[55vh]
           sm:min-h-[65vh]
-          md:min-h-[70vh]
-          rounded-xl
+          lg:min-h-[70vh]
+          rounded-2xl
           overflow-hidden
           ring-1 ring-black/10
           bg-zinc-100
         "
       >
+        {/* ================= LOADING OVERLAY ================= */}
+        {!loaded && (
+          <div className="absolute inset-0 grid place-items-center text-sm text-zinc-500">
+            Loading certificate…
+          </div>
+        )}
+
+        {/* ================= PDF IFRAME ================= */}
         <iframe
           src={`${src}#view=FitH&toolbar=0&navpanes=0`}
           title={title}
           className="absolute inset-0 w-full h-full border-0"
+          onLoad={() => setLoaded(true)}
         />
       </div>
 
@@ -48,12 +59,12 @@ export default function CertificateViewer({ title, src }) {
           target="_blank"
           rel="noopener noreferrer"
           className="
-            px-4 py-2
-            rounded-lg
+            px-5 py-2.5
+            rounded-xl
             text-sm font-semibold
             bg-brand-primary
             text-white
-            shadow
+            shadow-md
             active:scale-95
             transition
           "
