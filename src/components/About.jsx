@@ -8,6 +8,21 @@ import { useRef } from "react";
 import Highlight from "./ui/Highlight";
 import Timeline from "./ui/Timeline";
 
+/* ================= HEADER COPY ================= */
+const HEADER = {
+  label: "About Me",
+  title: (
+    <>
+      Designing Systems
+      <span className="block text-brand-primary">
+        That Feel Intuitive & Human
+      </span>
+    </>
+  ),
+  desc:
+    "I focus on building software systems that balance technical structure with real-world usability — transforming complex requirements into clear, scalable solutions.",
+};
+
 export default function About() {
   const reduceMotion = useReducedMotion();
   const sectionRef = useRef(null);
@@ -18,7 +33,7 @@ export default function About() {
     offset: ["start end", "end start"],
   });
 
-  const bgDrift = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const bgDrift = useTransform(scrollYProgress, [0, 1], [0, -120]);
 
   return (
     <section
@@ -26,48 +41,78 @@ export default function About() {
       id="about"
       className="relative py-28 sm:py-36 bg-brand-bg overflow-hidden"
     >
-      {/* ================= BACKGROUND ================= */}
+      {/* ================= AMBIENT BACKGROUND ================= */}
+      {!reduceMotion && (
+        <motion.div
+          style={{ y: bgDrift }}
+          className="absolute inset-0 -z-10 pointer-events-none"
+        >
+          <div
+            className="absolute top-24 right-[-200px]
+            w-[520px] h-[520px]
+            rounded-full bg-brand-primary/15 blur-3xl"
+          />
+          <div
+            className="absolute bottom-32 left-[-200px]
+            w-[420px] h-[420px]
+            rounded-full bg-brand-primary/10 blur-3xl"
+          />
+        </motion.div>
+      )}
+
+      {/* ================= HEADER ================= */}
       <motion.div
-        style={!reduceMotion ? { y: bgDrift } : {}}
-        className="absolute inset-0 -z-10 pointer-events-none"
+        initial={{ opacity: 0, y: 28 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-120px" }}
+        transition={{ duration: 0.6 }}
+        className="mb-24 px-4 text-center max-w-3xl mx-auto"
       >
-        <div className="absolute top-24 right-[-200px] w-[520px] h-[520px] rounded-full bg-brand-primary/15 blur-3xl" />
-        <div className="absolute bottom-32 left-[-200px] w-[420px] h-[420px] rounded-full bg-brand-secondary/20 blur-3xl" />
+        <span
+          className="inline-block mb-4 px-4 py-1.5 rounded-full
+          bg-brand-primary/10 text-brand-primary
+          text-xs font-semibold tracking-wide"
+        >
+          {HEADER.label}
+        </span>
+
+        <h2
+          className="text-4xl sm:text-5xl xl:text-6xl
+          font-black text-text-primary leading-tight"
+        >
+          {HEADER.title}
+        </h2>
+
+        <p className="mt-6 text-sm sm:text-base text-text-muted leading-relaxed">
+          {HEADER.desc}
+        </p>
       </motion.div>
 
       {/* ================= CONTENT ================= */}
       <div className="relative max-w-6xl mx-auto px-4 grid gap-20 lg:grid-cols-2 lg:gap-24">
         {/* ================= LEFT ================= */}
         <motion.div
-          initial={!reduceMotion ? { opacity: 0, y: 32 } : false}
-          whileInView={!reduceMotion ? { opacity: 1, y: 0 } : false}
+          initial={{ opacity: 0, y: 32 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-120px" }}
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="flex flex-col"
         >
-          <span className="inline-block mb-4 text-xs font-bold tracking-widest text-brand-primary">
-            ABOUT ME
-          </span>
-
-          <h2 className="text-4xl sm:text-5xl font-black text-brand-dark leading-tight mb-6">
-            Systems that feel
-            <br className="hidden sm:block" />
-            intuitive and human
-          </h2>
-
-          <p className="text-lg leading-relaxed text-zinc-700 max-w-xl">
+          <p className="text-base sm:text-lg leading-relaxed text-text-muted max-w-xl">
             I work at the intersection of{" "}
-            <span className="font-semibold text-brand-dark">education</span>{" "}
+            <span className="font-semibold text-text-primary">
+              education
+            </span>{" "}
             and{" "}
-            <span className="font-semibold text-brand-dark">
+            <span className="font-semibold text-text-primary">
               software engineering
             </span>
             .
             <br />
             <br />
-            My focus is transforming complex requirements into practical,
-            human-centered systems — built for clarity, scalability, and
-            long-term use.
+            My approach centers on turning complex workflows into systems that
+            feel clear, efficient, and intuitive — built for long-term use and
+            real people.
           </p>
 
           {/* TIMELINE */}
@@ -76,12 +121,17 @@ export default function About() {
           </div>
 
           {/* PHILOSOPHY */}
-          <div className="relative mt-20 max-w-xl rounded-2xl bg-white/90 backdrop-blur p-8 shadow-lg ring-1 ring-black/5">
+          <div
+            className="relative mt-20 max-w-xl
+            rounded-2xl bg-brand-surface
+            backdrop-blur p-8 shadow-xl
+            ring-1 ring-brand-text/10"
+          >
             <div className="absolute left-0 top-0 h-full w-1 bg-brand-primary rounded-l-2xl" />
-            <h3 className="font-black text-lg text-brand-dark mb-3">
+            <h3 className="font-black text-lg text-text-primary mb-3">
               Design Philosophy
             </h3>
-            <p className="text-sm text-zinc-600 leading-relaxed">
+            <p className="text-sm text-text-muted leading-relaxed">
               Technology should fade into the background.
               <br />
               When systems feel obvious, they’re doing their job.
@@ -91,8 +141,8 @@ export default function About() {
 
         {/* ================= RIGHT ================= */}
         <motion.div
-          initial={!reduceMotion ? { opacity: 0, y: 32 } : false}
-          whileInView={!reduceMotion ? { opacity: 1, y: 0 } : false}
+          initial={{ opacity: 0, y: 32 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="flex flex-col gap-10 lg:pt-10"

@@ -10,6 +10,23 @@ import Modal from "./ui/Modal";
 import Badge from "./ui/Badge";
 import CertificateViewer from "./ui/CertificateViewer";
 
+/* ================= HEADER PRESETS ================= */
+const HEADER_PRESETS = {
+  default: {
+    label: "Milestones",
+    title: (
+      <>
+        Achievements &
+        <span className="block text-brand-primary">
+          Professional Recognition
+        </span>
+      </>
+    ),
+    desc:
+      "Key milestones across education, research, and system development that reflect growth, leadership, and technical depth.",
+  },
+};
+
 /* ================= DATA ================= */
 const achievements = [
   {
@@ -46,8 +63,9 @@ const achievements = [
 
 const filters = ["All", "Architecture", "Research", "IoT"];
 
-export default function Achievements() {
+export default function Achievements({ headerVariant = "default" }) {
   const reduceMotion = useReducedMotion();
+  const header = HEADER_PRESETS[headerVariant];
   const sectionRef = useRef(null);
 
   /* ================= MOBILE DETECTION ================= */
@@ -87,22 +105,35 @@ export default function Achievements() {
       className="relative py-28 bg-brand-bg overflow-hidden"
     >
       {/* ================= HEADER ================= */}
-      <div className="max-w-6xl mx-auto px-4 text-center mb-16">
-        <span className="block mb-3 text-xs font-bold tracking-widest text-brand-primary">
-          MILESTONES
+      <motion.div
+        initial={{ opacity: 0, y: 28 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-120px" }}
+        transition={{ duration: 0.6 }}
+        className="max-w-3xl mx-auto px-4 text-center mb-20"
+      >
+        <span
+          className="inline-block mb-4 px-4 py-1.5 rounded-full
+          bg-brand-primary/10 text-brand-primary
+          text-xs font-semibold tracking-wide"
+        >
+          {header.label}
         </span>
 
-        <h2 className="text-4xl sm:text-5xl font-black mb-4">
-          Achievements & Recognition
+        <h2
+          className="text-4xl sm:text-5xl xl:text-6xl
+          font-black text-text-primary leading-tight"
+        >
+          {header.title}
         </h2>
 
-        <p className="text-lg text-text-muted max-w-2xl mx-auto">
-          Key milestones across education, research, and systems development.
+        <p className="mt-6 text-sm sm:text-base text-text-muted leading-relaxed">
+          {header.desc}
         </p>
-      </div>
+      </motion.div>
 
       {/* ================= FILTER ================= */}
-      <div className="flex justify-center gap-3 mb-20 flex-wrap px-4">
+      <div className="flex justify-center gap-3 mb-24 flex-wrap px-4">
         {filters.map((f) => (
           <button
             key={f}
@@ -111,7 +142,7 @@ export default function Achievements() {
               ${
                 filter === f
                   ? "bg-brand-primary text-white ring-brand-primary"
-                  : "bg-white/80 hover:bg-white ring-black/10"
+                  : "bg-brand-surface hover:bg-white ring-brand-text/10"
               }`}
           >
             {f}
@@ -122,25 +153,37 @@ export default function Achievements() {
       {/* ================= FEATURED ================= */}
       {featured && (
         <motion.div
-          initial={!reduceMotion ? { opacity: 0, y: 24 } : false}
-          whileInView={!reduceMotion ? { opacity: 1, y: 0 } : false}
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.55, ease: "easeOut" }}
-          className="max-w-4xl mx-auto mb-24 px-4"
+          className="max-w-4xl mx-auto mb-28 px-4"
         >
-          <div className="relative rounded-3xl p-8 sm:p-10 bg-white/90 backdrop-blur ring-1 ring-black/5 shadow-2xl">
-            <span className="absolute -top-3 left-6 px-3 py-1 rounded-full text-xs font-bold bg-brand-primary text-white">
-              FEATURED
+          <div
+            className="relative rounded-3xl p-8 sm:p-10
+            bg-brand-surface backdrop-blur
+            ring-1 ring-brand-text/10 shadow-2xl"
+          >
+            <span
+              className="absolute -top-3 left-6 px-3 py-1
+              rounded-full text-xs font-bold
+              bg-brand-primary text-white"
+            >
+              Featured
             </span>
 
             <div className="flex items-center gap-4 mb-4">
-              <span className="px-3 py-1 rounded-full bg-brand-primary/10 text-brand-primary text-xs font-bold">
+              <span
+                className="px-3 py-1 rounded-full
+                bg-brand-primary/10 text-brand-primary
+                text-xs font-bold"
+              >
                 {featured.year}
               </span>
               <Badge {...featured.badge} />
             </div>
 
-            <h3 className="text-2xl font-black mb-3">
+            <h3 className="text-2xl font-black text-text-primary mb-3">
               {featured.title}
             </h3>
 
@@ -167,7 +210,8 @@ export default function Achievements() {
 
         {!reduceMotion && !isMobile && (
           <motion.div
-            className="absolute left-[10px] top-0 bottom-0 w-px bg-brand-primary origin-top"
+            className="absolute left-[10px] top-0 bottom-0 w-px
+              bg-brand-primary origin-top"
             style={{ scaleY: spineScale }}
           />
         )}
@@ -183,11 +227,19 @@ export default function Achievements() {
               className="relative"
             >
               {/* Node */}
-              <span className="absolute left-[2px] top-6 w-4 h-4 rounded-full bg-brand-primary ring-4 ring-brand-bg shadow-[0_0_0_6px_rgba(255,109,31,0.15)]" />
+              <span
+                className="absolute left-[2px] top-6 w-4 h-4 rounded-full
+                bg-brand-primary ring-4 ring-brand-bg
+                shadow-[0_0_0_6px_rgba(255,109,31,0.15)]"
+              />
 
               <div
-                onClick={() => a.certificate && setActiveCert(a.certificate)}
-                className={`rounded-2xl p-7 sm:p-8 bg-white shadow-lg ring-1 ring-black/5 transition
+                onClick={() =>
+                  a.certificate && setActiveCert(a.certificate)
+                }
+                className={`rounded-2xl p-7 sm:p-8
+                  bg-brand-surface shadow-lg
+                  ring-1 ring-brand-text/10 transition
                   ${
                     a.certificate
                       ? "cursor-pointer hover:shadow-xl hover:-translate-y-1"
@@ -195,13 +247,17 @@ export default function Achievements() {
                   }`}
               >
                 <div className="flex items-center gap-4">
-                  <span className="px-3 py-1 rounded-full bg-brand-primary/10 text-brand-primary text-xs font-bold">
+                  <span
+                    className="px-3 py-1 rounded-full
+                    bg-brand-primary/10 text-brand-primary
+                    text-xs font-bold"
+                  >
                     {a.year}
                   </span>
                   <Badge {...a.badge} />
                 </div>
 
-                <h3 className="mt-4 text-xl font-black">
+                <h3 className="mt-4 text-xl font-black text-text-primary">
                   {a.title}
                 </h3>
 
