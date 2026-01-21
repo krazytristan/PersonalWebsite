@@ -10,6 +10,7 @@ import Modal from "./ui/Modal";
 import Badge from "./ui/Badge";
 import CertificateViewer from "./ui/CertificateViewer";
 
+/* ================= DATA ================= */
 const achievements = [
   {
     year: "2025",
@@ -41,6 +42,7 @@ const achievements = [
     title: "IoT & Web Systems Instructor",
     desc: "Delivered real-world IoT + dashboard projects.",
     badge: { icon: "🔌", label: "IoT" },
+    category: "IoT",
   },
 ];
 
@@ -50,22 +52,21 @@ export default function Achievements() {
   const reduceMotion = useReducedMotion();
   const sectionRef = useRef(null);
 
-  /* ---------------- MOBILE DETECTION ---------------- */
+  /* ================= MOBILE DETECTION ================= */
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
     if (typeof window === "undefined") return;
     const mq = window.matchMedia("(pointer: coarse)");
     setIsMobile(mq.matches);
-    const h = (e) => setIsMobile(e.matches);
-    mq.addEventListener("change", h);
-    return () => mq.removeEventListener("change", h);
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
   }, []);
 
   const [filter, setFilter] = useState("All");
   const [activeCert, setActiveCert] = useState(null);
-  const [index, setIndex] = useState(0);
 
-  /* ---------------- FILTER ---------------- */
+  /* ================= FILTER LOGIC ================= */
   const filtered = useMemo(() => {
     if (filter === "All") return achievements;
     return achievements.filter((a) => a.category === filter);
@@ -74,26 +75,12 @@ export default function Achievements() {
   const featured =
     filtered.find((a) => a.featured) || filtered[0];
 
-  /* ---------------- SCROLL SPINE ---------------- */
+  /* ================= SCROLL SPINE ================= */
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
   });
   const spineScale = useTransform(scrollYProgress, [0, 1], [0, 1]);
-
-  /* ---------------- SWIPE HANDLERS (MOBILE) ---------------- */
-  const swipeHandlers = isMobile
-    ? {
-        onDragEnd: (_, info) => {
-          if (info.offset.x < -80 && index < filtered.length - 1) {
-            setIndex((i) => i + 1);
-          }
-          if (info.offset.x > 80 && index > 0) {
-            setIndex((i) => i - 1);
-          }
-        },
-      }
-    : {};
 
   return (
     <section
@@ -106,9 +93,11 @@ export default function Achievements() {
         <span className="block mb-3 text-xs font-bold tracking-widest text-brand-primary">
           MILESTONES
         </span>
-        <h2 className="text-4xl font-black mb-4">
+
+        <h2 className="text-4xl sm:text-5xl font-black mb-4">
           Achievements & Recognition
         </h2>
+
         <p className="text-lg text-text-muted max-w-2xl mx-auto">
           Key milestones across education, research, and systems development.
         </p>
@@ -119,10 +108,7 @@ export default function Achievements() {
         {filters.map((f) => (
           <button
             key={f}
-            onClick={() => {
-              setFilter(f);
-              setIndex(0);
-            }}
+            onClick={() => setFilter(f)}
             className={`px-5 py-2 rounded-full text-sm font-semibold transition ring-1
               ${
                 filter === f
@@ -135,18 +121,16 @@ export default function Achievements() {
         ))}
       </div>
 
-      {/* ================= FEATURED SPOTLIGHT ================= */}
+      {/* ================= FEATURED ================= */}
       {featured && (
         <motion.div
           initial={!reduceMotion ? { opacity: 0, y: 30 } : false}
-          animate={!reduceMotion ? { opacity: 1, y: 0 } : false}
+          whileInView={!reduceMotion ? { opacity: 1, y: 0 } : false}
+          viewport={{ once: true }}
           transition={{ duration: 0.6 }}
           className="max-w-4xl mx-auto mb-24 px-4"
         >
-          <div
-            className="relative rounded-3xl p-10 bg-white/90 backdrop-blur
-              ring-1 ring-black/5 shadow-2xl"
-          >
+          <div className="relative rounded-3xl p-10 bg-white/90 backdrop-blur ring-1 ring-black/5 shadow-2xl">
             <span className="absolute -top-3 left-6 px-3 py-1 rounded-full text-xs font-bold bg-brand-primary text-white">
               FEATURED
             </span>
@@ -180,6 +164,7 @@ export default function Achievements() {
 
       {/* ================= TIMELINE ================= */}
       <div className="relative max-w-6xl mx-auto px-4 pl-10 space-y-16">
+        {/* Spine */}
         <div className="absolute left-[10px] top-0 bottom-0 w-px bg-brand-primary/25" />
 
         {!reduceMotion && !isMobile && (
@@ -193,22 +178,23 @@ export default function Achievements() {
           {filtered.map((a, i) => (
             <motion.article
               key={a.title}
-              drag={isMobile ? "x" : false}
-              dragConstraints={{ left: 0, right: 0 }}
-              {...swipeHandlers}
               initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 30 }}
-              transition={{ duration: 0.4 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: i * 0.06 }}
               className="relative"
             >
-              <span className="absolute left-[2px] top-5 w-4 h-4 rounded-full bg-brand-primary ring-4 ring-brand-bg" />
+              {/* Node */}
+              <span className="absolute left-[2px] top-6 w-4 h-4 rounded-full bg-brand-primary ring-4 ring-brand-bg shadow-[0_0_0_6px_rgba(255,109,31,0.15)]" />
 
               <div
                 onClick={() => a.certificate && setActiveCert(a.certificate)}
-                className={`rounded-2xl p-7 bg-white shadow-lg ring-1 ring-black/5 ${
-                  a.certificate ? "cursor-pointer" : ""
-                }`}
+                className={`rounded-2xl p-7 bg-white shadow-lg ring-1 ring-black/5 transition
+                  ${
+                    a.certificate
+                      ? "cursor-pointer hover:shadow-xl"
+                      : ""
+                  }`}
               >
                 <div className="flex items-center gap-4">
                   <span className="px-3 py-1 rounded-full bg-brand-primary/10 text-brand-primary text-xs font-bold">
@@ -224,6 +210,12 @@ export default function Achievements() {
                 <p className="mt-2 text-text-muted">
                   {a.desc}
                 </p>
+
+                {a.certificate && (
+                  <p className="mt-4 text-sm font-semibold text-brand-primary">
+                    View certificate →
+                  </p>
+                )}
               </div>
             </motion.article>
           ))}

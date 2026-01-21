@@ -4,23 +4,26 @@ import {
   useScroll,
   useTransform,
 } from "framer-motion";
-import { useRef, useMemo } from "react";
+import { useRef } from "react";
 
 const items = [
   {
     year: "2018",
     title: "IT Educator",
     desc: "Started teaching IT & CS, focusing on practical systems and real-world projects.",
+    icon: "🎓",
   },
   {
     year: "2021",
     title: "Full-Stack Developer",
     desc: "Built academic systems, dashboards, and reservation platforms.",
+    icon: "💻",
   },
   {
     year: "2024",
     title: "Systems Builder",
     desc: "Focused on scalable platforms, UX clarity, and IoT-enabled solutions.",
+    icon: "🧠",
   },
 ];
 
@@ -28,92 +31,101 @@ export default function Timeline() {
   const reduceMotion = useReducedMotion();
   const ref = useRef(null);
 
-  /* ================= DEVICE GUARD ================= */
-  const isDesktop = useMemo(() => {
-    if (typeof window === "undefined") return false;
-    return window.matchMedia("(min-width: 768px)").matches;
-  }, []);
-
-  const enableFX = !reduceMotion && isDesktop;
-
   /* ================= SCROLL LINE ================= */
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
   });
 
-  const lineScale = enableFX
-    ? useTransform(scrollYProgress, [0, 1], [0, 1])
-    : 1;
+  const lineScale = reduceMotion
+    ? 1
+    : useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   return (
     <div
       ref={ref}
-      className="relative mt-16 pl-8 sm:pl-10"
+      className="relative mt-16"
     >
-      {/* ================= BASE LINE ================= */}
-      <div className="absolute left-[14px] top-0 h-full w-[2px] bg-brand-primary/20" />
+      {/* ================= CENTER LINE ================= */}
+      <div className="absolute left-1/2 top-0 h-full w-px bg-brand-primary/20 -translate-x-1/2 hidden lg:block" />
 
-      {/* ================= ANIMATED LINE (DESKTOP ONLY) ================= */}
-      {enableFX && (
+      {!reduceMotion && (
         <motion.div
-          className="absolute left-[14px] top-0 h-full w-[2px] bg-brand-primary origin-top"
+          className="absolute left-1/2 top-0 h-full w-px bg-brand-primary origin-top -translate-x-1/2 hidden lg:block"
           style={{ scaleY: lineScale }}
         />
       )}
 
       {/* ================= ITEMS ================= */}
-      {items.map((item, i) => (
-        <motion.div
-          key={item.year}
-          initial={!reduceMotion ? { opacity: 0, x: -24 } : false}
-          whileInView={!reduceMotion ? { opacity: 1, x: 0 } : false}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{
-            duration: 0.6,
-            delay: i * 0.12,
-            ease: "easeOut",
-          }}
-          whileHover={
-            enableFX
-              ? {
-                  y: -4,
-                }
-              : {}
-          }
-          className="relative mb-14"
-        >
-          {/* ================= NODE ================= */}
-          <motion.span
-            initial={!reduceMotion ? { scale: 0.85, opacity: 0 } : false}
-            whileInView={!reduceMotion ? { scale: 1, opacity: 1 } : false}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.15 }}
-            className="
-              absolute left-[6px] top-2
-              w-4 h-4 rounded-full
-              bg-brand-primary
-              ring-4 ring-brand-bg
-              shadow-[0_0_0_6px_rgba(255,109,31,0.15)]
-            "
-          />
+      <div className="flex flex-col gap-16">
+        {items.map((item, i) => {
+          const isLeft = i % 2 === 0;
 
-          {/* ================= CONTENT ================= */}
-          <div className="ml-8 sm:ml-10">
-            <p className="text-xs tracking-widest uppercase text-brand-primary font-semibold">
-              {item.year}
-            </p>
+          return (
+            <motion.div
+              key={item.year}
+              initial={!reduceMotion ? { opacity: 0, y: 30 } : false}
+              whileInView={!reduceMotion ? { opacity: 1, y: 0 } : false}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{
+                duration: 0.6,
+                delay: reduceMotion ? 0 : i * 0.12,
+                ease: "easeOut",
+              }}
+              className={`
+                relative grid grid-cols-1 lg:grid-cols-2 items-start
+                ${isLeft ? "" : "lg:text-right"}
+              `}
+            >
+              {/* ================= CONTENT ================= */}
+              <div
+                className={`
+                  px-6
+                  ${isLeft ? "lg:pr-16" : "lg:pl-16 lg:col-start-2"}
+                `}
+              >
+                <p className="text-xs font-bold tracking-widest text-brand-primary">
+                  {item.year}
+                </p>
 
-            <h4 className="mt-1 font-black text-brand-dark">
-              {item.title}
-            </h4>
+                <h4 className="mt-1 text-lg font-black text-brand-dark">
+                  {item.title}
+                </h4>
 
-            <p className="mt-2 text-sm text-zinc-600 max-w-md leading-relaxed">
-              {item.desc}
-            </p>
-          </div>
-        </motion.div>
-      ))}
+                <p className="mt-2 text-sm leading-relaxed text-zinc-600 max-w-md lg:ml-auto">
+                  {item.desc}
+                </p>
+              </div>
+
+              {/* ================= NODE ================= */}
+              <div className="absolute left-1/2 top-2 -translate-x-1/2 hidden lg:flex">
+                <motion.div
+                  initial={!reduceMotion ? { scale: 0.8, opacity: 0 } : false}
+                  whileInView={!reduceMotion ? { scale: 1, opacity: 1 } : false}
+                  viewport={{ once: true }}
+                  transition={{ delay: reduceMotion ? 0 : i * 0.15 }}
+                  className="
+                    h-10 w-10 rounded-full
+                    bg-white
+                    ring-2 ring-brand-primary
+                    shadow-lg
+                    flex items-center justify-center
+                    text-lg
+                  "
+                >
+                  {item.icon}
+                </motion.div>
+              </div>
+
+              {/* ================= MOBILE NODE ================= */}
+              <div className="flex lg:hidden items-center gap-3 px-6 mt-4">
+                <span className="h-3 w-3 rounded-full bg-brand-primary" />
+                <span className="text-xs text-zinc-500">Milestone</span>
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
     </div>
   );
 }

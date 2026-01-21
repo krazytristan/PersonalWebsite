@@ -18,7 +18,7 @@ export default function About() {
     offset: ["start end", "end start"],
   });
 
-  const bgDrift = useTransform(scrollYProgress, [0, 1], [0, -120]);
+  const bgDrift = useTransform(scrollYProgress, [0, 1], [0, -100]);
 
   return (
     <section
@@ -31,18 +31,19 @@ export default function About() {
         style={!reduceMotion ? { y: bgDrift } : {}}
         className="absolute inset-0 -z-10 pointer-events-none"
       >
-        <div className="absolute top-24 right-[-160px] w-[520px] h-[520px] rounded-full bg-brand-primary/20 blur-3xl" />
-        <div className="absolute bottom-24 left-[-180px] w-[420px] h-[420px] rounded-full bg-brand-secondary/25 blur-3xl" />
+        <div className="absolute top-24 right-[-200px] w-[520px] h-[520px] rounded-full bg-brand-primary/15 blur-3xl" />
+        <div className="absolute bottom-32 left-[-200px] w-[420px] h-[420px] rounded-full bg-brand-secondary/20 blur-3xl" />
       </motion.div>
 
       {/* ================= CONTENT ================= */}
-      <div className="relative max-w-6xl mx-auto px-4 grid gap-16 lg:grid-cols-2 lg:gap-20">
+      <div className="relative max-w-6xl mx-auto px-4 grid gap-20 lg:grid-cols-2 lg:gap-24">
         {/* ================= LEFT ================= */}
         <motion.div
           initial={!reduceMotion ? { opacity: 0, y: 32 } : false}
           whileInView={!reduceMotion ? { opacity: 1, y: 0 } : false}
           viewport={{ once: true, margin: "-120px" }}
           transition={{ duration: 0.8, ease: "easeOut" }}
+          className="flex flex-col"
         >
           <span className="inline-block mb-4 text-xs font-bold tracking-widest text-brand-primary">
             ABOUT ME
@@ -69,13 +70,15 @@ export default function About() {
             long-term use.
           </p>
 
-          <div className="mt-14">
+          {/* TIMELINE */}
+          <div className="mt-20">
             <Timeline />
           </div>
 
-          <div className="relative mt-16 rounded-2xl bg-white/90 backdrop-blur p-7 shadow-lg ring-1 ring-black/5">
+          {/* PHILOSOPHY */}
+          <div className="relative mt-20 max-w-xl rounded-2xl bg-white/90 backdrop-blur p-8 shadow-lg ring-1 ring-black/5">
             <div className="absolute left-0 top-0 h-full w-1 bg-brand-primary rounded-l-2xl" />
-            <h3 className="font-black text-lg text-brand-dark mb-2">
+            <h3 className="font-black text-lg text-brand-dark mb-3">
               Design Philosophy
             </h3>
             <p className="text-sm text-zinc-600 leading-relaxed">
@@ -92,7 +95,7 @@ export default function About() {
           whileInView={!reduceMotion ? { opacity: 1, y: 0 } : false}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="flex flex-col gap-8"
+          className="flex flex-col gap-10 lg:pt-10"
         >
           <Highlight
             title="What I Build"
