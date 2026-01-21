@@ -5,13 +5,16 @@ export const projects = [
     desc: "PC reservation, maintenance tracking, and admin dashboard system for computer laboratories.",
     description:
       "PC reservation, maintenance tracking, and admin dashboard system for computer laboratories.",
+
     image: "/images/projects/ilab.jpg",
-    video: null, // optional hover preview
-    year: "2025",
+    imageAlt: "iLab Reservation System dashboard",
+    fallbackImage: "/images/projects/fallback.jpg",
+
+    video: null,
+    year: 2025,
     role: "Lead Developer",
     type: "project",
     order: 1,
-
     featured: true,
 
     tags: ["Reservation", "Admin", "UX"],
@@ -28,8 +31,8 @@ export const projects = [
       uptime: "99.9%",
     },
 
-    demo: null, // live demo URL
-    repo: null, // GitHub URL
+    demo: null,
+    repo: null,
     link: null,
   },
 
@@ -39,13 +42,16 @@ export const projects = [
     desc: "Cloud-based system for certificates, announcements, residents, and automated email delivery.",
     description:
       "Cloud-based system for certificates, announcements, residents, and automated email delivery.",
+
     image: "/images/projects/barangay.jpg",
+    imageAlt: "Barangay Information Management System",
+    fallbackImage: "/images/projects/fallback.jpg",
+
     video: null,
-    year: "2025",
+    year: 2025,
     role: "Full-Stack Developer",
     type: "project",
     order: 2,
-
     featured: true,
 
     tags: ["Cloud", "GovTech", "Automation"],
@@ -73,13 +79,16 @@ export const projects = [
     desc: "A complete library management system with barcode-based attendance, analytics, and admin controls.",
     description:
       "A complete library management system with barcode-based attendance, analytics, and admin controls.",
+
     image: "/images/projects/librarysys.jpg",
+    imageAlt: "LibrarySys management dashboard",
+    fallbackImage: "/images/projects/fallback.jpg",
+
     video: null,
-    year: "2024",
+    year: 2024,
     role: "Full-Stack Developer",
     type: "project",
     order: 3,
-
     featured: true,
 
     tags: ["PHP", "MySQL", "Barcode", "UX"],
@@ -107,13 +116,16 @@ export const projects = [
     desc: "Attendance and scheduling platform designed for academic institutions with real-time dashboards.",
     description:
       "Attendance and scheduling platform designed for academic institutions with real-time dashboards.",
+
     image: "/images/projects/amatrack.jpg",
+    imageAlt: "AMATrack academic dashboard",
+    fallbackImage: "/images/projects/fallback.jpg",
+
     video: null,
-    year: "2023",
+    year: 2023,
     role: "System Designer & Developer",
     type: "experience",
     order: 4,
-
     featured: true,
 
     tags: ["JavaScript", "Dashboard", "Admin"],
@@ -141,13 +153,16 @@ export const projects = [
     desc: "IoT-based smart waste and connectivity system with cloud monitoring and API integrations.",
     description:
       "IoT-based smart waste and connectivity system with cloud monitoring and API integrations.",
+
     image: "/images/projects/wificonnect.jpg",
+    imageAlt: "WiFi Connect IoT dashboard",
+    fallbackImage: "/images/projects/fallback.jpg",
+
     video: null,
-    year: "2022",
+    year: 2022,
     role: "IoT & Backend Developer",
     type: "experience",
     order: 5,
-
     featured: false,
 
     tags: ["IoT", "Cloud", "APIs"],

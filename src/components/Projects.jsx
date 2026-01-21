@@ -31,32 +31,29 @@ export default function Projects({ onOpen }) {
   /* ================= MOBILE ================= */
   if (isMobile) {
     return (
-      <section
-        id="projects"
-        className="py-24 bg-brand-bg"
-      >
+      <section id="projects" className="py-24 bg-brand-bg">
         <h2 className="text-4xl font-black text-center mb-12">
           Featured Projects
         </h2>
 
-        <div className="flex gap-5 overflow-x-auto px-6 snap-x snap-mandatory">
+        <div className="flex gap-6 overflow-x-auto px-6 snap-x snap-mandatory">
           {projects.map((p) => (
             <div
               key={p.id}
               onClick={() => onOpen?.(p)}
-              className="min-w-[280px] snap-center rounded-2xl bg-white p-5 shadow-lg ring-1 ring-black/5 cursor-pointer"
+              className="min-w-[85%] snap-center rounded-2xl bg-white shadow-lg ring-1 ring-black/5 overflow-hidden"
             >
-              <h3 className="font-bold text-lg">
-                {p.title}
-              </h3>
+              <img
+                src={p.image}
+                alt={p.title}
+                className="h-44 w-full object-cover"
+                loading="lazy"
+              />
 
-              <p className="mt-2 text-sm text-text-muted">
-                {p.desc}
-              </p>
-
-              <span className="inline-block mt-4 text-xs font-semibold text-brand-primary">
-                Tap to view →
-              </span>
+              <div className="p-5">
+                <h3 className="font-black text-lg">{p.title}</h3>
+                <p className="mt-2 text-sm text-text-muted">{p.desc}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -77,11 +74,10 @@ export default function Projects({ onOpen }) {
         <div className="absolute top-24 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-brand-primary/20 blur-3xl" />
       </div>
 
-      <h2 className="text-4xl font-black text-center mb-14">
+      <h2 className="text-4xl font-black text-center mb-16">
         Featured Projects
       </h2>
 
-      {/* VIEWPORT */}
       <div className="relative max-w-6xl mx-auto overflow-hidden">
         <motion.div
           animate={{
@@ -94,36 +90,68 @@ export default function Projects({ onOpen }) {
             const isActive = i === active;
 
             return (
-              <motion.div
+              <motion.article
                 key={p.id}
-                onClick={() =>
-                  isActive ? onOpen?.(p) : setActive(i)
-                }
+                onClick={() => (isActive ? onOpen?.(p) : setActive(i))}
                 animate={{
                   scale: isActive ? 1 : 0.88,
-                  opacity: isActive ? 1 : 0.45,
-                  filter: isActive ? "blur(0px)" : "blur(10px)",
+                  opacity: isActive ? 1 : 0.4,
+                  filter: isActive ? "blur(0px)" : "blur(12px)",
                 }}
                 transition={{ duration: 0.4 }}
-                className="relative w-[360px] flex-shrink-0 rounded-3xl bg-white p-6 shadow-xl ring-1 ring-black/5 cursor-pointer"
+                className="relative w-[360px] flex-shrink-0 rounded-3xl bg-white shadow-2xl ring-1 ring-black/5 overflow-hidden cursor-pointer"
               >
-                {/* Accent */}
-                <div className="absolute top-0 left-0 w-full h-1 rounded-t-3xl bg-brand-primary" />
+                {/* MEDIA */}
+                <div className="relative h-48 overflow-hidden">
+                  {p.video && !reduceMotion ? (
+                    <video
+                      src={p.video}
+                      muted
+                      loop
+                      playsInline
+                      className="w-full h-full object-cover"
+                      onMouseEnter={(e) => e.currentTarget.play()}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.pause();
+                        e.currentTarget.currentTime = 0;
+                      }}
+                    />
+                  ) : (
+                    <img
+                      src={p.image}
+                      alt={p.title}
+                      className={`w-full h-full object-cover transition-transform duration-500 ${
+                        isActive ? "scale-105" : ""
+                      }`}
+                      loading="lazy"
+                    />
+                  )}
 
-                <h3 className="font-bold text-lg">
-                  {p.title}
-                </h3>
+                  <div className="absolute top-0 left-0 w-full h-1 bg-brand-primary" />
+                </div>
 
-                <p className="mt-2 text-sm text-text-muted">
-                  {p.desc}
-                </p>
+                {/* CONTENT */}
+                <div className="p-6 relative">
+                  <h3 className="font-black text-lg">{p.title}</h3>
+                  <p className="mt-2 text-sm text-text-muted">{p.desc}</p>
 
-                {isActive && (
-                  <span className="inline-block mt-4 text-xs font-semibold px-3 py-1 rounded-full bg-brand-primary/10 text-brand-primary">
-                    Click to view
-                  </span>
-                )}
-              </motion.div>
+                  {/* STACK */}
+                  {isActive && p.stack && (
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {p.stack.map((tech) => (
+                        <span
+                          key={tech}
+                          className="px-2.5 py-1 rounded-full text-xs font-semibold
+                                     bg-brand-primary/10 text-brand-primary
+                                     ring-1 ring-brand-primary/30"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </motion.article>
             );
           })}
         </motion.div>

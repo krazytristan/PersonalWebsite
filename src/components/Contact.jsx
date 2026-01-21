@@ -26,14 +26,25 @@ export default function Contact() {
     setTimeout(() => setCopied(false), 1600);
   };
 
+  const cardMotion = !reduceMotion
+    ? {
+        whileHover: { y: -6, scale: 1.02 },
+        transition: { type: "spring", stiffness: 180, damping: 18 },
+      }
+    : {};
+
   return (
     <section
       id="contact"
-      className="relative py-24 sm:py-32 text-center bg-brand-bg overflow-hidden"
+      className="relative py-24 sm:py-32 bg-brand-bg overflow-hidden"
     >
       {/* ================= AMBIENT GLOW ================= */}
       <div className="absolute inset-0 -z-10 pointer-events-none">
-        <div className="absolute bottom-[-240px] left-1/2 -translate-x-1/2 w-[520px] h-[520px] sm:w-[760px] sm:h-[760px] rounded-full bg-brand-primary/15 blur-3xl" />
+        <div
+          className="absolute bottom-[-240px] left-1/2 -translate-x-1/2
+                     w-[520px] h-[520px] sm:w-[760px] sm:h-[760px]
+                     rounded-full bg-brand-primary/15 blur-3xl"
+        />
       </div>
 
       {/* ================= HEADER ================= */}
@@ -42,7 +53,7 @@ export default function Contact() {
         whileInView={!reduceMotion ? { opacity: 1, y: 0 } : false}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="mb-14 px-4"
+        className="mb-14 px-4 text-center"
       >
         <span className="inline-block mb-3 text-xs font-bold tracking-widest text-brand-primary">
           CONTACT
@@ -59,17 +70,18 @@ export default function Contact() {
       </motion.div>
 
       {/* ================= CONTACT CARDS ================= */}
-      <motion.div
-        initial={!reduceMotion ? { opacity: 0, y: 24 } : false}
-        whileInView={!reduceMotion ? { opacity: 1, y: 0 } : false}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto px-4"
-      >
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto px-4">
         {/* ================= EMAIL ================= */}
-        <button
+        <motion.button
+          {...cardMotion}
           onClick={copyEmail}
-          className="rounded-3xl bg-white p-7 text-left shadow-xl ring-1 ring-black/5 focus:outline-none active:scale-[0.98] transition"
+          aria-label="Copy email address"
+          className="
+            group rounded-3xl bg-white p-7 text-left
+            shadow-xl ring-1 ring-black/5
+            focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary
+            active:scale-[0.98] transition
+          "
         >
           <div className="text-3xl mb-3">📧</div>
           <div className="font-semibold">Email</div>
@@ -77,17 +89,27 @@ export default function Contact() {
             {email}
           </div>
 
-          <div className="mt-4 text-xs font-semibold text-brand-primary">
+          <div
+            aria-live="polite"
+            className="mt-4 text-xs font-semibold text-brand-primary"
+          >
             {copied ? "Copied ✓" : "Tap to copy"}
           </div>
-        </button>
+        </motion.button>
 
         {/* ================= GITHUB ================= */}
-        <a
+        <motion.a
+          {...cardMotion}
           href="https://github.com/krazytristan"
           target="_blank"
           rel="noopener noreferrer"
-          className="rounded-3xl bg-white p-7 text-left shadow-xl ring-1 ring-black/5 active:scale-[0.98] transition"
+          aria-label="Visit GitHub profile"
+          className="
+            group rounded-3xl bg-white p-7 text-left
+            shadow-xl ring-1 ring-black/5
+            focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary
+            active:scale-[0.98] transition
+          "
         >
           <div className="text-3xl mb-3">🐙</div>
           <div className="font-semibold">GitHub</div>
@@ -98,14 +120,21 @@ export default function Contact() {
           <div className="mt-4 text-xs font-semibold text-brand-primary">
             View repositories →
           </div>
-        </a>
+        </motion.a>
 
         {/* ================= LINKEDIN ================= */}
-        <a
+        <motion.a
+          {...cardMotion}
           href="https://linkedin.com/in/tristan-jorge-cuartero"
           target="_blank"
           rel="noopener noreferrer"
-          className="rounded-3xl bg-white p-7 text-left shadow-xl ring-1 ring-black/5 active:scale-[0.98] transition"
+          aria-label="Visit LinkedIn profile"
+          className="
+            group rounded-3xl bg-white p-7 text-left
+            shadow-xl ring-1 ring-black/5
+            focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary
+            active:scale-[0.98] transition
+          "
         >
           <div className="text-3xl mb-3">🔗</div>
           <div className="font-semibold">LinkedIn</div>
@@ -116,8 +145,8 @@ export default function Contact() {
           <div className="mt-4 text-xs font-semibold text-brand-primary">
             Connect professionally →
           </div>
-        </a>
-      </motion.div>
+        </motion.a>
+      </div>
 
       {/* ================= DIVIDER ================= */}
       <div className="mt-20 mx-auto h-px w-20 bg-brand-primary/40" />
@@ -128,7 +157,7 @@ export default function Contact() {
         whileInView={!reduceMotion ? { opacity: 1 } : false}
         viewport={{ once: true }}
         transition={{ duration: 0.5 }}
-        className="mt-10 text-sm text-zinc-500 px-4"
+        className="mt-10 text-sm text-zinc-500 text-center px-4"
       >
         © {new Date().getFullYear()} Tristan Jorge Cuartero
         <span className="block mt-1">

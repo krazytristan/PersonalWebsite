@@ -232,11 +232,11 @@ export default function Hero() {
           {/* SOCIALS */}
           <div className="mt-6 flex items-center gap-4">
             {[
-              { icon: <FaFacebookF />, href: "https://facebook.com/yourprofile" },
-              { icon: <FaInstagram />, href: "https://instagram.com/yourprofile" },
-              { icon: <FaTiktok />, href: "https://tiktok.com/@yourprofile" },
-              { icon: <FaGithub />, href: "https://github.com/yourprofile" },
-              { icon: <FaLinkedinIn />, href: "https://linkedin.com/in/yourprofile" },
+              { icon: <FaFacebookF />, href: "https://www.facebook.com/profile.php?id=61580976757488" },
+              { icon: <FaInstagram />, href: "https://www.instagram.com/_trstnjrgcrtr_officialoppa/" },
+              { icon: <FaTiktok />, href: "https://www.tiktok.com/@_trstnjrgcrtr" },
+              { icon: <FaGithub />, href: "https://github.com/krazytristan" },
+              { icon: <FaLinkedinIn />, href: "https://www.linkedin.com/in/tristan-jorge-cuartero/" },
             ].map((item, i) => (
               <motion.a
                 key={i}

@@ -9,7 +9,9 @@ import Projects from "../components/Projects";
 import Skills from "../components/Skills";
 import BlogSection from "../components/BlogSection";
 import Contact from "../components/Contact";
+
 import StickyCTA from "../components/StickyCTA";
+import ScrollToTop from "../components/ScrollToTop";
 
 import Modal from "../components/ui/Modal";
 import ResumeViewer from "../components/ResumeViewer";
@@ -24,12 +26,12 @@ export default function Portfolio() {
     typeof window !== "undefined" &&
     window.matchMedia("(pointer: coarse)").matches;
 
-  /* ================= MODAL STATE ================= */
+  /* ================= STATE ================= */
   const [resumeOpen, setResumeOpen] = useState(false);
   const [activeProject, setActiveProject] = useState(null);
 
   return (
-    <div className="relative min-h-screen bg-brand-bg text-brand-text">
+    <div className="relative min-h-screen bg-brand-bg text-brand-text overflow-x-hidden">
       {/* ================= SEO ================= */}
       <SEO
         title="Tristan Cuartero | Systems Architect & Educator"
@@ -75,8 +77,18 @@ export default function Portfolio() {
         </PageTransition>
       </main>
 
-      {/* ================= UTILITIES ================= */}
-      <StickyCTA onResume={() => setResumeOpen(true)} />
+      {/* ================= FLOATING UTILITIES ================= */}
+      {/* Sticky CTA (desktop only) */}
+      {!isMobile && (
+        <div className="fixed bottom-6 right-6 z-50">
+          <StickyCTA onResume={() => setResumeOpen(true)} />
+        </div>
+      )}
+
+      {/* Scroll to Top (always visible, same vertical level) */}
+      <div className="fixed bottom-6 left-6 z-50">
+        <ScrollToTop />
+      </div>
 
       {/* ================= RESUME MODAL ================= */}
       <AnimatePresence>
@@ -105,9 +117,11 @@ export default function Portfolio() {
                   {activeProject.stack.map((tech) => (
                     <span
                       key={tech}
-                      className="px-2.5 py-1 rounded-full text-xs
-                      bg-brand-primary/10 text-brand-primary
-                      ring-1 ring-brand-primary/30"
+                      className="
+                        px-2.5 py-1 rounded-full text-xs
+                        bg-brand-primary/10 text-brand-primary
+                        ring-1 ring-brand-primary/30
+                      "
                     >
                       {tech}
                     </span>

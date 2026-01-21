@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef, useMemo, useEffect } from "react";
 import {
   motion,
   useReducedMotion,
@@ -17,6 +17,7 @@ const achievements = [
     desc: "Designed and deployed academic, reservation, and admin platforms.",
     badge: { icon: "🏆", label: "Architecture" },
     category: "Architecture",
+    featured: true,
     certificate: {
       title: "Systems Architecture Recognition",
       src: "/certificates/architecture.pdf",
@@ -47,153 +48,186 @@ const filters = ["All", "Architecture", "Research", "IoT"];
 
 export default function Achievements() {
   const reduceMotion = useReducedMotion();
-  const isMobile =
-    typeof window !== "undefined" &&
-    window.matchMedia("(pointer: coarse)").matches;
-
-  const [activeCert, setActiveCert] = useState(null);
-  const [filter, setFilter] = useState("All");
   const sectionRef = useRef(null);
 
-  /* Scroll-linked spine (desktop only) */
+  /* ---------------- MOBILE DETECTION ---------------- */
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(pointer: coarse)");
+    setIsMobile(mq.matches);
+    const h = (e) => setIsMobile(e.matches);
+    mq.addEventListener("change", h);
+    return () => mq.removeEventListener("change", h);
+  }, []);
+
+  const [filter, setFilter] = useState("All");
+  const [activeCert, setActiveCert] = useState(null);
+  const [index, setIndex] = useState(0);
+
+  /* ---------------- FILTER ---------------- */
+  const filtered = useMemo(() => {
+    if (filter === "All") return achievements;
+    return achievements.filter((a) => a.category === filter);
+  }, [filter]);
+
+  const featured =
+    filtered.find((a) => a.featured) || filtered[0];
+
+  /* ---------------- SCROLL SPINE ---------------- */
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
   });
   const spineScale = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
-  /* Filtered data */
-  const filtered = useMemo(() => {
-    if (filter === "All") return achievements;
-    return achievements.filter((a) => a.category === filter);
-  }, [filter]);
+  /* ---------------- SWIPE HANDLERS (MOBILE) ---------------- */
+  const swipeHandlers = isMobile
+    ? {
+        onDragEnd: (_, info) => {
+          if (info.offset.x < -80 && index < filtered.length - 1) {
+            setIndex((i) => i + 1);
+          }
+          if (info.offset.x > 80 && index > 0) {
+            setIndex((i) => i - 1);
+          }
+        },
+      }
+    : {};
 
   return (
     <section
       ref={sectionRef}
       id="achievements"
-      className="relative py-28 min-h-[80vh] bg-brand-bg"
+      className="relative py-28 bg-brand-bg overflow-hidden"
     >
-      {/* ================= BACKGROUND (DESKTOP ONLY) ================= */}
-      {!isMobile && (
-        <div className="absolute inset-0 -z-10 pointer-events-none">
-          <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[720px] h-[720px] rounded-full bg-brand-primary/20 blur-3xl" />
-          <div className="absolute bottom-24 right-[-200px] w-[520px] h-[520px] rounded-full bg-brand-secondary/20 blur-3xl" />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-brand-bg/70 to-brand-bg" />
-        </div>
+      {/* ================= HEADER ================= */}
+      <div className="max-w-6xl mx-auto px-4 text-center mb-16">
+        <span className="block mb-3 text-xs font-bold tracking-widest text-brand-primary">
+          MILESTONES
+        </span>
+        <h2 className="text-4xl font-black mb-4">
+          Achievements & Recognition
+        </h2>
+        <p className="text-lg text-text-muted max-w-2xl mx-auto">
+          Key milestones across education, research, and systems development.
+        </p>
+      </div>
+
+      {/* ================= FILTER ================= */}
+      <div className="flex justify-center gap-3 mb-20 flex-wrap">
+        {filters.map((f) => (
+          <button
+            key={f}
+            onClick={() => {
+              setFilter(f);
+              setIndex(0);
+            }}
+            className={`px-5 py-2 rounded-full text-sm font-semibold transition ring-1
+              ${
+                filter === f
+                  ? "bg-brand-primary text-white ring-brand-primary"
+                  : "bg-white/80 hover:bg-white ring-black/10"
+              }`}
+          >
+            {f}
+          </button>
+        ))}
+      </div>
+
+      {/* ================= FEATURED SPOTLIGHT ================= */}
+      {featured && (
+        <motion.div
+          initial={!reduceMotion ? { opacity: 0, y: 30 } : false}
+          animate={!reduceMotion ? { opacity: 1, y: 0 } : false}
+          transition={{ duration: 0.6 }}
+          className="max-w-4xl mx-auto mb-24 px-4"
+        >
+          <div
+            className="relative rounded-3xl p-10 bg-white/90 backdrop-blur
+              ring-1 ring-black/5 shadow-2xl"
+          >
+            <span className="absolute -top-3 left-6 px-3 py-1 rounded-full text-xs font-bold bg-brand-primary text-white">
+              FEATURED
+            </span>
+
+            <div className="flex items-center gap-4 mb-4">
+              <span className="px-3 py-1 rounded-full bg-brand-primary/10 text-brand-primary text-xs font-bold">
+                {featured.year}
+              </span>
+              <Badge {...featured.badge} />
+            </div>
+
+            <h3 className="text-2xl font-black mb-3">
+              {featured.title}
+            </h3>
+
+            <p className="text-text-muted">
+              {featured.desc}
+            </p>
+
+            {featured.certificate && (
+              <button
+                onClick={() => setActiveCert(featured.certificate)}
+                className="mt-6 inline-flex font-semibold text-brand-primary hover:underline"
+              >
+                View certificate →
+              </button>
+            )}
+          </div>
+        </motion.div>
       )}
 
-      <div className="max-w-6xl mx-auto px-4">
-        {/* ================= HEADER ================= */}
-        <motion.div
-          initial={!reduceMotion && !isMobile ? { opacity: 0, y: 24 } : false}
-          whileInView={
-            !reduceMotion && !isMobile ? { opacity: 1, y: 0 } : false
-          }
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-          className="text-center mb-14"
-        >
-          <span className="block mb-3 text-xs font-bold tracking-widest text-brand-primary">
-            MILESTONES
-          </span>
+      {/* ================= TIMELINE ================= */}
+      <div className="relative max-w-6xl mx-auto px-4 pl-10 space-y-16">
+        <div className="absolute left-[10px] top-0 bottom-0 w-px bg-brand-primary/25" />
 
-          <h2 className="text-4xl font-black mb-4">
-            Achievements & Recognition
-          </h2>
+        {!reduceMotion && !isMobile && (
+          <motion.div
+            className="absolute left-[10px] top-0 bottom-0 w-px bg-brand-primary origin-top"
+            style={{ scaleY: spineScale }}
+          />
+        )}
 
-          <p className="text-lg text-text-muted max-w-2xl mx-auto">
-            Key milestones, recognitions, and professional highlights across
-            education, research, and systems development.
-          </p>
-        </motion.div>
-
-        {/* ================= FILTER ================= */}
-        <div className="flex justify-center gap-3 mb-16 flex-wrap">
-          {filters.map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`px-5 py-2 rounded-full text-sm font-semibold transition ring-1
-                ${
-                  filter === f
-                    ? "bg-brand-primary text-white ring-brand-primary"
-                    : "bg-white/80 hover:bg-white ring-black/10"
-                }`}
+        <AnimatePresence>
+          {filtered.map((a, i) => (
+            <motion.article
+              key={a.title}
+              drag={isMobile ? "x" : false}
+              dragConstraints={{ left: 0, right: 0 }}
+              {...swipeHandlers}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 30 }}
+              transition={{ duration: 0.4 }}
+              className="relative"
             >
-              {f}
-            </button>
-          ))}
-        </div>
+              <span className="absolute left-[2px] top-5 w-4 h-4 rounded-full bg-brand-primary ring-4 ring-brand-bg" />
 
-        {/* ================= TIMELINE ================= */}
-        <div className="relative pl-10 space-y-16">
-          {/* Spine */}
-          <div className="absolute left-[10px] top-0 bottom-0 w-px bg-brand-primary/25" />
-          {!reduceMotion && !isMobile && (
-            <motion.div
-              className="absolute left-[10px] top-0 bottom-0 w-px bg-brand-primary origin-top"
-              style={{ scaleY: spineScale }}
-            />
-          )}
-
-          <AnimatePresence>
-            {filtered.map((a, i) => (
-              <motion.article
-                key={a.title}
-                initial={!reduceMotion && !isMobile ? { opacity: 0, y: 30 } : false}
-                animate={!reduceMotion && !isMobile ? { opacity: 1, y: 0 } : false}
-                exit={!reduceMotion && !isMobile ? { opacity: 0, y: 30 } : false}
-                transition={{ duration: 0.4, delay: i * 0.05 }}
-                className="relative"
+              <div
+                onClick={() => a.certificate && setActiveCert(a.certificate)}
+                className={`rounded-2xl p-7 bg-white shadow-lg ring-1 ring-black/5 ${
+                  a.certificate ? "cursor-pointer" : ""
+                }`}
               >
-                {/* NODE */}
-                <span className="absolute left-[2px] top-5 w-4 h-4 rounded-full bg-brand-primary ring-4 ring-brand-bg shadow-[0_0_12px_rgba(255,109,31,0.6)]" />
+                <div className="flex items-center gap-4">
+                  <span className="px-3 py-1 rounded-full bg-brand-primary/10 text-brand-primary text-xs font-bold">
+                    {a.year}
+                  </span>
+                  <Badge {...a.badge} />
+                </div>
 
-                {/* CARD */}
-                <motion.div
-                  whileHover={
-                    a.certificate && !reduceMotion && !isMobile
-                      ? {
-                          y: -6,
-                          boxShadow:
-                            "0 20px 40px rgba(0,0,0,0.12), inset 0 0 0 1px rgba(255,109,31,0.35)",
-                        }
-                      : {}
-                  }
-                  transition={{ type: "spring", stiffness: 160, damping: 16 }}
-                  onClick={() =>
-                    a.certificate && setActiveCert(a.certificate)
-                  }
-                  className={`rounded-2xl p-7 bg-white/90 backdrop-blur shadow-lg ring-1 ring-black/5 transition ${
-                    a.certificate ? "cursor-pointer" : ""
-                  }`}
-                >
-                  <div className="flex items-center gap-4">
-                    <span className="px-3 py-1 rounded-full bg-brand-primary/10 text-brand-primary text-xs font-bold">
-                      {a.year}
-                    </span>
-                    <Badge {...a.badge} />
-                  </div>
+                <h3 className="mt-4 text-xl font-black">
+                  {a.title}
+                </h3>
 
-                  <h3 className="mt-4 text-xl font-black">
-                    {a.title}
-                  </h3>
-
-                  <p className="mt-2 text-text-muted leading-relaxed">
-                    {a.desc}
-                  </p>
-
-                  {a.certificate && (
-                    <p className="mt-4 text-sm font-semibold text-brand-primary">
-                      View certificate →
-                    </p>
-                  )}
-                </motion.div>
-              </motion.article>
-            ))}
-          </AnimatePresence>
-        </div>
+                <p className="mt-2 text-text-muted">
+                  {a.desc}
+                </p>
+              </div>
+            </motion.article>
+          ))}
+        </AnimatePresence>
       </div>
 
       {/* ================= CERTIFICATE MODAL ================= */}

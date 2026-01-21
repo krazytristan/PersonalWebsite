@@ -20,7 +20,7 @@ const POSTS = [
     tags: ["Education", "Career"],
     excerpt:
       "Lessons from years of teaching IT & CS — how to keep students motivated and shipping real projects.",
-    cover: "/images/blog/teaching.jpg",
+    cover: "/images/tech.jpg",
     link: "#",
   },
   {
@@ -30,7 +30,7 @@ const POSTS = [
     tags: ["IoT", "APIs", "Case Study"],
     excerpt:
       "A candid field note from deploying small-scale sensors — what surprised us and what to avoid.",
-    cover: "/images/blog/iot.jpg",
+    cover: "/images/IoT.webp",
     link: "#",
   },
 ];

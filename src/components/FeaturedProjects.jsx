@@ -13,9 +13,11 @@ import { projects } from "../data/projects";
 const AUTO_DELAY = 5200;
 const CARD_WIDTH = 360;
 const GAP = 120;
+const FALLBACK_IMAGE = "/images/projects/fallback.jpg";
 
 export default function FeaturedProjects() {
   const reduceMotion = useReducedMotion();
+
   const isMobile =
     typeof window !== "undefined" &&
     window.matchMedia("(pointer: coarse)").matches;
@@ -46,29 +48,35 @@ export default function FeaturedProjects() {
   });
   const driftY = useTransform(scrollYProgress, [0, 1], [40, -40]);
 
-  /* ================= MAGNETIC (DESKTOP ONLY) ================= */
+  /* ================= MAGNETIC ================= */
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
   const magneticX = useSpring(mx, { stiffness: 120, damping: 18 });
   const magneticY = useSpring(my, { stiffness: 120, damping: 18 });
 
-  /* ================= AUTO SLIDE (DESKTOP ONLY) ================= */
+  /* ================= AUTO SLIDE ================= */
   useEffect(() => {
-    if (reduceMotion || paused || active || isMobile) return;
+    if (
+      reduceMotion ||
+      paused ||
+      active ||
+      isMobile ||
+      featured.length <= 1
+    )
+      return;
+
     const id = setInterval(
       () => setIndex((i) => (i + 1) % featured.length),
       AUTO_DELAY
     );
-    return () => clearInterval(id);
-  }, [paused, reduceMotion, active, isMobile]);
 
-  /* ================= MOBILE LAYOUT ================= */
+    return () => clearInterval(id);
+  }, [paused, reduceMotion, active, isMobile, featured.length]);
+
+  /* ================= MOBILE ================= */
   if (isMobile) {
     return (
-      <section
-        id="projects"
-        className="py-24 bg-brand-bg"
-      >
+      <section id="projects" className="py-24 bg-brand-bg">
         <div className="text-center mb-14">
           <span className="block mb-3 text-xs font-bold tracking-widest text-brand-primary">
             SELECTED WORK
@@ -85,10 +93,14 @@ export default function FeaturedProjects() {
             >
               <img
                 src={project.image}
-                alt={project.title}
-                className="h-48 w-full object-cover rounded-t-2xl"
+                alt={project.imageAlt || project.title}
                 loading="lazy"
+                onError={(e) => {
+                  e.currentTarget.src = FALLBACK_IMAGE;
+                }}
+                className="h-48 w-full object-cover rounded-t-2xl"
               />
+
               <div className="p-5">
                 <h3 className="text-lg font-black">{project.title}</h3>
                 <p className="mt-2 text-sm text-text-muted">
@@ -118,9 +130,7 @@ export default function FeaturedProjects() {
                 <h3 className="text-xl font-black mb-2">
                   {active.title}
                 </h3>
-                <p className="text-text-muted">
-                  {active.desc}
-                </p>
+                <p className="text-text-muted">{active.desc}</p>
               </motion.div>
             </motion.div>
           )}
@@ -129,7 +139,7 @@ export default function FeaturedProjects() {
     );
   }
 
-  /* ================= DESKTOP CAROUSEL ================= */
+  /* ================= DESKTOP ================= */
   return (
     <motion.section
       ref={containerRef}
@@ -169,9 +179,7 @@ export default function FeaturedProjects() {
 
           const isCenter = offset === 0;
           const x =
-            offset === 0
-              ? 0
-              : offset * (CARD_WIDTH / 2 + GAP);
+            offset === 0 ? 0 : offset * (CARD_WIDTH / 2 + GAP);
 
           return (
             <motion.div key={project.id} className="absolute">
@@ -206,9 +214,14 @@ export default function FeaturedProjects() {
               >
                 <img
                   src={project.image}
-                  alt={project.title}
+                  alt={project.imageAlt || project.title}
+                  loading="lazy"
+                  onError={(e) => {
+                    e.currentTarget.src = FALLBACK_IMAGE;
+                  }}
                   className="h-52 w-full object-cover"
                 />
+
                 <div className="p-6 bg-white/30 backdrop-blur-xl">
                   <h3 className="text-xl font-black">
                     {project.title}
@@ -242,9 +255,7 @@ export default function FeaturedProjects() {
               <h3 className="text-2xl font-black mb-2">
                 {active.title}
               </h3>
-              <p className="text-text-muted">
-                {active.desc}
-              </p>
+              <p className="text-text-muted">{active.desc}</p>
             </motion.div>
           </motion.div>
         )}
