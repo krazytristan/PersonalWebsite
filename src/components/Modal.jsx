@@ -1,96 +1,114 @@
 import { useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
 export default function Modal({ open, onClose, children }) {
   const reduceMotion = useReducedMotion();
 
-  /* ================= ESC + iOS SAFE SCROLL LOCK ================= */
   useEffect(() => {
     if (!open) return;
+
+    document.body.style.overflow = "hidden";
 
     const onKey = (e) => {
       if (e.key === "Escape") onClose?.();
     };
 
-    const scrollY = window.scrollY;
-    const body = document.body;
-
-    body.style.position = "fixed";
-    body.style.top = `-${scrollY}px`;
-    body.style.width = "100%";
-
     window.addEventListener("keydown", onKey);
 
     return () => {
+      document.body.style.overflow = "";
       window.removeEventListener("keydown", onKey);
-
-      body.style.position = "";
-      body.style.top = "";
-      body.style.width = "";
-      window.scrollTo(0, scrollY);
     };
   }, [open, onClose]);
 
-  return (
+  if (typeof window === "undefined") return null;
+
+  return createPortal(
     <AnimatePresence>
       {open && (
         <motion.div
-          role="dialog"
-          aria-modal="true"
           className="
-            fixed inset-0 z-[100]
-            bg-black/60 backdrop-blur
-            flex items-end sm:items-center justify-center
-            px-3 sm:px-4
+            fixed inset-0 z-[9999]
+            flex items-center justify-center
+            p-4
           "
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
+          transition={{ duration: 0.25 }}
           onClick={onClose}
         >
+          {/* 🌌 PREMIUM BACKDROP */}
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-md" />
+
+          {/* ✨ MODAL CARD */}
           <motion.div
             onClick={(e) => e.stopPropagation()}
             initial={
               !reduceMotion
-                ? { scale: 0.96, y: 32, opacity: 0 }
+                ? { scale: 0.9, opacity: 0, y: 30 }
                 : false
             }
             animate={
               !reduceMotion
-                ? { scale: 1, y: 0, opacity: 1 }
+                ? { scale: 1, opacity: 1, y: 0 }
                 : false
             }
             exit={
               !reduceMotion
-                ? { scale: 0.96, y: 32, opacity: 0 }
+                ? { scale: 0.9, opacity: 0, y: 20 }
                 : false
             }
-            transition={{ duration: 0.25, ease: "easeOut" }}
+            transition={{
+              type: "spring",
+              stiffness: 260,
+              damping: 22,
+            }}
             className="
-              relative w-full max-w-5xl
-              bg-white dark:bg-zinc-900
-              rounded-t-3xl sm:rounded-2xl
-              shadow-2xl
-              max-h-[85svh] sm:max-h-[90vh]
+              relative
+              w-full max-w-3xl
+              h-[85vh] max-h-[85vh]
+
+              bg-white/80 dark:bg-zinc-900/80
+              backdrop-blur-xl
+
+              border border-white/20 dark:border-white/10
+              rounded-2xl shadow-2xl
+
               overflow-hidden
               flex flex-col
             "
           >
+            {/* 🔥 GLOW BORDER EFFECT */}
+            <div className="absolute inset-0 rounded-2xl pointer-events-none ring-1 ring-white/10" />
+
             {/* ================= HEADER ================= */}
-            <div className="sticky top-0 z-10 flex items-center justify-end
-                            p-4 bg-white/90 dark:bg-zinc-900/90
-                            backdrop-blur ring-b ring-black/5 dark:ring-white/10">
+            <div className="
+              flex items-center justify-between
+              px-5 py-3
+              border-b border-black/5 dark:border-white/10
+              shrink-0
+            ">
+              <span className="text-sm font-semibold text-zinc-600 dark:text-zinc-300">
+                Certificate Preview
+              </span>
+
+              {/* ✖ CLOSE BUTTON */}
               <button
                 onClick={onClose}
                 aria-label="Close modal"
                 className="
-                  h-10 w-10 rounded-full
-                  grid place-items-center
-                  text-zinc-500
-                  hover:bg-black/5 dark:hover:bg-white/10
-                  hover:text-zinc-800 dark:hover:text-white
+                  w-9 h-9
+                  flex items-center justify-center
+                  rounded-full
+
+                  bg-black/5 dark:bg-white/10
+                  hover:bg-black/10 dark:hover:bg-white/20
+
+                  text-lg
                   transition
+                  active:scale-90
                 "
               >
                 ✕
@@ -98,18 +116,13 @@ export default function Modal({ open, onClose, children }) {
             </div>
 
             {/* ================= CONTENT ================= */}
-            <div
-              className="
-                flex-1 overflow-y-auto overscroll-contain
-                p-5 sm:p-6
-              "
-              style={{ WebkitOverflowScrolling: "touch" }}
-            >
+            <div className="flex-1 overflow-hidden p-4 sm:p-5">
               {children}
             </div>
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }

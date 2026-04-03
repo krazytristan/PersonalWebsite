@@ -32,7 +32,7 @@ function Typewriter({ text }) {
       setDisplay(text.slice(0, i + 1));
       i++;
       if (i >= text.length) clearInterval(id);
-    }, 70);
+    }, 60); // smoother typing
 
     return () => clearInterval(id);
   }, [text, reduceMotion]);
@@ -80,7 +80,6 @@ function useCountUp(target, duration = 1200) {
 export default function Hero() {
   const reduceMotion = useReducedMotion();
 
-  /* ================= DEVICE GUARD ================= */
   const isDesktop = useMemo(() => {
     if (typeof window === "undefined") return false;
     return window.matchMedia("(min-width: 768px)").matches;
@@ -88,30 +87,26 @@ export default function Hero() {
 
   const enableFX = !reduceMotion && isDesktop;
 
-  /* ================= SCROLL FADE ================= */
   const { scrollY } = useScroll();
   const fadeOut = enableFX
     ? useTransform(scrollY, [0, 420], [1, 0.85])
     : 1;
 
-  /* ================= CURSOR SPOTLIGHT ================= */
   const mx = useMotionValue(50);
   const my = useMotionValue(50);
 
-  /* ================= TILT ================= */
   const tx = useMotionValue(0);
   const ty = useMotionValue(0);
 
   const rotateX = useSpring(
     useTransform(ty, [-40, 40], [10, -10]),
-    { stiffness: 120, damping: 18 }
+    { stiffness: 100, damping: 20 }
   );
   const rotateY = useSpring(
     useTransform(tx, [-40, 40], [-10, 10]),
-    { stiffness: 120, damping: 18 }
+    { stiffness: 100, damping: 20 }
   );
 
-  /* ================= ROLES ================= */
   const roles = ["Educator", "Developer", "Architect"];
   const [role, setRole] = useState(0);
 
@@ -119,12 +114,11 @@ export default function Hero() {
     if (!enableFX) return;
     const id = setInterval(
       () => setRole((i) => (i + 1) % roles.length),
-      2600
+      2400
     );
     return () => clearInterval(id);
   }, [enableFX]);
 
-  /* ================= STATS ================= */
   const [years, yearsRef] = useCountUp(5);
   const [systems, systemsRef] = useCountUp(15);
 
@@ -139,7 +133,7 @@ export default function Hero() {
         my.set(((e.clientY - r.top) / r.height) * 100);
       }}
     >
-      {/* ================= SPOTLIGHT ================= */}
+      {/* PREMIUM SPOTLIGHT */}
       {enableFX && (
         <motion.div
           className="absolute inset-0 pointer-events-none"
@@ -147,21 +141,20 @@ export default function Hero() {
             background: useTransform(
               [mx, my],
               ([x, y]) =>
-                `radial-gradient(600px at ${x}% ${y}%, rgba(255,109,31,0.15), transparent 60%)`
+                `radial-gradient(650px at ${x}% ${y}%, rgba(255,109,31,0.18), transparent 60%)`
             ),
           }}
         />
       )}
 
-      {/* ================= VIDEO (DESKTOP ONLY) ================= */}
+      {/* BACKGROUND VIDEO */}
       {enableFX && (
         <video
-          className="absolute inset-0 w-full h-full object-cover opacity-[0.05]"
+          className="absolute inset-0 w-full h-full object-cover opacity-[0.06]"
           autoPlay
           loop
           muted
           playsInline
-          preload="none"
         >
           <source src="/videos/hero-bg.mp4" type="video/mp4" />
         </video>
@@ -171,25 +164,26 @@ export default function Hero() {
 
       <motion.div
         style={{ opacity: fadeOut }}
-        className="relative z-10 max-w-6xl mx-auto px-4 grid md:grid-cols-2 gap-14 items-center"
+        className="relative z-10 max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center"
       >
-        {/* ================= LEFT ================= */}
+        {/* LEFT */}
         <motion.div
           initial={{ opacity: 0, y: 60 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
+          transition={{ duration: 0.9 }}
         >
           <span className="inline-flex px-4 py-1.5 rounded-full text-sm bg-brand-primary/10 text-brand-primary ring-1 ring-brand-primary/30">
             🚀 Building real-world systems
           </span>
 
-          <h1 className="mt-6 text-5xl xl:text-6xl font-black leading-tight">
+          <h1 className="mt-6 text-4xl sm:text-5xl xl:text-6xl font-black leading-tight">
             Hi, I’m{" "}
             <span className="text-brand-primary">
               <Typewriter text="Tristan" />
             </span>
           </h1>
 
+          {/* ROLE SWITCH */}
           <div className="relative mt-2 h-[28px] text-lg font-semibold text-brand-primary overflow-hidden">
             <AnimatePresence mode="wait">
               <motion.div
@@ -197,7 +191,7 @@ export default function Hero() {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -20, opacity: 0 }}
-                transition={{ duration: 0.45 }}
+                transition={{ duration: 0.4 }}
                 className="absolute"
               >
                 {roles[role]}
@@ -211,12 +205,12 @@ export default function Hero() {
           </p>
 
           {/* CTA */}
-          <div className="mt-8 flex gap-4">
+          <div className="mt-8 flex flex-wrap gap-4">
             <motion.a
               href="#projects"
-              whileHover={enableFX ? { scale: 1.05 } : {}}
-              whileTap={{ scale: 0.97 }}
-              className="px-7 py-3 rounded-xl bg-brand-primary text-white font-semibold shadow-lg"
+              whileHover={enableFX ? { scale: 1.07 } : {}}
+              whileTap={{ scale: 0.95 }}
+              className="px-7 py-3 rounded-xl bg-brand-primary text-white font-semibold shadow-lg hover:shadow-xl transition"
             >
               View Projects
             </motion.a>
@@ -242,9 +236,7 @@ export default function Hero() {
                 key={i}
                 href={item.href}
                 target="_blank"
-                rel="noopener noreferrer"
-                whileHover={enableFX ? { y: -4, scale: 1.08 } : {}}
-                whileTap={{ scale: 0.95 }}
+                whileHover={enableFX ? { y: -5, scale: 1.1 } : {}}
                 className="w-11 h-11 flex items-center justify-center rounded-full
                   bg-brand-surface ring-1 ring-black/10 text-brand-primary
                   hover:bg-brand-primary hover:text-white transition shadow-md"
@@ -266,7 +258,7 @@ export default function Hero() {
           </div>
         </motion.div>
 
-        {/* ================= RIGHT (DESKTOP ONLY) ================= */}
+        {/* RIGHT */}
         <motion.div
           className="relative hidden md:block perspective-[1200px]"
           onMouseMove={(e) => {
@@ -280,33 +272,28 @@ export default function Hero() {
             ty.set(0);
           }}
         >
-          {enableFX && (
-            <motion.div
-              className="absolute -inset-8 rounded-[2.5rem]"
-              style={{
-                background:
-                  "conic-gradient(from 0deg, transparent, #FF6D1F, transparent)",
-                filter: "blur(26px)",
-                opacity: 0.6,
-              }}
-              animate={{ rotate: 360 }}
-              transition={{ duration: 24, repeat: Infinity, ease: "linear" }}
-            />
-          )}
+          <motion.div
+            className="absolute -inset-10 rounded-[2.5rem]"
+            style={{
+              background:
+                "conic-gradient(from 0deg, transparent, #FF6D1F, transparent)",
+              filter: "blur(30px)",
+              opacity: 0.6,
+            }}
+            animate={{ rotate: 360 }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          />
 
           <motion.div
             style={enableFX ? { rotateX, rotateY } : {}}
             whileHover={enableFX ? { scale: 1.05 } : {}}
-            transition={{ type: "spring", stiffness: 120, damping: 16 }}
             className="relative rounded-3xl overflow-hidden shadow-2xl"
           >
             <img
-              src="/images/BSU_6102.jpg"
+              src="/images/portratit.png"
               alt="Tristan portrait"
               className="rounded-3xl"
-              loading="eager"
             />
-            <div className="noise-overlay absolute inset-0" />
           </motion.div>
         </motion.div>
       </motion.div>

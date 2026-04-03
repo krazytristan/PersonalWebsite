@@ -20,7 +20,7 @@ const HEADER = {
   title: (
     <>
       Let’s Build Something
-      <span className="block text-brand-primary">
+      <span className="block bg-gradient-to-r from-brand-primary to-orange-400 bg-clip-text text-transparent">
         Meaningful Together
       </span>
     </>
@@ -33,26 +33,24 @@ export default function Contact() {
   const reduceMotion = useReducedMotion();
   const email = "trstnjorge@gmail.com";
 
-  /* ================= FORM STATE ================= */
   const [form, setForm] = useState({
     name: "",
     email: "",
     message: "",
   });
-  const [status, setStatus] = useState("idle"); // idle | sending
-  const [toast, setToast] = useState(null); // { type, message }
+
+  const [status, setStatus] = useState("idle");
+  const [toast, setToast] = useState(null);
 
   const onChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  /* ================= AUTO-HIDE TOAST ================= */
   useEffect(() => {
     if (!toast) return;
     const timer = setTimeout(() => setToast(null), 3000);
     return () => clearTimeout(timer);
   }, [toast]);
 
-  /* ================= SUBMIT ================= */
   const onSubmit = async (e) => {
     e.preventDefault();
     setStatus("sending");
@@ -86,8 +84,8 @@ export default function Contact() {
   };
 
   const fieldClass =
-    "w-full rounded-xl bg-brand-surface px-4 py-3 text-sm text-text-primary " +
-    "ring-1 ring-brand-text/10 focus:outline-none focus:ring-2 focus:ring-brand-primary";
+    "peer w-full rounded-xl bg-transparent px-4 pt-5 pb-2 text-sm text-text-primary " +
+    "ring-1 ring-brand-text/10 focus:outline-none focus:ring-2 focus:ring-brand-primary transition";
 
   return (
     <section
@@ -97,36 +95,24 @@ export default function Contact() {
       {/* ================= TOAST ================= */}
       {toast && (
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0 }}
-          className={`
-            fixed top-6 right-6 z-50 flex items-center gap-3
-            rounded-xl px-5 py-3 text-sm font-semibold shadow-xl
-            ${
-              toast.type === "success"
-                ? "bg-emerald-500 text-white"
-                : "bg-red-500 text-white"
-            }
-          `}
+          initial={{ opacity: 0, y: 20, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          className={`fixed top-6 right-6 z-50 flex items-center gap-3
+            rounded-xl px-5 py-3 text-sm font-semibold shadow-2xl backdrop-blur
+            ${toast.type === "success"
+              ? "bg-emerald-500/90 text-white"
+              : "bg-red-500/90 text-white"
+            }`}
         >
-          {toast.type === "success" ? (
-            <FaCheckCircle />
-          ) : (
-            <FaTimesCircle />
-          )}
+          {toast.type === "success" ? <FaCheckCircle /> : <FaTimesCircle />}
           {toast.message}
         </motion.div>
       )}
 
-      {/* ================= AMBIENT GLOW ================= */}
+      {/* ================= GLOW ================= */}
       {!reduceMotion && (
         <div className="absolute inset-0 -z-10 pointer-events-none">
-          <div
-            className="absolute bottom-[-240px] left-1/2 -translate-x-1/2
-            w-[520px] h-[520px] sm:w-[760px] sm:h-[760px]
-            rounded-full bg-brand-primary/15 blur-3xl"
-          />
+          <div className="absolute bottom-[-240px] left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full bg-brand-primary/20 blur-3xl" />
         </div>
       )}
 
@@ -135,55 +121,52 @@ export default function Contact() {
         initial={{ opacity: 0, y: 28 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
         className="mb-16 px-4 text-center max-w-3xl mx-auto"
       >
-        <span className="inline-block mb-4 px-4 py-1.5 rounded-full
-          bg-brand-primary/10 text-brand-primary
-          text-xs font-semibold tracking-wide"
-        >
+        <span className="inline-block mb-4 px-4 py-1.5 rounded-full bg-brand-primary/10 text-brand-primary text-xs font-semibold">
           {HEADER.label}
         </span>
 
-        <h2 className="text-4xl sm:text-5xl xl:text-6xl font-black text-text-primary leading-tight">
+        <h2 className="text-4xl sm:text-5xl xl:text-6xl font-black leading-tight">
           {HEADER.title}
         </h2>
 
-        <p className="mt-6 text-sm sm:text-base text-text-muted leading-relaxed">
+        <p className="mt-6 text-sm sm:text-base text-text-muted">
           {HEADER.desc}
         </p>
       </motion.div>
 
       {/* ================= CONTENT ================= */}
-      <div className="max-w-5xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-14">
+        
         {/* ================= FORM ================= */}
         <motion.form
           onSubmit={onSubmit}
-          initial={{ opacity: 0, y: 32 }}
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="rounded-3xl bg-brand-surface p-8 shadow-xl ring-1 ring-brand-text/10"
+          className="rounded-3xl bg-white/5 backdrop-blur-xl p-8 shadow-2xl ring-1 ring-white/10"
         >
-          <div className="space-y-5">
-            <div>
-              <label className="block text-xs font-semibold text-text-muted mb-1">
-                Name
-              </label>
+          <div className="space-y-6">
+
+            {/* NAME */}
+            <div className="relative">
               <input
                 name="name"
                 required
                 value={form.name}
                 onChange={onChange}
                 className={fieldClass}
-                placeholder="Your name"
+                placeholder=" "
               />
+              <label className="absolute left-4 top-2 text-xs text-text-muted transition-all
+                peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm
+                peer-focus:top-2 peer-focus:text-xs">
+                Name
+              </label>
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-text-muted mb-1">
-                Email
-              </label>
+            {/* EMAIL */}
+            <div className="relative">
               <input
                 name="email"
                 type="email"
@@ -191,14 +174,17 @@ export default function Contact() {
                 value={form.email}
                 onChange={onChange}
                 className={fieldClass}
-                placeholder="you@email.com"
+                placeholder=" "
               />
+              <label className="absolute left-4 top-2 text-xs text-text-muted transition-all
+                peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm
+                peer-focus:top-2 peer-focus:text-xs">
+                Email
+              </label>
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-text-muted mb-1">
-                Message
-              </label>
+            {/* MESSAGE */}
+            <div className="relative">
               <textarea
                 name="message"
                 rows={5}
@@ -206,82 +192,60 @@ export default function Contact() {
                 value={form.message}
                 onChange={onChange}
                 className={fieldClass}
-                placeholder="Tell me about your project..."
+                placeholder=" "
               />
+              <label className="absolute left-4 top-2 text-xs text-text-muted transition-all
+                peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm
+                peer-focus:top-2 peer-focus:text-xs">
+                Message
+              </label>
             </div>
 
-            <button
+            {/* BUTTON */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               type="submit"
               disabled={status === "sending"}
-              className="
-                inline-flex items-center justify-center
-                rounded-xl bg-brand-primary px-6 py-3
-                text-sm font-semibold text-white
-                hover:opacity-90 active:scale-95 transition
-                disabled:opacity-60
-              "
+              className="w-full rounded-xl py-3 font-semibold text-white
+                bg-gradient-to-r from-brand-primary to-orange-400
+                shadow-lg hover:shadow-xl transition disabled:opacity-60"
             >
               {status === "sending" ? "Sending..." : "Send Message"}
-            </button>
+            </motion.button>
           </div>
         </motion.form>
 
-        {/* ================= SOCIALS ================= */}
+        {/* ================= SOCIAL ================= */}
         <motion.div
-          initial={{ opacity: 0, y: 32 }}
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.1 }}
           className="space-y-6"
         >
-          <h3 className="text-xl font-black text-text-primary">
-            Connect with me
-          </h3>
+          <h3 className="text-xl font-black">Connect with me</h3>
 
           <p className="text-sm text-text-muted max-w-md">
             You can also reach out or follow my work through these platforms.
           </p>
 
           <div className="flex gap-4">
-            <a
-              href="https://github.com/krazytristan"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="GitHub"
-              className="
-                grid place-items-center w-12 h-12 rounded-xl
-                bg-brand-surface ring-1 ring-brand-text/10
-                hover:bg-[#24292e] hover:text-white transition
-              "
-            >
-              <FaGithub />
-            </a>
-
-            <a
-              href="https://linkedin.com/in/tristan-jorge-cuartero"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="LinkedIn"
-              className="
-                grid place-items-center w-12 h-12 rounded-xl
-                bg-brand-surface ring-1 ring-brand-text/10
-                hover:bg-[#0a66c2] hover:text-white transition
-              "
-            >
-              <FaLinkedinIn />
-            </a>
-
-            <a
-              href={`mailto:${email}`}
-              aria-label="Email"
-              className="
-                grid place-items-center w-12 h-12 rounded-xl
-                bg-brand-surface ring-1 ring-brand-text/10
-                hover:bg-brand-primary hover:text-white transition
-              "
-            >
-              <FaEnvelope />
-            </a>
+            {[
+              { icon: <FaGithub />, link: "https://github.com/krazytristan" },
+              { icon: <FaLinkedinIn />, link: "https://linkedin.com/in/tristan-jorge-cuartero" },
+              { icon: <FaEnvelope />, link: `mailto:${email}` },
+            ].map((item, i) => (
+              <motion.a
+                key={i}
+                href={item.link}
+                target="_blank"
+                whileHover={{ y: -6, scale: 1.1 }}
+                className="w-12 h-12 flex items-center justify-center rounded-xl
+                  bg-white/5 backdrop-blur ring-1 ring-white/10
+                  hover:bg-brand-primary hover:text-white transition shadow-lg"
+              >
+                {item.icon}
+              </motion.a>
+            ))}
           </div>
         </motion.div>
       </div>

@@ -82,7 +82,7 @@ export default function Achievements({ headerVariant = "default" }) {
   const [filter, setFilter] = useState("All");
   const [activeCert, setActiveCert] = useState(null);
 
-  /* ================= FILTER LOGIC ================= */
+  /* ================= FILTER ================= */
   const filtered = useMemo(() => {
     if (filter === "All") return achievements;
     return achievements.filter((a) => a.category === filter);
@@ -91,39 +91,33 @@ export default function Achievements({ headerVariant = "default" }) {
   const featured =
     filtered.find((a) => a.featured) || filtered[0];
 
-  /* ================= SCROLL SPINE ================= */
+  /* ================= SCROLL ================= */
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
   });
+
   const spineScale = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   return (
     <section
       ref={sectionRef}
       id="achievements"
-      className="relative py-28 bg-brand-bg overflow-hidden"
+      className="relative py-24 bg-brand-bg overflow-hidden"
     >
       {/* ================= HEADER ================= */}
       <motion.div
         initial={{ opacity: 0, y: 28 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-120px" }}
+        viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="max-w-3xl mx-auto px-4 text-center mb-20"
+        className="max-w-3xl mx-auto px-4 text-center mb-16"
       >
-        <span
-          className="inline-block mb-4 px-4 py-1.5 rounded-full
-          bg-brand-primary/10 text-brand-primary
-          text-xs font-semibold tracking-wide"
-        >
+        <span className="inline-block mb-4 px-4 py-1.5 rounded-full bg-brand-primary/10 text-brand-primary text-xs font-semibold tracking-wide">
           {header.label}
         </span>
 
-        <h2
-          className="text-4xl sm:text-5xl xl:text-6xl
-          font-black text-text-primary leading-tight"
-        >
+        <h2 className="text-4xl sm:text-5xl xl:text-6xl font-black text-text-primary leading-tight">
           {header.title}
         </h2>
 
@@ -133,15 +127,15 @@ export default function Achievements({ headerVariant = "default" }) {
       </motion.div>
 
       {/* ================= FILTER ================= */}
-      <div className="flex justify-center gap-3 mb-24 flex-wrap px-4">
+      <div className="flex justify-center gap-3 mb-16 flex-wrap px-4">
         {filters.map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-5 py-2 rounded-full text-sm font-semibold transition ring-1
+            className={`px-4 py-1.5 rounded-full text-sm font-semibold transition ring-1
               ${
                 filter === f
-                  ? "bg-brand-primary text-white ring-brand-primary"
+                  ? "bg-brand-primary text-white ring-brand-primary shadow-lg"
                   : "bg-brand-surface hover:bg-white ring-brand-text/10"
               }`}
           >
@@ -155,46 +149,33 @@ export default function Achievements({ headerVariant = "default" }) {
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.55, ease: "easeOut" }}
-          className="max-w-4xl mx-auto mb-28 px-4"
+          transition={{ duration: 0.5 }}
+          className="max-w-4xl mx-auto mb-20 px-4"
         >
-          <div
-            className="relative rounded-3xl p-8 sm:p-10
-            bg-brand-surface backdrop-blur
-            ring-1 ring-brand-text/10 shadow-2xl"
-          >
-            <span
-              className="absolute -top-3 left-6 px-3 py-1
-              rounded-full text-xs font-bold
-              bg-brand-primary text-white"
-            >
+          <div className="relative rounded-2xl p-6 sm:p-8 bg-brand-surface ring-1 ring-brand-text/10 shadow-xl">
+            <span className="absolute -top-3 left-5 px-3 py-1 rounded-full text-xs font-bold bg-brand-primary text-white">
               Featured
             </span>
 
-            <div className="flex items-center gap-4 mb-4">
-              <span
-                className="px-3 py-1 rounded-full
-                bg-brand-primary/10 text-brand-primary
-                text-xs font-bold"
-              >
+            <div className="flex items-center gap-3 mb-3">
+              <span className="px-2.5 py-1 rounded-full bg-brand-primary/10 text-brand-primary text-xs font-bold">
                 {featured.year}
               </span>
               <Badge {...featured.badge} />
             </div>
 
-            <h3 className="text-2xl font-black text-text-primary mb-3">
+            <h3 className="text-xl font-black text-text-primary mb-2">
               {featured.title}
             </h3>
 
-            <p className="text-text-muted leading-relaxed">
+            <p className="text-sm text-text-muted">
               {featured.desc}
             </p>
 
             {featured.certificate && (
               <button
                 onClick={() => setActiveCert(featured.certificate)}
-                className="mt-6 inline-flex font-semibold text-brand-primary hover:underline"
+                className="mt-4 text-sm font-semibold text-brand-primary hover:underline"
               >
                 View certificate →
               </button>
@@ -203,80 +184,67 @@ export default function Achievements({ headerVariant = "default" }) {
         </motion.div>
       )}
 
-      {/* ================= TIMELINE ================= */}
-      <div className="relative max-w-6xl mx-auto px-4 pl-8 sm:pl-10 space-y-20">
+      {/* ================= TIMELINE (2 COLUMN) ================= */}
+      <div className="relative max-w-6xl mx-auto px-4">
         {/* Spine */}
-        <div className="absolute left-[10px] top-0 bottom-0 w-px bg-brand-primary/25" />
+        <div className="absolute left-4 top-0 bottom-0 w-px bg-brand-primary/20 hidden md:block" />
 
         {!reduceMotion && !isMobile && (
           <motion.div
-            className="absolute left-[10px] top-0 bottom-0 w-px
-              bg-brand-primary origin-top"
+            className="absolute left-4 top-0 bottom-0 w-px bg-brand-primary origin-top hidden md:block"
             style={{ scaleY: spineScale }}
           />
         )}
 
-        <AnimatePresence>
-          {filtered.map((a, i) => (
-            <motion.article
-              key={a.title}
-              initial={{ opacity: 0, y: 28 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.45, delay: i * 0.06 }}
-              className="relative"
-            >
-              {/* Node */}
-              <span
-                className="absolute left-[2px] top-6 w-4 h-4 rounded-full
-                bg-brand-primary ring-4 ring-brand-bg
-                shadow-[0_0_0_6px_rgba(255,109,31,0.15)]"
-              />
-
-              <div
-                onClick={() =>
-                  a.certificate && setActiveCert(a.certificate)
-                }
-                className={`rounded-2xl p-7 sm:p-8
-                  bg-brand-surface shadow-lg
-                  ring-1 ring-brand-text/10 transition
+        {/* GRID */}
+        <div className="grid md:grid-cols-2 gap-6 md:gap-8">
+          <AnimatePresence>
+            {filtered.map((a, i) => (
+              <motion.article
+                key={a.title}
+                initial={{ opacity: 0, y: 25 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05 }}
+              >
+                <div
+                  onClick={() =>
+                    a.certificate && setActiveCert(a.certificate)
+                  }
+                  className={`rounded-xl p-5 bg-brand-surface ring-1 ring-brand-text/10 shadow-md transition
                   ${
                     a.certificate
-                      ? "cursor-pointer hover:shadow-xl hover:-translate-y-1"
+                      ? "cursor-pointer hover:shadow-lg hover:-translate-y-1"
                       : ""
                   }`}
-              >
-                <div className="flex items-center gap-4">
-                  <span
-                    className="px-3 py-1 rounded-full
-                    bg-brand-primary/10 text-brand-primary
-                    text-xs font-bold"
-                  >
-                    {a.year}
-                  </span>
-                  <Badge {...a.badge} />
-                </div>
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 rounded-full bg-brand-primary/10 text-brand-primary text-xs font-bold">
+                      {a.year}
+                    </span>
+                    <Badge {...a.badge} />
+                  </div>
 
-                <h3 className="mt-4 text-xl font-black text-text-primary">
-                  {a.title}
-                </h3>
+                  <h3 className="mt-3 text-lg font-black text-text-primary">
+                    {a.title}
+                  </h3>
 
-                <p className="mt-2 text-text-muted leading-relaxed">
-                  {a.desc}
-                </p>
-
-                {a.certificate && (
-                  <p className="mt-4 text-sm font-semibold text-brand-primary">
-                    View certificate →
+                  <p className="mt-1 text-sm text-text-muted">
+                    {a.desc}
                   </p>
-                )}
-              </div>
-            </motion.article>
-          ))}
-        </AnimatePresence>
+
+                  {a.certificate && (
+                    <p className="mt-3 text-xs font-semibold text-brand-primary">
+                      View certificate →
+                    </p>
+                  )}
+                </div>
+              </motion.article>
+            ))}
+          </AnimatePresence>
+        </div>
       </div>
 
-      {/* ================= CERTIFICATE MODAL ================= */}
+      {/* ================= MODAL ================= */}
       <Modal open={!!activeCert} onClose={() => setActiveCert(null)}>
         {activeCert && <CertificateViewer {...activeCert} />}
       </Modal>
