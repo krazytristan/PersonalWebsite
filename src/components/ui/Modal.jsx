@@ -1,22 +1,37 @@
 import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { X } from "lucide-react";
+import { sounds } from "../../utils/audio";
 
-export default function Modal({ open, onClose, children }) {
+export default function Modal({
+  open,
+  onClose,
+  children,
+  size = "xl", // sm | md | lg | xl | full
+  showCloseButton = true,
+  className = "",
+}) {
   const reduceMotion = useReducedMotion();
   const overlayRef = useRef(null);
 
-  /* ================= ESC + SCROLL LOCK ================= */
+  /* ================= ESC KEY + BODY SCROLL LOCK ================= */
   useEffect(() => {
     if (!open) return;
 
+    sounds.playPop();
+
     const onKey = (e) => {
-      if (e.key === "Escape") onClose?.();
+      if (e.key === "Escape") {
+        sounds.playClick();
+        onClose?.();
+      }
     };
 
     const originalOverflow = document.body.style.overflow;
     const originalPadding = document.body.style.paddingRight;
 
-    // Prevent layout shift when scrollbar disappears
+    // Prevent layout jitter when scrollbar is hidden
     const scrollbarWidth =
       window.innerWidth - document.documentElement.clientWidth;
 
@@ -34,86 +49,103 @@ export default function Modal({ open, onClose, children }) {
     };
   }, [open, onClose]);
 
-  return (
+  if (typeof window === "undefined") return null;
+
+  const sizeClasses = {
+    sm: "max-w-md",
+    md: "max-w-lg",
+    lg: "max-w-3xl",
+    xl: "max-w-5xl",
+    full: "max-w-6xl",
+  }[size] || "max-w-5xl";
+
+  const handleClose = () => {
+    sounds.playClick();
+    onClose?.();
+  };
+
+  return createPortal(
     <AnimatePresence>
       {open && (
         <motion.div
           ref={overlayRef}
           role="dialog"
           aria-modal="true"
-          className="
-            fixed inset-0 z-[1000]
-            bg-black/60 backdrop-blur-sm
-            grid place-items-center
-            px-4
-          "
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-5 overflow-y-auto"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.2, ease: "easeOut" }}
+          transition={{ duration: 0.22, ease: "easeOut" }}
           onClick={(e) => {
-            if (e.target === overlayRef.current) onClose?.();
+            if (e.target === overlayRef.current) handleClose();
           }}
         >
-          {/* ================= MODAL CARD ================= */}
+          {/* Backdrop with High-Tech Frosted Blur */}
+          <div className="fixed inset-0 bg-black/75 dark:bg-black/85 backdrop-blur-md transition-opacity pointer-events-none" />
+
+          {/* Modal Container Card */}
           <motion.div
             onClick={(e) => e.stopPropagation()}
             initial={
               !reduceMotion
-                ? { opacity: 0, scale: 0.96, y: 20 }
-                : false
+                ? { opacity: 0, scale: 0.94, y: 16 }
+                : { opacity: 0 }
             }
             animate={
               !reduceMotion
                 ? { opacity: 1, scale: 1, y: 0 }
-                : false
+                : { opacity: 1 }
             }
             exit={
               !reduceMotion
-                ? { opacity: 0, scale: 0.96, y: 20 }
-                : false
+                ? { opacity: 0, scale: 0.95, y: 12 }
+                : { opacity: 0 }
             }
             transition={{
-              duration: 0.25,
-              ease: [0.22, 1, 0.36, 1],
+              type: "spring",
+              damping: 26,
+              stiffness: 300,
             }}
-            className="
-              relative
-              w-full max-w-5xl
-              max-h-[90vh]
-              overflow-y-auto
-              rounded-2xl
+            className={`
+              relative w-full ${sizeClasses}
+              max-h-[92vh] flex flex-col
+              rounded-3xl
               bg-brand-surface text-brand-text
-              shadow-2xl
               border border-brand-border
-              p-6
-            "
+              shadow-2xl shadow-black/40
+              overflow-hidden
+              z-10
+              ${className}
+            `}
           >
-            {/* ================= CLOSE BUTTON ================= */}
-            <button
-              onClick={onClose}
-              aria-label="Close modal"
-              className="
-                absolute top-4 right-4
-                h-9 w-9
-                rounded-full
-                grid place-items-center
-                text-brand-muted
-                hover:text-brand-text
-                hover:bg-white/10 dark:hover:bg-white/5
-                border border-brand-border
-                focus:outline-none
-                focus-visible:ring-2 focus-visible:ring-brand-primary
-                transition
-              "
-            >
-              ✕
-            </button>
+            {/* Top Close Button Bar */}
+            {showCloseButton && (
+              <button
+                onClick={handleClose}
+                aria-label="Close modal dialog"
+                className="
+                  absolute top-3.5 right-3.5 z-30
+                  w-9 h-9 rounded-full
+                  glass-panel border border-brand-border
+                  text-brand-muted hover:text-brand-text
+                  hover:scale-105 active:scale-95
+                  flex items-center justify-center
+                  shadow-md transition-all
+                  focus:outline-none focus:ring-2 focus:ring-brand-primary
+                "
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
 
-            {children}
+            {/* Modal Body with Custom Clean Scrolling */}
+            <div className="flex-1 overflow-y-auto p-5 sm:p-8">
+              {children}
+            </div>
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }

@@ -17,7 +17,7 @@ export default function ProjectModal({ project, onClose }) {
   if (!project) return null;
 
   return (
-    <div className="flex flex-col max-h-[85vh] overflow-y-auto pr-1">
+    <div className="flex flex-col space-y-6">
       {/* Visual Header Image */}
       <div className="relative rounded-2xl overflow-hidden aspect-[16/8] bg-brand-surface border border-brand-border mb-6">
         <img
