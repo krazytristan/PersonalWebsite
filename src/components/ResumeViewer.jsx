@@ -84,19 +84,18 @@ export default function ResumeViewer({
       className="
         flex flex-wrap items-center justify-between gap-3
         p-4 rounded-xl
-        bg-white/90 dark:bg-zinc-900/90 backdrop-blur
-        ring-1 ring-black/10 dark:ring-white/10
+        glass-panel border border-brand-border text-brand-text
       "
     >
       <div>
-        <h3 className="font-semibold">Resume</h3>
-        <p className="text-xs text-zinc-500">{filename}</p>
+        <h3 className="font-semibold text-brand-text">Resume</h3>
+        <p className="text-xs text-brand-muted">{filename}</p>
       </div>
 
       <div className="flex items-center gap-2">
         <button
           onClick={openNewTab}
-          className="px-4 py-2 rounded-lg ring-1 ring-black/10 dark:ring-white/10 hover:bg-black/5 transition"
+          className="px-4 py-2 rounded-lg border border-brand-border hover:border-brand-primary/40 text-brand-text hover:bg-black/5 dark:hover:bg-white/5 transition text-xs font-semibold"
         >
           Open
         </button>
@@ -152,12 +151,12 @@ export default function ResumeViewer({
 
       {/* Loading skeleton */}
       {loading && (
-        <div className="h-[50vh] rounded-xl ring-1 ring-black/10 dark:ring-white/10 bg-zinc-100 dark:bg-zinc-900 animate-pulse" />
+        <div className="h-[50vh] rounded-xl border border-brand-border bg-brand-surface animate-pulse" />
       )}
 
       {!loading && exists && (
         inlineAllowed ? (
-          <div className="overflow-hidden rounded-xl ring-1 ring-black/10 dark:ring-white/10 bg-white dark:bg-zinc-950">
+          <div className="overflow-hidden rounded-xl border border-brand-border bg-brand-surface">
             <object
               data={`${src}#view=FitH`}
               type="application/pdf"
@@ -167,13 +166,13 @@ export default function ResumeViewer({
             </object>
           </div>
         ) : (
-          <div className="rounded-xl ring-1 ring-black/10 dark:ring-white/10 bg-white dark:bg-zinc-950">
+          <div className="rounded-xl border border-brand-border bg-brand-surface">
             <Fallback />
           </div>
         )
       )}
 
-      <p className="text-[11px] text-center text-zinc-500">
+      <p className="text-[11px] text-center text-brand-muted">
         On mobile, the resume opens in a new tab for the best experience.
       </p>
     </div>

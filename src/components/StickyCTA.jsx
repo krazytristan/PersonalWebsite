@@ -1,56 +1,30 @@
 import { motion, useReducedMotion } from "framer-motion";
+import { MessageSquare, Sparkles } from "lucide-react";
 
-export default function StickyCTA() {
+export default function StickyCTA({ onResume }) {
   const reduceMotion = useReducedMotion();
 
   return (
-    <div
-      className="
-        fixed z-50
-        bottom-[env(safe-area-inset-bottom)]
-        inset-x-0 sm:inset-x-auto
-        sm:bottom-6 sm:right-6
-        flex justify-center sm:block
-        px-4 sm:px-0
-        pointer-events-none
-      "
+    <motion.div
+      initial={!reduceMotion ? { opacity: 0, y: 20 } : false}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.8 }}
+      className="pointer-events-auto"
     >
       <motion.a
         href="#contact"
-        whileHover={!reduceMotion ? { y: -4, scale: 1.04 } : {}}
+        whileHover={!reduceMotion ? { y: -3, scale: 1.03 } : {}}
         whileTap={{ scale: 0.96 }}
-        transition={{ type: "spring", stiffness: 220, damping: 18 }}
-        className="
-          pointer-events-auto
-          relative inline-flex items-center gap-2
-          px-5 py-3 sm:px-6 sm:py-3
-          rounded-full
-          bg-brand-primary text-white font-semibold
-          shadow-xl
-          ring-1 ring-brand-primary/40
-          overflow-hidden
-          w-full sm:w-auto
-          justify-center
-        "
+        transition={{ type: "spring", stiffness: 260, damping: 20 }}
+        className="relative inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-brand-primary to-orange-500 text-white font-semibold text-xs tracking-wide shadow-xl shadow-brand-primary/25 hover:shadow-brand-primary/40 border border-white/20 transition-all overflow-hidden"
       >
-        {/* Glow sweep */}
-        {!reduceMotion && (
-          <motion.span
-            className="absolute inset-0 bg-gradient-to-r
-                       from-white/0 via-white/25 to-white/0"
-            initial={{ x: "-100%" }}
-            whileHover={{ x: "100%" }}
-            transition={{ duration: 0.9 }}
-          />
-        )}
-
-        {/* Grain */}
-        <span className="noise-overlay rounded-full" />
-
-        <span className="relative z-10">
-          Let’s Work Together
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
         </span>
+        <MessageSquare className="w-3.5 h-3.5" />
+        <span>Initiate Contact</span>
       </motion.a>
-    </div>
+    </motion.div>
   );
 }

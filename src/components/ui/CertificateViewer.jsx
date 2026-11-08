@@ -14,10 +14,10 @@ export default function CertificateViewer({ title, src }) {
     >
       {/* ================= HEADER ================= */}
       <div className="mb-4">
-        <h3 className="text-lg sm:text-xl font-black text-brand-dark">
+        <h3 className="text-lg sm:text-xl font-black text-brand-text">
           {title}
         </h3>
-        <p className="text-xs sm:text-sm text-zinc-500">
+        <p className="text-xs sm:text-sm text-brand-muted">
           Scroll to view • Pinch to zoom
         </p>
       </div>
@@ -32,13 +32,13 @@ export default function CertificateViewer({ title, src }) {
           lg:min-h-[70vh]
           rounded-2xl
           overflow-hidden
-          ring-1 ring-black/10
-          bg-zinc-100
+          border border-brand-border
+          bg-brand-surface
         "
       >
         {/* ================= LOADING OVERLAY ================= */}
         {!loaded && (
-          <div className="absolute inset-0 grid place-items-center text-sm text-zinc-500">
+          <div className="absolute inset-0 grid place-items-center text-sm text-brand-muted">
             Loading certificate…
           </div>
         )}

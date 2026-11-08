@@ -3,28 +3,59 @@
   <head>
     <meta charset="UTF-8" />
 
+    <!-- Instant Zero-Flash Theme Hydration across all pages & reloads -->
+    <script>
+      (function () {
+        try {
+          var mode = localStorage.getItem("theme-mode") || "dark";
+          var resolved = mode;
+          if (mode === "system") {
+            resolved = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          }
+          var root = document.documentElement;
+          if (resolved === "dark") {
+            root.classList.add("dark");
+            root.setAttribute("data-theme", "dark");
+            root.style.colorScheme = "dark";
+          } else {
+            root.classList.remove("dark");
+            root.setAttribute("data-theme", "light");
+            root.style.colorScheme = "light";
+          }
+        } catch (e) {}
+      })();
+    </script>
+
     <!-- Viewport & color scheme -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
 
     <!-- Title & basic SEO -->
-    <title>Tristan Jorge Cuartero — Portfolio</title>
+    <title>Tristan Jorge Cuartero — Systems Architect & Full-Stack Engineer</title>
     <meta
       name="description"
-      content="Full-stack developer & educator from Batangas, PH. I build modern, accessible web apps with React, Tailwind, and Node."
+      content="Tristan Jorge Cuartero — Systems Architect, Full-Stack Engineer & Tech Educator from Batangas, Philippines. Specializing in scalable cloud architectures, civic systems, and real-time IoT platforms."
     />
     <meta name="robots" content="index,follow" />
 
+    <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
     <!-- Open Graph / Twitter -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Tristan Jorge Cuartero — Portfolio" />
-    <meta property="og:description" content="Full-stack developer & educator from Batangas, PH." />
-    <meta property="og:image" content="/images/BSU_6102.jpg" />
+    <meta property="og:title" content="Tristan Jorge Cuartero — Systems Architect & Full-Stack Engineer" />
+    <meta property="og:description" content="Systems Architect, Full-Stack Engineer & Tech Educator from Batangas, Philippines. Specializing in scalable cloud architectures, civic systems, and real-time IoT platforms." />
+    <meta property="og:image" content="/images/portratit.png" />
     <meta property="og:url" content="/" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Tristan Jorge Cuartero — Portfolio" />
-    <meta name="twitter:description" content="Full-stack developer & educator from Batangas, PH." />
-    <meta name="twitter:image" content="/images/BSU_6102.jpg" />
+    <meta name="twitter:title" content="Tristan Jorge Cuartero — Systems Architect & Full-Stack Engineer" />
+    <meta name="twitter:description" content="Systems Architect, Full-Stack Engineer & Tech Educator from Batangas, Philippines. Specializing in scalable cloud architectures, civic systems, and real-time IoT platforms." />
+    <meta name="twitter:image" content="/images/portratit.png" />
 
     <!-- Theme color (light/dark). Your main.jsx also updates this dynamically. -->
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />

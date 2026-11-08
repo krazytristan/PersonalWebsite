@@ -49,7 +49,7 @@ export default function CursorSpotlight({
   return (
     <div
       ref={ref}
-      className="pointer-events-none fixed top-0 left-0 z-30"
+      className="pointer-events-none fixed top-0 left-0 z-30 hidden dark:block"
       style={{
         width: size,
         height: size,
@@ -59,7 +59,7 @@ export default function CursorSpotlight({
           rgba(${color}, ${strength * 0.6}) 30%,
           rgba(${color}, ${strength * 0.3}) 50%,
           rgba(${color}, 0) 70%)`,
-        filter: "blur(14px)",
+        filter: "blur(20px)",
         mixBlendMode: "screen",
         willChange: "transform",
       }}

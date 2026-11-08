@@ -83,9 +83,9 @@ export default function Modal({ open, onClose, children }) {
               max-h-[90vh]
               overflow-y-auto
               rounded-2xl
-              bg-white dark:bg-zinc-900
+              bg-brand-surface text-brand-text
               shadow-2xl
-              ring-1 ring-black/10 dark:ring-white/10
+              border border-brand-border
               p-6
             "
           >
@@ -98,9 +98,10 @@ export default function Modal({ open, onClose, children }) {
                 h-9 w-9
                 rounded-full
                 grid place-items-center
-                text-zinc-500
-                hover:bg-black/5 dark:hover:bg-white/10
-                hover:text-zinc-800 dark:hover:text-white
+                text-brand-muted
+                hover:text-brand-text
+                hover:bg-white/10 dark:hover:bg-white/5
+                border border-brand-border
                 focus:outline-none
                 focus-visible:ring-2 focus-visible:ring-brand-primary
                 transition

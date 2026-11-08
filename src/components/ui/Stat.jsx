@@ -29,7 +29,7 @@ export default function Stat({ value, label }) {
       className="group text-center will-change-transform"
     >
       {/* ================= VALUE ================= */}
-      <div className="relative inline-block text-2xl font-black text-brand-dark">
+      <div className="relative inline-block text-2xl font-black text-brand-text">
         {value}
 
         {/* Glow underline */}
@@ -46,7 +46,7 @@ export default function Stat({ value, label }) {
       </div>
 
       {/* ================= LABEL ================= */}
-      <div className="mt-1 text-xs font-medium tracking-wide text-zinc-500 dark:text-zinc-400">
+      <div className="mt-1 text-xs font-medium tracking-wide text-brand-muted">
         {label}
       </div>
     </motion.div>

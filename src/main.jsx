@@ -66,7 +66,7 @@ import "./index.css";
     const m = safeGet(THEME_KEY);
     return m === "light" || m === "dark" || m === "system"
       ? m
-      : "system";
+      : "dark";
   };
 
   const resolveTheme = (mode) => {
@@ -83,10 +83,22 @@ import "./index.css";
     root.dataset.themeMode = mode;
     root.style.colorScheme = resolved;
 
+    if (document.body) {
+      document.body.classList.toggle("dark", resolved === "dark");
+      document.body.dataset.theme = resolved;
+      document.body.style.colorScheme = resolved;
+    }
+
     try {
       ensureThemeMeta().setAttribute(
         "content",
-        resolved === "dark" ? "#050508" : "#ffffff"
+        resolved === "dark" ? "#07090E" : "#F8FAFC"
+      );
+    } catch {}
+
+    try {
+      window.dispatchEvent(
+        new CustomEvent("themechange", { detail: { mode, resolved } })
       );
     } catch {}
   };

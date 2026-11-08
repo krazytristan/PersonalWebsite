@@ -1,0 +1,174 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0c101c" />
+      <stop offset="50%" stop-color="#141a2e" />
+      <stop offset="100%" stop-color="#0a0d17" />
+    </linearGradient>
+    <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF6D1F" />
+      <stop offset="100%" stop-color="#FF9D43" />
+    </linearGradient>
+    <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#818CF8" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="500" fill="url(#bgGrad)" />
+
+  <!-- Grid overlay -->
+  <g opacity="0.08" stroke="#ffffff" stroke-width="1">
+    <line x1="0" y1="50" x2="800" y2="50" />
+    <line x1="0" y1="100" x2="800" y2="100" />
+    <line x1="0" y1="150" x2="800" y2="150" />
+    <line x1="0" y1="200" x2="800" y2="200" />
+    <line x1="0" y1="250" x2="800" y2="250" />
+    <line x1="0" y1="300" x2="800" y2="300" />
+    <line x1="0" y1="350" x2="800" y2="350" />
+    <line x1="0" y1="400" x2="800" y2="400" />
+    <line x1="0" y1="450" x2="800" y2="450" />
+    <line x1="80" y1="0" x2="80" y2="500" />
+    <line x1="160" y1="0" x2="160" y2="500" />
+    <line x1="240" y1="0" x2="240" y2="500" />
+    <line x1="320" y1="0" x2="320" y2="500" />
+    <line x1="400" y1="0" x2="400" y2="500" />
+    <line x1="480" y1="0" x2="480" y2="500" />
+    <line x1="560" y1="0" x2="560" y2="500" />
+    <line x1="640" y1="0" x2="640" y2="500" />
+    <line x1="720" y1="0" x2="720" y2="500" />
+  </g>
+
+  <!-- Ambient Glows -->
+  <circle cx="200" cy="180" r="160" fill="#FF6D1F" opacity="0.12" filter="url(#glow)" />
+  <circle cx="650" cy="320" r="180" fill="#38BDF8" opacity="0.1" filter="url(#glow)" />
+
+  <!-- Main Window Frame -->
+  <rect x="50" y="40" width="700" height="420" rx="16" fill="#111726" stroke="#25324d" stroke-width="1.5" />
+
+  <!-- Window Header -->
+  <rect x="50" y="40" width="700" height="44" rx="16" fill="#171f33" />
+  <circle cx="75" cy="62" r="6" fill="#EF4444" opacity="0.8" />
+  <circle cx="95" cy="62" r="6" fill="#F59E0B" opacity="0.8" />
+  <circle cx="115" cy="62" r="6" fill="#10B981" opacity="0.8" />
+
+  <text x="400" y="66" fill="#94A3B8" font-family="'JetBrains Mono', monospace" font-size="12" text-anchor="middle" letter-spacing="1">
+    iLab Management System • Terminal Cluster Alpha
+  </text>
+
+  <!-- Sidebar -->
+  <rect x="66" y="98" width="160" height="346" rx="10" fill="#161f36" stroke="#222f4c" stroke-width="1" />
+  <text x="86" y="130" fill="#F8FAFC" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="14">iLab Core</text>
+  <rect x="86" y="146" width="120" height="26" rx="6" fill="#FF6D1F" opacity="0.2" />
+  <text x="98" y="163" fill="#FF843D" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="600">🖥 Workstations</text>
+  <text x="98" y="200" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="12">⏱ Reservations</text>
+  <text x="98" y="235" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="12">🔧 Maintenance</text>
+  <text x="98" y="270" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="12">📊 Analytics</text>
+  <text x="98" y="305" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="12">⚙ Logs & Audit</text>
+
+  <!-- Stat Badges -->
+  <rect x="242" y="98" width="150" height="74" rx="10" fill="#161f36" stroke="#222f4c" stroke-width="1" />
+  <text x="258" y="122" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="11">Available Nodes</text>
+  <text x="258" y="152" fill="#10B981" font-family="'JetBrains Mono', monospace" font-size="22" font-weight="700">42 / 48</text>
+
+  <rect x="408" y="98" width="150" height="74" rx="10" fill="#161f36" stroke="#222f4c" stroke-width="1" />
+  <text x="424" y="122" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="11">Active Sessions</text>
+  <text x="424" y="152" fill="#38BDF8" font-family="'JetBrains Mono', monospace" font-size="22" font-weight="700">128 Total</text>
+
+  <rect x="574" y="98" width="160" height="74" rx="10" fill="#161f36" stroke="#222f4c" stroke-width="1" />
+  <text x="590" y="122" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="11">System Health</text>
+  <text x="590" y="152" fill="#FF843D" font-family="'JetBrains Mono', monospace" font-size="22" font-weight="700">99.9% Up</text>
+
+  <!-- PC Grid Matrix -->
+  <rect x="242" y="188" width="492" height="256" rx="10" fill="#151d33" stroke="#222f4c" stroke-width="1" />
+  <text x="260" y="216" fill="#F8FAFC" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" font-weight="700">Laboratory Workstation Matrix</text>
+  <text x="680" y="216" fill="#10B981" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="end">● Live Telemetry</text>
+
+  <!-- Workstation Cards -->
+  <!-- Row 1 -->
+  <g transform="translate(260, 234)">
+    <rect width="66" height="52" rx="6" fill="#1c2744" stroke="#10B981" stroke-width="1.5" />
+    <text x="33" y="24" fill="#F8FAFC" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" text-anchor="middle">PC-01</text>
+    <rect x="18" y="32" width="30" height="10" rx="3" fill="#10B981" opacity="0.2" />
+    <text x="33" y="40" fill="#10B981" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" text-anchor="middle">READY</text>
+  </g>
+  <g transform="translate(338, 234)">
+    <rect width="66" height="52" rx="6" fill="#1c2744" stroke="#10B981" stroke-width="1.5" />
+    <text x="33" y="24" fill="#F8FAFC" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" text-anchor="middle">PC-02</text>
+    <rect x="18" y="32" width="30" height="10" rx="3" fill="#10B981" opacity="0.2" />
+    <text x="33" y="40" fill="#10B981" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" text-anchor="middle">READY</text>
+  </g>
+  <g transform="translate(416, 234)">
+    <rect width="66" height="52" rx="6" fill="#1c2744" stroke="#FF6D1F" stroke-width="1.5" />
+    <text x="33" y="24" fill="#F8FAFC" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" text-anchor="middle">PC-03</text>
+    <rect x="18" y="32" width="30" height="10" rx="3" fill="#FF6D1F" opacity="0.2" />
+    <text x="33" y="40" fill="#FF843D" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" text-anchor="middle">OCCUPIED</text>
+  </g>
+  <g transform="translate(494, 234)">
+    <rect width="66" height="52" rx="6" fill="#1c2744" stroke="#10B981" stroke-width="1.5" />
+    <text x="33" y="24" fill="#F8FAFC" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" text-anchor="middle">PC-04</text>
+    <rect x="18" y="32" width="30" height="10" rx="3" fill="#10B981" opacity="0.2" />
+    <text x="33" y="40" fill="#10B981" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" text-anchor="middle">READY</text>
+  </g>
+  <g transform="translate(572, 234)">
+    <rect width="66" height="52" rx="6" fill="#1c2744" stroke="#38BDF8" stroke-width="1.5" />
+    <text x="33" y="24" fill="#F8FAFC" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" text-anchor="middle">PC-05</text>
+    <rect x="18" y="32" width="30" height="10" rx="3" fill="#38BDF8" opacity="0.2" />
+    <text x="33" y="40" fill="#38BDF8" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" text-anchor="middle">BOOKED</text>
+  </g>
+  <g transform="translate(650, 234)">
+    <rect width="66" height="52" rx="6" fill="#1c2744" stroke="#10B981" stroke-width="1.5" />
+    <text x="33" y="24" fill="#F8FAFC" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" text-anchor="middle">PC-06</text>
+    <rect x="18" y="32" width="30" height="10" rx="3" fill="#10B981" opacity="0.2" />
+    <text x="33" y="40" fill="#10B981" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" text-anchor="middle">READY</text>
+  </g>
+
+  <!-- Row 2 -->
+  <g transform="translate(260, 300)">
+    <rect width="66" height="52" rx="6" fill="#1c2744" stroke="#10B981" stroke-width="1.5" />
+    <text x="33" y="24" fill="#F8FAFC" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" text-anchor="middle">PC-07</text>
+    <rect x="18" y="32" width="30" height="10" rx="3" fill="#10B981" opacity="0.2" />
+    <text x="33" y="40" fill="#10B981" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" text-anchor="middle">READY</text>
+  </g>
+  <g transform="translate(338, 300)">
+    <rect width="66" height="52" rx="6" fill="#1c2744" stroke="#EF4444" stroke-width="1.5" />
+    <text x="33" y="24" fill="#F8FAFC" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" text-anchor="middle">PC-08</text>
+    <rect x="18" y="32" width="30" height="10" rx="3" fill="#EF4444" opacity="0.2" />
+    <text x="33" y="40" fill="#EF4444" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" text-anchor="middle">MAINT</text>
+  </g>
+  <g transform="translate(416, 300)">
+    <rect width="66" height="52" rx="6" fill="#1c2744" stroke="#10B981" stroke-width="1.5" />
+    <text x="33" y="24" fill="#F8FAFC" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" text-anchor="middle">PC-09</text>
+    <rect x="18" y="32" width="30" height="10" rx="3" fill="#10B981" opacity="0.2" />
+    <text x="33" y="40" fill="#10B981" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" text-anchor="middle">READY</text>
+  </g>
+  <g transform="translate(494, 300)">
+    <rect width="66" height="52" rx="6" fill="#1c2744" stroke="#FF6D1F" stroke-width="1.5" />
+    <text x="33" y="24" fill="#F8FAFC" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" text-anchor="middle">PC-10</text>
+    <rect x="18" y="32" width="30" height="10" rx="3" fill="#FF6D1F" opacity="0.2" />
+    <text x="33" y="40" fill="#FF843D" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" text-anchor="middle">OCCUPIED</text>
+  </g>
+  <g transform="translate(572, 300)">
+    <rect width="66" height="52" rx="6" fill="#1c2744" stroke="#10B981" stroke-width="1.5" />
+    <text x="33" y="24" fill="#F8FAFC" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" text-anchor="middle">PC-11</text>
+    <rect x="18" y="32" width="30" height="10" rx="3" fill="#10B981" opacity="0.2" />
+    <text x="33" y="40" fill="#10B981" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" text-anchor="middle">READY</text>
+  </g>
+  <g transform="translate(650, 300)">
+    <rect width="66" height="52" rx="6" fill="#1c2744" stroke="#10B981" stroke-width="1.5" />
+    <text x="33" y="24" fill="#F8FAFC" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" text-anchor="middle">PC-12</text>
+    <rect x="18" y="32" width="30" height="10" rx="3" fill="#10B981" opacity="0.2" />
+    <text x="33" y="40" fill="#10B981" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" text-anchor="middle">READY</text>
+  </g>
+
+  <!-- Real-time activity footer -->
+  <rect x="260" y="370" width="456" height="58" rx="8" fill="#19233c" stroke="#253456" stroke-width="1" />
+  <circle cx="280" cy="399" r="5" fill="#10B981" />
+  <text x="296" y="395" fill="#F8FAFC" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="600">Reservation Approved: Student ID 21-04982 for PC-05 (14:00 - 16:00)</text>
+  <text x="296" y="412" fill="#94A3B8" font-family="'JetBrains Mono', monospace" font-size="10">Auto-conflict safety checked • 0 collisions detected</text>
+</svg>

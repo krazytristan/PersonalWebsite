@@ -1,193 +1,182 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
-  motion,
-  AnimatePresence,
-  useReducedMotion,
-} from "framer-motion";
+  BookOpen,
+  Calendar,
+  Clock,
+  ArrowRight,
+  Sparkles,
+  CheckCircle2,
+  X,
+  Share2,
+} from "lucide-react";
+import Modal from "./ui/Modal";
+import { POSTS } from "../data/posts";
 
-/* ================= DATA ================= */
-const POSTS = [
-  {
-    id: "ship-fast-react",
-    title: "How I Ship React Apps Fast (without the mess)",
-    date: "2025-06-30",
-    tags: ["React", "UX", "Architecture"],
-    excerpt:
-      "My practical checklist for going from idea → production with clean UX, strong structure, and minimal regrets.",
-    cover: "/images/React-app.jpg",
-    link: "/blog/ship-fast-react",
-  },
-  {
-    id: "teaching-tech",
-    title: "Teaching Tech: What Actually Works",
-    date: "2025-04-12",
-    tags: ["Education", "Career"],
-    excerpt:
-      "Lessons from years of teaching IT & CS — how to keep students motivated and shipping real projects.",
-    cover: "/images/tech.jpg",
-    link: "/blog/teaching-tech",
-  },
-  {
-    id: "iot-in-batangas",
-    title: "IoT in Batangas: Real-World Wins & Pitfalls",
-    date: "2025-02-20",
-    tags: ["IoT", "APIs", "Case Study"],
-    excerpt:
-      "A candid field note from deploying small-scale sensors — what surprised us and what to avoid.",
-    cover: "/images/IoT.webp",
-    link: "/blog/iot-in-batangas",
-  },
-];
-
-const AUTO_DELAY = 5200;
-
-/* ================= COMPONENT ================= */
 export default function BlogSection() {
   const reduceMotion = useReducedMotion();
-  const [index, setIndex] = useState(0);
-
-  const active = POSTS[index];
-
-  /* ================= AUTO PLAY ================= */
-  useEffect(() => {
-    if (reduceMotion) return;
-
-    const id = setInterval(() => {
-      setIndex((i) => (i + 1) % POSTS.length);
-    }, AUTO_DELAY);
-
-    return () => clearInterval(id);
-  }, [reduceMotion]);
-
-  const go = (dir) => {
-    setIndex((i) =>
-      dir === "next"
-        ? (i + 1) % POSTS.length
-        : (i - 1 + POSTS.length) % POSTS.length
-    );
-  };
+  const [activePost, setActivePost] = useState(null);
 
   return (
-    <section className="relative max-w-7xl mx-auto px-4 py-28 bg-brand-bg overflow-hidden">
-      {/* ================= HEADER ================= */}
-      <div className="text-center mb-20">
-        <span className="block mb-3 text-xs font-bold tracking-widest text-brand-primary">
-          BLOG
-        </span>
-        <h2 className="text-4xl sm:text-5xl font-black mb-4">
-          Writing & Insights
-        </h2>
-        <p className="text-lg text-zinc-600 max-w-2xl mx-auto">
-          Field notes on building systems, teaching technology, and shipping
-          real-world software.
-        </p>
-      </div>
+    <section
+      id="blog"
+      className="relative py-24 sm:py-32 bg-brand-bg text-brand-text overflow-hidden"
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* ================= HEADER ================= */}
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <motion.span
+            initial={!reduceMotion ? { opacity: 0, y: 10 } : false}
+            whileInView={!reduceMotion ? { opacity: 1, y: 0 } : false}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-mono font-semibold tracking-wider uppercase bg-brand-primary/10 text-brand-primary border border-brand-primary/20 mb-4"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            Field Notes & Insights
+          </motion.span>
 
-      {/* ================= CAROUSEL ================= */}
-      <div className="grid lg:grid-cols-2 gap-14 items-center">
-        {/* =================================================
-            LEFT COLUMN – CONTENT
-        ================================================= */}
-        <div className="relative min-h-[260px]">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={active.id}
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -24 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
+          <motion.h2
+            initial={!reduceMotion ? { opacity: 0, y: 14 } : false}
+            whileInView={!reduceMotion ? { opacity: 1, y: 0 } : false}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-3xl sm:text-5xl font-extrabold tracking-tight text-brand-text leading-tight"
+          >
+            Technical Writings &{" "}
+            <span className="gradient-brand">Architectural Notes</span>
+          </motion.h2>
+
+          <motion.p
+            initial={!reduceMotion ? { opacity: 0, y: 14 } : false}
+            whileInView={!reduceMotion ? { opacity: 1, y: 0 } : false}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="mt-5 text-base sm:text-lg text-brand-muted leading-relaxed"
+          >
+            Practical takeaways on engineering scalable software, teaching computer science, and deploying physical hardware systems.
+          </motion.p>
+        </div>
+
+        {/* ================= EDITORIAL GRID ================= */}
+        <div className="grid md:grid-cols-3 gap-8">
+          {POSTS.map((post, i) => (
+            <motion.article
+              key={post.id}
+              initial={!reduceMotion ? { opacity: 0, y: 20 } : false}
+              whileInView={!reduceMotion ? { opacity: 1, y: 0 } : false}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              onClick={() => setActivePost(post)}
+              className="p-6 rounded-3xl glass-card border border-brand-border flex flex-col justify-between hover:border-brand-primary/40 hover:shadow-xl transition-all cursor-pointer group"
             >
-              <time className="text-xs font-semibold text-brand-primary tracking-widest">
-                {formatDate(active.date)}
-              </time>
+              <div>
+                <div className="relative aspect-[16/10] rounded-2xl overflow-hidden mb-6 bg-brand-surface border border-brand-border">
+                  <img
+                    src={post.cover}
+                    alt={post.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent" />
+                  
+                  <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
+                    {post.tags.slice(0, 2).map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-slate-900/80 backdrop-blur-md text-white border border-white/10"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
 
-              <h3 className="mt-3 text-3xl font-black leading-tight">
-                {active.title}
-              </h3>
-
-              <div className="mt-4 flex flex-wrap gap-2">
-                {active.tags.map((t) => (
-                  <span
-                    key={t}
-                    className="px-3 py-1 rounded-full text-xs bg-brand-primary/10 text-brand-primary font-semibold"
-                  >
-                    {t}
+                <div className="flex items-center gap-3 text-xs font-mono text-brand-muted mb-3">
+                  <span className="flex items-center gap-1">
+                    <Calendar className="w-3.5 h-3.5" />
+                    {new Date(post.date).toLocaleDateString(undefined, {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
                   </span>
-                ))}
+                  <span>•</span>
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-3.5 h-3.5" />
+                    {post.readTime}
+                  </span>
+                </div>
+
+                <h3 className="font-bold text-lg sm:text-xl text-brand-text group-hover:text-brand-primary transition-colors leading-snug">
+                  {post.title}
+                </h3>
+
+                <p className="mt-3 text-xs sm:text-sm text-brand-muted leading-relaxed line-clamp-3">
+                  {post.excerpt}
+                </p>
               </div>
 
-              <p className="mt-6 text-lg text-zinc-700 max-w-xl">
-                {active.excerpt}
-              </p>
+              <div className="mt-6 pt-4 border-t border-brand-border flex items-center justify-between text-xs font-semibold text-brand-primary group-hover:text-brand-primaryHover transition">
+                <span>Read Full Field Note</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </motion.article>
+          ))}
+        </div>
 
-              <a
-                href={active.link}
-                className="inline-flex items-center gap-2 mt-8 font-semibold text-brand-primary hover:underline"
+      </div>
+
+      {/* ================= ARTICLE READER MODAL ================= */}
+      <Modal open={!!activePost} onClose={() => setActivePost(null)}>
+        {activePost && (
+          <div className="max-h-[85vh] overflow-y-auto pr-2">
+            <div className="relative aspect-[21/9] rounded-2xl overflow-hidden mb-6 border border-brand-border">
+              <img
+                src={activePost.cover}
+                alt={activePost.title}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 mb-3">
+              {activePost.tags.map((t) => (
+                <span
+                  key={t}
+                  className="px-2.5 py-0.5 rounded-full text-xs font-mono font-semibold bg-brand-primary/10 text-brand-primary border border-brand-primary/20"
+                >
+                  {t}
+                </span>
+              ))}
+              <span className="text-xs font-mono text-brand-muted ml-auto">
+                {activePost.readTime}
+              </span>
+            </div>
+
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-brand-text mb-4">
+              {activePost.title}
+            </h2>
+
+            <div className="pt-4 border-t border-brand-border">
+              {activePost.content}
+            </div>
+
+            <div className="mt-8 pt-4 border-t border-brand-border flex items-center justify-between">
+              <span className="text-xs font-mono text-brand-muted">
+                Author: Tristan Jorge Cuartero
+              </span>
+
+              <button
+                onClick={() => setActivePost(null)}
+                className="px-4 py-2 rounded-xl glass-card text-brand-text font-semibold text-xs hover:border-brand-primary transition"
               >
-                Read article →
-              </a>
-            </motion.div>
-          </AnimatePresence>
-
-          {/* NAV BUTTONS */}
-          <div className="mt-10 flex gap-3">
-            <button
-              onClick={() => go("prev")}
-              className="h-10 w-10 rounded-full ring-1 ring-black/10 hover:bg-black/5 transition"
-            >
-              ←
-            </button>
-            <button
-              onClick={() => go("next")}
-              className="h-10 w-10 rounded-full ring-1 ring-black/10 hover:bg-black/5 transition"
-            >
-              →
-            </button>
+                Close Article
+              </button>
+            </div>
           </div>
-        </div>
-
-        {/* =================================================
-            RIGHT COLUMN – IMAGE
-        ================================================= */}
-        <div className="relative h-[320px] sm:h-[420px] rounded-3xl overflow-hidden shadow-2xl ring-1 ring-black/5">
-          <AnimatePresence mode="wait">
-            <motion.img
-              key={active.cover}
-              src={active.cover}
-              alt={active.title}
-              initial={{ opacity: 0, scale: 1.05 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.98 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-          </AnimatePresence>
-        </div>
-      </div>
-
-      {/* ================= DOTS ================= */}
-      <div className="flex justify-center gap-3 mt-14">
-        {POSTS.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setIndex(i)}
-            className={`h-2.5 w-2.5 rounded-full transition ${
-              i === index
-                ? "bg-brand-primary scale-125"
-                : "bg-black/20"
-            }`}
-          />
-        ))}
-      </div>
+        )}
+      </Modal>
     </section>
   );
-}
-
-/* ================= UTILS ================= */
-function formatDate(iso) {
-  return new Date(iso).toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
 }

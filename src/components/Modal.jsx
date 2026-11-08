@@ -70,10 +70,10 @@ export default function Modal({ open, onClose, children }) {
               w-full max-w-3xl
               h-[85vh] max-h-[85vh]
 
-              bg-white/80 dark:bg-zinc-900/80
+              bg-brand-surface text-brand-text
               backdrop-blur-xl
 
-              border border-white/20 dark:border-white/10
+              border border-brand-border
               rounded-2xl shadow-2xl
 
               overflow-hidden
@@ -87,11 +87,11 @@ export default function Modal({ open, onClose, children }) {
             <div className="
               flex items-center justify-between
               px-5 py-3
-              border-b border-black/5 dark:border-white/10
+              border-b border-brand-border
               shrink-0
             ">
-              <span className="text-sm font-semibold text-zinc-600 dark:text-zinc-300">
-                Certificate Preview
+              <span className="text-sm font-semibold text-brand-text">
+                Preview
               </span>
 
               {/* ✖ CLOSE BUTTON */}
@@ -103,8 +103,9 @@ export default function Modal({ open, onClose, children }) {
                   flex items-center justify-center
                   rounded-full
 
-                  bg-black/5 dark:bg-white/10
-                  hover:bg-black/10 dark:hover:bg-white/20
+                  border border-brand-border
+                  text-brand-muted hover:text-brand-text
+                  hover:bg-white/10 dark:hover:bg-white/5
 
                   text-lg
                   transition

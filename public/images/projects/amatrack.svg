@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="amaBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#14100c" />
+      <stop offset="50%" stop-color="#241910" />
+      <stop offset="100%" stop-color="#0f0c08" />
+    </linearGradient>
+    <linearGradient id="amberGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#FB923C" />
+    </linearGradient>
+    <filter id="amberGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="15" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <rect width="800" height="500" fill="url(#amaBgGrad)" />
+
+  <!-- Grid overlay -->
+  <g opacity="0.07" stroke="#ffffff" stroke-width="1">
+    <line x1="0" y1="50" x2="800" y2="50" />
+    <line x1="0" y1="100" x2="800" y2="100" />
+    <line x1="0" y1="150" x2="800" y2="150" />
+    <line x1="0" y1="200" x2="800" y2="200" />
+    <line x1="0" y1="250" x2="800" y2="250" />
+    <line x1="0" y1="300" x2="800" y2="300" />
+    <line x1="0" y1="350" x2="800" y2="350" />
+    <line x1="0" y1="400" x2="800" y2="400" />
+    <line x1="0" y1="450" x2="800" y2="450" />
+    <line x1="80" y1="0" x2="80" y2="500" />
+    <line x1="160" y1="0" x2="160" y2="500" />
+    <line x1="240" y1="0" x2="240" y2="500" />
+    <line x1="320" y1="0" x2="320" y2="500" />
+    <line x1="400" y1="0" x2="400" y2="500" />
+    <line x1="480" y1="0" x2="480" y2="500" />
+    <line x1="560" y1="0" x2="560" y2="500" />
+    <line x1="640" y1="0" x2="640" y2="500" />
+    <line x1="720" y1="0" x2="720" y2="500" />
+  </g>
+
+  <!-- Ambient Glow -->
+  <circle cx="220" cy="200" r="160" fill="#F59E0B" opacity="0.12" filter="url(#amberGlow)" />
+  <circle cx="640" cy="300" r="180" fill="#EA580C" opacity="0.1" filter="url(#amberGlow)" />
+
+  <!-- Main Window -->
+  <rect x="50" y="40" width="700" height="420" rx="16" fill="#1c1510" stroke="#3d2a1b" stroke-width="1.5" />
+
+  <!-- Header -->
+  <rect x="50" y="40" width="700" height="44" rx="16" fill="#291e16" />
+  <circle cx="75" cy="62" r="6" fill="#EF4444" opacity="0.8" />
+  <circle cx="95" cy="62" r="6" fill="#F59E0B" opacity="0.8" />
+  <circle cx="115" cy="62" r="6" fill="#10B981" opacity="0.8" />
+
+  <text x="400" y="66" fill="#FDE68A" font-family="'JetBrains Mono', monospace" font-size="12" text-anchor="middle" letter-spacing="1">
+    AMATrack Academic Telemetry • Timetable & Attendance Engine
+  </text>
+
+  <!-- Left: Timetable / Room Conflict Resolver -->
+  <rect x="70" y="98" width="350" height="344" rx="12" fill="#241a12" stroke="#442e1d" stroke-width="1" />
+  <text x="90" y="128" fill="#F8FAFC" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="14">Live Lecture Hall Schedules</text>
+  <text x="400" y="128" fill="#10B981" font-family="'JetBrains Mono', monospace" font-size="11" text-anchor="end">No Conflicts</text>
+
+  <!-- Timetable blocks -->
+  <g transform="translate(90, 148)">
+    <rect width="310" height="54" rx="8" fill="#2e2015" stroke="#523620" stroke-width="1" />
+    <rect x="8" y="8" width="4" height="38" rx="2" fill="#F59E0B" />
+    <text x="24" y="24" fill="#F8FAFC" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="700">CS 301: Systems Architecture</text>
+    <text x="24" y="40" fill="#94A3B8" font-family="'JetBrains Mono', monospace" font-size="10">Room 402 • 08:00 - 10:00 AM • Prof. Cuartero</text>
+    <rect x="235" y="14" width="65" height="20" rx="4" fill="#10B981" opacity="0.2" />
+    <text x="267" y="28" fill="#10B981" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="700" text-anchor="middle">ACTIVE</text>
+  </g>
+
+  <g transform="translate(90, 214)">
+    <rect width="310" height="54" rx="8" fill="#2e2015" stroke="#523620" stroke-width="1" />
+    <rect x="8" y="8" width="4" height="38" rx="2" fill="#38BDF8" />
+    <text x="24" y="24" fill="#F8FAFC" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="700">IT 204: Database Systems & SQL</text>
+    <text x="24" y="40" fill="#94A3B8" font-family="'JetBrains Mono', monospace" font-size="10">Lab 3 • 10:30 - 12:30 PM • 38 Enrolled</text>
+    <rect x="235" y="14" width="65" height="20" rx="4" fill="#38BDF8" opacity="0.2" />
+    <text x="267" y="28" fill="#38BDF8" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="700" text-anchor="middle">UPCOMING</text>
+  </g>
+
+  <g transform="translate(90, 280)">
+    <rect width="310" height="54" rx="8" fill="#2e2015" stroke="#523620" stroke-width="1" />
+    <rect x="8" y="8" width="4" height="38" rx="2" fill="#A855F7" />
+    <text x="24" y="24" fill="#F8FAFC" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="700">CPE 401: Embedded Systems & IoT</text>
+    <text x="24" y="40" fill="#94A3B8" font-family="'JetBrains Mono', monospace" font-size="10">Hardware Lab • 01:00 - 04:00 PM</text>
+    <rect x="235" y="14" width="65" height="20" rx="4" fill="#A855F7" opacity="0.2" />
+    <text x="267" y="28" fill="#A855F7" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="700" text-anchor="middle">SCHEDULED</text>
+  </g>
+
+  <g transform="translate(90, 348)">
+    <rect width="310" height="74" rx="8" fill="#332418" stroke="#5c3d25" stroke-width="1" />
+    <circle cx="20" cy="24" r="5" fill="#10B981" />
+    <text x="34" y="27" fill="#F8FAFC" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="700">Zero Schedule Collision Engine</text>
+    <text x="20" y="48" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="10">Automated conflict matrix verified across 32 instructors and 54 classroom time-slots.</text>
+  </g>
+
+  <!-- Right: Attendance Metrics & Telemetry -->
+  <rect x="440" y="98" width="290" height="344" rx="12" fill="#241a12" stroke="#442e1d" stroke-width="1" />
+  <text x="460" y="128" fill="#F8FAFC" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="14">Faculty & Student Metrics</text>
+
+  <g transform="translate(460, 148)">
+    <rect width="118" height="72" rx="8" fill="#302217" stroke="#4a3423" stroke-width="1" />
+    <text x="14" y="24" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="10">Faculty Active</text>
+    <text x="14" y="52" fill="#F59E0B" font-family="'JetBrains Mono', monospace" font-size="20" font-weight="700">30+</text>
+  </g>
+  <g transform="translate(592, 148)">
+    <rect width="118" height="72" rx="8" fill="#302217" stroke="#4a3423" stroke-width="1" />
+    <text x="14" y="24" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-size="10">Active Classes</text>
+    <text x="14" y="52" fill="#38BDF8" font-family="'JetBrains Mono', monospace" font-size="20" font-weight="700">50+</text>
+  </g>
+
+  <!-- Real-time Attendance Stream -->
+  <text x="460" y="248" fill="#94A3B8" font-family="'JetBrains Mono', monospace" font-size="10" letter-spacing="1">LIVE ATTENDANCE STREAM</text>
+
+  <g transform="translate(460, 260)">
+    <rect width="250" height="42" rx="6" fill="#2d1f14" />
+    <circle cx="16" cy="21" r="5" fill="#10B981" />
+    <text x="30" y="18" fill="#F8FAFC" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" font-weight="600">Christian P. — Timed In (On-Time)</text>
+    <text x="30" y="32" fill="#94A3B8" font-family="'JetBrains Mono', monospace" font-size="9">Terminal 02 • 07:58:14 AM</text>
+  </g>
+
+  <g transform="translate(460, 312)">
+    <rect width="250" height="42" rx="6" fill="#2d1f14" />
+    <circle cx="16" cy="21" r="5" fill="#10B981" />
+    <text x="30" y="18" fill="#F8FAFC" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" font-weight="600">Angelica M. — Timed In (On-Time)</text>
+    <text x="30" y="32" fill="#94A3B8" font-family="'JetBrains Mono', monospace" font-size="9">Terminal 01 • 07:59:02 AM</text>
+  </g>
+
+  <g transform="translate(460, 364)">
+    <rect width="250" height="42" rx="6" fill="#2d1f14" />
+    <circle cx="16" cy="21" r="5" fill="#F59E0B" />
+    <text x="30" y="18" fill="#F8FAFC" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" font-weight="600">Joshua T. — Verified Grace Period</text>
+    <text x="30" y="32" fill="#94A3B8" font-family="'JetBrains Mono', monospace" font-size="9">Terminal 03 • 08:04:18 AM</text>
+  </g>
+</svg>

@@ -30,10 +30,10 @@ export default function ExperienceTimeline() {
         <span className="block mb-3 text-xs font-bold tracking-widest text-brand-primary">
           EXPERIENCE
         </span>
-        <h2 className="text-4xl font-black text-brand-dark">
+        <h2 className="text-4xl font-black text-brand-text">
           Professional Journey
         </h2>
-        <p className="mt-4 text-zinc-600 max-w-xl mx-auto">
+        <p className="mt-4 text-brand-muted max-w-xl mx-auto">
           Roles and projects that shaped my approach to building scalable,
           human-centered systems.
         </p>
@@ -68,8 +68,7 @@ export default function ExperienceTimeline() {
                   damping: 22,
                 }}
                 onClick={() => !isCenter && setIndex(i)}
-                className={`absolute w-[360px] rounded-3xl bg-white/90
-                  backdrop-blur shadow-2xl ring-1 ring-black/10 p-7
+                className={`absolute w-[360px] rounded-3xl glass-card border border-brand-border shadow-2xl p-7
                   ${!isCenter ? "cursor-pointer" : ""}`}
               >
                 {/* Year / Phase */}
@@ -79,11 +78,11 @@ export default function ExperienceTimeline() {
                   </span>
                 )}
 
-                <h3 className="mt-2 text-xl font-black text-brand-dark">
+                <h3 className="mt-2 text-xl font-black text-brand-text">
                   {item.title}
                 </h3>
 
-                <p className="mt-3 text-sm text-zinc-600 leading-relaxed">
+                <p className="mt-3 text-sm text-brand-muted leading-relaxed">
                   {item.desc || item.description}
                 </p>
 
@@ -112,8 +111,7 @@ export default function ExperienceTimeline() {
         <button
           onClick={prev}
           aria-label="Previous experience"
-          className="h-11 w-11 rounded-full bg-brand-surface
-            ring-1 ring-black/10 hover:bg-black/5 transition"
+          className="h-11 w-11 rounded-full glass-panel border border-brand-border text-brand-text hover:border-brand-primary/40 transition flex items-center justify-center"
         >
           ◀
         </button>
@@ -121,8 +119,7 @@ export default function ExperienceTimeline() {
         <button
           onClick={next}
           aria-label="Next experience"
-          className="h-11 w-11 rounded-full bg-brand-surface
-            ring-1 ring-black/10 hover:bg-black/5 transition"
+          className="h-11 w-11 rounded-full glass-panel border border-brand-border text-brand-text hover:border-brand-primary/40 transition flex items-center justify-center"
         >
           ▶
         </button>
