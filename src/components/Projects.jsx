@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
   ExternalLink,
@@ -15,7 +15,7 @@ import {
   Clock,
   Code,
 } from "lucide-react";
-import { projects } from "../data/projects";
+import { projects, getStoredProjects } from "../data/projects";
 
 const categories = [
   "All Systems",
@@ -26,13 +26,20 @@ const categories = [
 
 export default function Projects({ onOpen }) {
   const reduceMotion = useReducedMotion();
+  const [projectList, setProjectList] = useState(() => getStoredProjects());
   const [selectedCategory, setSelectedCategory] = useState("All Systems");
   const [hoveredId, setHoveredId] = useState(null);
 
+  useEffect(() => {
+    const handleUpdate = () => setProjectList(getStoredProjects());
+    window.addEventListener("projects-updated", handleUpdate);
+    return () => window.removeEventListener("projects-updated", handleUpdate);
+  }, []);
+
   const filteredProjects = useMemo(() => {
-    if (selectedCategory === "All Systems") return projects;
-    return projects.filter((p) => p.category === selectedCategory);
-  }, [selectedCategory]);
+    if (selectedCategory === "All Systems") return projectList;
+    return projectList.filter((p) => p.category === selectedCategory);
+  }, [selectedCategory, projectList]);
 
   return (
     <section

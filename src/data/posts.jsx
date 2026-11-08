@@ -136,11 +136,68 @@ export const POSTS = [
   },
 ];
 
-export function getAllPosts() {
+/* -------------------- DYNAMIC ADMIN PERSISTENCE -------------------- */
+export function getStoredPosts() {
+  if (typeof window === "undefined") return POSTS;
+  try {
+    const raw = localStorage.getItem("admin_portfolio_posts");
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed.map((p) => {
+          const defaultMatch = POSTS.find((def) => def.id === p.id || def.slug === p.slug);
+          return {
+            ...p,
+            content:
+              p.contentString ? (
+                <div className="space-y-4 text-brand-text text-sm sm:text-base leading-relaxed whitespace-pre-line">
+                  {p.contentString}
+                </div>
+              ) : (
+                defaultMatch?.content || (
+                  <p className="text-brand-muted leading-relaxed">{p.excerpt}</p>
+                )
+              ),
+          };
+        });
+      }
+    }
+  } catch (e) {
+    console.error("Error loading stored posts:", e);
+  }
   return POSTS;
+}
+
+export function saveStoredPosts(updatedList) {
+  if (typeof window === "undefined") return;
+  try {
+    const serializable = updatedList.map(({ content, ...rest }) => ({
+      ...rest,
+      contentString:
+        typeof content === "string"
+          ? content
+          : rest.contentString || rest.excerpt || "",
+    }));
+    localStorage.setItem("admin_portfolio_posts", JSON.stringify(serializable));
+    window.dispatchEvent(new CustomEvent("posts-updated", { detail: updatedList }));
+  } catch (e) {
+    console.error("Error saving posts:", e);
+  }
+}
+
+export function resetStoredPosts() {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem("admin_portfolio_posts");
+    window.dispatchEvent(new CustomEvent("posts-updated", { detail: POSTS }));
+  } catch (e) {}
+}
+
+export function getAllPosts() {
+  return getStoredPosts();
 }
 
 export function getPost(slug) {
   if (!slug) return null;
-  return POSTS.find((p) => p.slug === slug || p.id === slug) || null;
+  return getStoredPosts().find((p) => p.slug === slug || p.id === slug) || null;
 }

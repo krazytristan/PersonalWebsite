@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import {
   BookOpen,
@@ -11,11 +11,18 @@ import {
   Share2,
 } from "lucide-react";
 import Modal from "./ui/Modal";
-import { POSTS } from "../data/posts";
+import { POSTS, getStoredPosts } from "../data/posts";
 
 export default function BlogSection() {
   const reduceMotion = useReducedMotion();
   const [activePost, setActivePost] = useState(null);
+  const [posts, setPosts] = useState(() => getStoredPosts());
+
+  useEffect(() => {
+    const handleUpdate = () => setPosts(getStoredPosts());
+    window.addEventListener("posts-updated", handleUpdate);
+    return () => window.removeEventListener("posts-updated", handleUpdate);
+  }, []);
 
   return (
     <section
@@ -60,7 +67,7 @@ export default function BlogSection() {
 
         {/* ================= EDITORIAL GRID ================= */}
         <div className="grid md:grid-cols-3 gap-8">
-          {POSTS.map((post, i) => (
+          {posts.map((post, i) => (
             <motion.article
               key={post.id}
               initial={!reduceMotion ? { opacity: 0, y: 20 } : false}

@@ -351,3 +351,36 @@ export const projects = [
     },
   },
 ];
+
+/* -------------------- DYNAMIC ADMIN PERSISTENCE -------------------- */
+export function getStoredProjects() {
+  if (typeof window === "undefined") return projects;
+  try {
+    const raw = localStorage.getItem("admin_portfolio_projects");
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) {
+    console.error("Error loading stored projects:", e);
+  }
+  return projects;
+}
+
+export function saveStoredProjects(updatedList) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem("admin_portfolio_projects", JSON.stringify(updatedList));
+    window.dispatchEvent(new CustomEvent("projects-updated", { detail: updatedList }));
+  } catch (e) {
+    console.error("Error saving projects:", e);
+  }
+}
+
+export function resetStoredProjects() {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem("admin_portfolio_projects");
+    window.dispatchEvent(new CustomEvent("projects-updated", { detail: projects }));
+  } catch (e) {}
+}

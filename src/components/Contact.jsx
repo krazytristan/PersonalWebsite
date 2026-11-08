@@ -1,5 +1,6 @@
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import emailjs from "@emailjs/browser";
 import {
   Mail,
@@ -14,6 +15,7 @@ import {
   ChevronDown,
   Calendar,
   HelpCircle,
+  Shield,
 } from "lucide-react";
 import {
   FaGithub,
@@ -94,6 +96,21 @@ export default function Contact() {
     e.preventDefault();
     setStatus("sending");
     sounds.playClick();
+
+    // Always persist to local Admin Inbox
+    try {
+      const existing = JSON.parse(localStorage.getItem("admin_portfolio_messages") || "[]");
+      const record = {
+        id: "msg_" + Date.now(),
+        name: form.name,
+        email: form.email,
+        message: form.message,
+        date: new Date().toISOString(),
+        read: false,
+      };
+      localStorage.setItem("admin_portfolio_messages", JSON.stringify([record, ...existing]));
+      window.dispatchEvent(new CustomEvent("admin-new-message"));
+    } catch (e) {}
 
     try {
       await emailjs.send(
@@ -416,8 +433,17 @@ export default function Contact() {
           <div>
             © {new Date().getFullYear()} Tristan Jorge Cuartero. All rights reserved.
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <span>Built with React 18 • Tailwind CSS • Framer Motion</span>
+            <span className="text-brand-border">•</span>
+            <Link
+              to="/admin"
+              className="inline-flex items-center gap-1.5 text-brand-muted hover:text-brand-primary transition-colors opacity-70 hover:opacity-100"
+              title="Open Administrative Console"
+            >
+              <Shield className="w-3.5 h-3.5" />
+              <span>Admin Portal</span>
+            </Link>
           </div>
         </div>
 

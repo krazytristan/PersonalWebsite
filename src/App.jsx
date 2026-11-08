@@ -6,6 +6,7 @@ import ScrollReset from "./components/ScrollReset";
 const Portfolio = lazy(() => import("./portfolio/Portfolio.jsx"));
 const BlogList = lazy(() => import("./pages/BlogList.jsx"));
 const PostPage = lazy(() => import("./pages/PostPage.jsx"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard.jsx"));
 const NotFound = lazy(() => import("./pages/NotFound.jsx"));
 
 export default function App() {
@@ -31,6 +32,8 @@ export default function App() {
           <Route path="/blog" element={<BlogList />} />
           <Route path="/blog/:slug" element={<PostPage />} />
           <Route path="/post/:slug" element={<PostPage />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/*" element={<AdminDashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>

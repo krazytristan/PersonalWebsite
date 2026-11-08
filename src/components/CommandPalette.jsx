@@ -16,6 +16,7 @@ import {
   Award,
   BookOpen,
   Terminal,
+  Shield,
 } from "lucide-react";
 import { projects } from "../data/projects";
 import { sounds } from "../utils/audio";
@@ -152,6 +153,16 @@ export default function CommandPalette({
         icon: Sparkles,
         action: () => {
           onReplayIntro?.();
+          onClose();
+        },
+      },
+      {
+        id: "action-admin",
+        title: "Open Administrative Console / CMS",
+        category: "Actions",
+        icon: Shield,
+        action: () => {
+          window.location.href = "/admin";
           onClose();
         },
       },
