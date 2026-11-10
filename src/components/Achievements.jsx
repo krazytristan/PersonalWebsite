@@ -185,17 +185,17 @@ export default function Achievements() {
   return (
     <section
       id="achievements"
-      className="relative py-24 sm:py-32 bg-brand-bg text-brand-text overflow-hidden"
+      className="relative py-16 sm:py-24 lg:py-32 bg-brand-bg text-brand-text overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* ================= HEADER ================= */}
-        <div className="text-center max-w-3xl mx-auto mb-14">
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
           <motion.span
             initial={!reduceMotion ? { opacity: 0, y: 10 } : false}
             whileInView={!reduceMotion ? { opacity: 1, y: 0 } : false}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-mono font-semibold tracking-wider uppercase bg-brand-primary/10 text-brand-primary border border-brand-primary/20 mb-4"
+            className="inline-flex items-center gap-1.5 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-mono font-semibold tracking-wider uppercase bg-brand-primary/10 text-brand-primary border border-brand-primary/20 mb-3 sm:mb-4"
           >
             <Sparkles className="w-3.5 h-3.5" />
             Verified Milestones & Honors
@@ -206,7 +206,7 @@ export default function Achievements() {
             whileInView={!reduceMotion ? { opacity: 1, y: 0 } : false}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-5xl font-extrabold tracking-tight text-brand-text leading-tight"
+            className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-brand-text leading-tight px-1"
           >
             Recognitions, Research &{" "}
             <span className="gradient-brand">Certifications</span>
@@ -217,13 +217,13 @@ export default function Achievements() {
             whileInView={!reduceMotion ? { opacity: 1, y: 0 } : false}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="mt-5 text-base sm:text-lg text-brand-muted leading-relaxed"
+            className="mt-3 sm:mt-5 text-sm sm:text-base lg:text-lg text-brand-muted leading-relaxed px-2"
           >
             Key academic milestones, peer-reviewed action research, and validated professional credentials acknowledging technical rigor and leadership.
           </motion.p>
 
           {/* Filter Pills */}
-          <div className="mt-8 flex justify-center gap-2 flex-wrap">
+          <div className="mt-6 sm:mt-8 flex justify-center gap-1.5 sm:gap-2 flex-wrap px-1">
             {categories.map((cat) => (
               <button
                 key={cat}
@@ -231,7 +231,7 @@ export default function Achievements() {
                   sounds.playPop();
                   setActiveCategory(cat);
                 }}
-                className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all ${
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold transition-all ${
                   activeCategory === cat
                     ? "bg-brand-primary text-white shadow-md shadow-brand-primary/25"
                     : "glass-card text-brand-muted hover:text-brand-text hover:border-brand-primary/30"
@@ -243,8 +243,8 @@ export default function Achievements() {
           </div>
         </div>
 
-        {/* ================= MILESTONES GRID ================= */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        {/* ================= MILESTONES GRID (RESPONSIVE: 1 col on mobile, 2 on tablet, 3 on desktop) ================= */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           <AnimatePresence>
             {filtered.map((item, idx) => {
               const Icon = item.icon;
@@ -256,33 +256,33 @@ export default function Achievements() {
                   exit={!reduceMotion ? { opacity: 0, scale: 0.95 } : false}
                   transition={{ duration: 0.35, delay: idx * 0.06 }}
                   onClick={() => handleOpenMilestone(item, "overview")}
-                  className="p-6 sm:p-7 rounded-3xl glass-card border border-brand-border flex flex-col justify-between hover:border-brand-primary/50 hover:shadow-xl transition-all group cursor-pointer relative"
+                  className="p-4 sm:p-6 lg:p-7 rounded-2xl sm:rounded-3xl glass-card border border-brand-border flex flex-col justify-between hover:border-brand-primary/50 hover:shadow-xl transition-all group cursor-pointer relative"
                 >
                   <div>
                     {/* Top Meta Bar */}
-                    <div className="flex items-center justify-between gap-2 mb-4">
-                      <span className="px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-brand-primary/10 text-brand-primary border border-brand-primary/20">
+                    <div className="flex items-center justify-between gap-2 mb-3 sm:mb-4 flex-wrap">
+                      <span className="px-2.5 py-0.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-mono font-bold bg-brand-primary/10 text-brand-primary border border-brand-primary/20 shrink-0">
                         {item.year}
                       </span>
 
-                      <span className="text-xs font-mono text-brand-muted flex items-center gap-1">
+                      <span className="text-[11px] sm:text-xs font-mono text-brand-muted flex items-center gap-1 shrink-0">
                         <CheckCircle className="w-3.5 h-3.5 text-emerald-500" />
-                        {item.badge}
+                        <span>{item.badge}</span>
                       </span>
                     </div>
 
                     {/* Icon */}
-                    <div className="w-11 h-11 rounded-2xl bg-brand-surface border border-brand-border flex items-center justify-center text-brand-primary mb-4 group-hover:scale-110 group-hover:border-brand-primary/40 transition-transform shadow-sm">
+                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-brand-surface border border-brand-border flex items-center justify-center text-brand-primary mb-3 sm:mb-4 group-hover:scale-110 group-hover:border-brand-primary/40 transition-transform shadow-sm">
                       <Icon className="w-5 h-5" />
                     </div>
 
-                    <h3 className="font-bold text-lg sm:text-xl text-brand-text mb-2.5 group-hover:text-brand-primary transition-colors leading-snug">
+                    <h3 className="font-bold text-base sm:text-lg lg:text-xl text-brand-text mb-2 group-hover:text-brand-primary transition-colors leading-snug break-words">
                       {item.title}
                     </h3>
 
-                    <div className="text-xs font-mono text-brand-muted mb-3 flex items-center gap-1.5">
-                      <Building2 className="w-3.5 h-3.5 text-brand-muted/70 shrink-0" />
-                      <span className="truncate">{item.organization}</span>
+                    <div className="text-xs font-mono text-brand-muted mb-2.5 sm:mb-3 flex items-start sm:items-center gap-1.5">
+                      <Building2 className="w-3.5 h-3.5 text-brand-muted/70 shrink-0 mt-0.5 sm:mt-0" />
+                      <span className="break-words line-clamp-1 sm:line-clamp-none">{item.organization}</span>
                     </div>
 
                     <p className="text-xs sm:text-sm text-brand-muted leading-relaxed line-clamp-3">
@@ -290,7 +290,7 @@ export default function Achievements() {
                     </p>
 
                     {/* Skills pills */}
-                    <div className="flex flex-wrap gap-1.5 pt-4">
+                    <div className="flex flex-wrap gap-1 sm:gap-1.5 pt-3 sm:pt-4">
                       {item.skills?.slice(0, 3).map((sk) => (
                         <span
                           key={sk}
@@ -308,12 +308,12 @@ export default function Achievements() {
                   </div>
 
                   {/* Bottom Action Footer */}
-                  <div className="mt-6 pt-4 border-t border-brand-border/60 flex items-center justify-between text-xs font-semibold text-brand-primary group-hover:text-brand-primaryHover transition">
-                    <span className="flex items-center gap-1.5">
-                      <FileCheck className="w-4 h-4" />
-                      <span>{item.certificate ? "View Dossier & Certificate" : "View Milestone Dossier"}</span>
+                  <div className="mt-4 sm:mt-6 pt-3 sm:pt-4 border-t border-brand-border/60 flex items-center justify-between text-xs font-semibold text-brand-primary group-hover:text-brand-primaryHover transition gap-2">
+                    <span className="flex items-center gap-1.5 truncate">
+                      <FileCheck className="w-4 h-4 shrink-0" />
+                      <span className="truncate">{item.certificate ? "View Dossier & Certificate" : "View Milestone Dossier"}</span>
                     </span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
                   </div>
                 </motion.div>
               );
@@ -323,64 +323,64 @@ export default function Achievements() {
 
       </div>
 
-      {/* ================= COMPREHENSIVE MILESTONE DOSSIER MODAL ================= */}
+      {/* ================= FULLY RESPONSIVE MILESTONE DOSSIER MODAL ================= */}
       <Modal
         open={!!selectedMilestone}
         onClose={() => setSelectedMilestone(null)}
         size="xl"
       >
         {selectedMilestone && (
-          <div className="space-y-6">
+          <div className="space-y-5 sm:space-y-6">
             
-            {/* Modal Header */}
-            <div className="space-y-2">
+            {/* Modal Header (with pr-8 sm:pr-12 to prevent overlapping with close button) */}
+            <div className="space-y-2.5 pr-8 sm:pr-12">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-brand-primary/10 text-brand-primary border border-brand-primary/20">
+                <span className="px-2.5 py-0.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-mono font-bold bg-brand-primary/10 text-brand-primary border border-brand-primary/20 shrink-0">
                   {selectedMilestone.year}
                 </span>
-                <span className="px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 flex items-center gap-1.5">
+                <span className="px-2.5 py-0.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-mono font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 flex items-center gap-1.5 shrink-0">
                   <ShieldCheck className="w-3.5 h-3.5" />
                   <span>{selectedMilestone.badge}</span>
                 </span>
-                <span className="text-xs font-mono text-brand-muted ml-auto">
+                <span className="text-[11px] sm:text-xs font-mono text-brand-muted sm:ml-auto">
                   Category: <strong className="text-brand-text">{selectedMilestone.category}</strong>
                 </span>
               </div>
 
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-brand-text tracking-tight">
+              <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-brand-text tracking-tight leading-snug break-words">
                 {selectedMilestone.title}
               </h2>
 
-              <div className="flex flex-wrap items-center gap-y-1 gap-x-3 text-xs font-mono text-brand-muted">
-                <span className="flex items-center gap-1">
-                  <Building2 className="w-3.5 h-3.5 text-brand-primary" />
+              <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-3 text-xs font-mono text-brand-muted">
+                <span className="flex items-center gap-1.5 break-words">
+                  <Building2 className="w-3.5 h-3.5 text-brand-primary shrink-0" />
                   <span>{selectedMilestone.organization}</span>
                 </span>
-                <span>•</span>
+                <span className="hidden sm:inline">•</span>
                 <button
                   onClick={() => handleCopyId(selectedMilestone.credentialId)}
-                  className="inline-flex items-center gap-1 text-brand-muted hover:text-brand-text transition"
+                  className="inline-flex items-center gap-1 text-brand-muted hover:text-brand-text transition w-fit py-0.5"
                   title="Copy Credential Verification ID"
                 >
-                  <span>ID: <strong className="text-brand-text">{selectedMilestone.credentialId}</strong></span>
+                  <span>ID: <strong className="text-brand-text break-all">{selectedMilestone.credentialId}</strong></span>
                   {copiedId ? (
-                    <Check className="w-3.5 h-3.5 text-emerald-500" />
+                    <Check className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                   ) : (
-                    <Copy className="w-3.5 h-3.5 opacity-60 hover:opacity-100" />
+                    <Copy className="w-3.5 h-3.5 opacity-60 hover:opacity-100 shrink-0" />
                   )}
                 </button>
               </div>
             </div>
 
-            {/* Tab switch between Dossier & Certificate (if cert exists) */}
+            {/* Tab switch between Dossier & Certificate (Responsive: 2-col grid on mobile, inline flex on tablet/desktop) */}
             {selectedMilestone.certificate && (
-              <div className="flex items-center gap-2 p-1 rounded-2xl glass-panel border border-brand-border w-fit">
+              <div className="grid grid-cols-2 sm:flex sm:items-center gap-1.5 p-1 rounded-2xl glass-panel border border-brand-border w-full sm:w-fit">
                 <button
                   onClick={() => {
                     sounds.playPop();
                     setModalTab("overview");
                   }}
-                  className={`px-4 py-1.5 rounded-xl text-xs font-bold transition ${
+                  className={`px-3 sm:px-4 py-2 sm:py-1.5 rounded-xl text-xs font-bold transition text-center justify-center ${
                     modalTab === "overview"
                       ? "bg-brand-primary text-white shadow-sm"
                       : "text-brand-muted hover:text-brand-text"
@@ -393,28 +393,28 @@ export default function Achievements() {
                     sounds.playPop();
                     setModalTab("certificate");
                   }}
-                  className={`px-4 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+                  className={`px-3 sm:px-4 py-2 sm:py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 text-center ${
                     modalTab === "certificate"
                       ? "bg-brand-primary text-white shadow-sm"
                       : "text-brand-muted hover:text-brand-text"
                   }`}
                 >
-                  <FileCheck className="w-3.5 h-3.5" />
-                  <span>Official Certificate PDF</span>
+                  <FileCheck className="w-3.5 h-3.5 shrink-0" />
+                  <span className="truncate">Official Certificate PDF</span>
                 </button>
               </div>
             )}
 
             {/* TAB CONTENT: OVERVIEW DOSSIER */}
             {modalTab === "overview" ? (
-              <div className="space-y-6 text-sm">
+              <div className="space-y-5 sm:space-y-6 text-sm">
                 
                 {/* Description */}
-                <div className="p-5 rounded-2xl glass-card border border-brand-border space-y-2">
+                <div className="p-4 sm:p-5 rounded-xl sm:rounded-2xl glass-card border border-brand-border space-y-2">
                   <div className="font-mono text-xs font-bold uppercase tracking-wider text-brand-primary">
                     Scope & Architectural Significance
                   </div>
-                  <p className="text-brand-text leading-relaxed sm:text-base">
+                  <p className="text-brand-text leading-relaxed text-xs sm:text-sm lg:text-base">
                     {selectedMilestone.longDesc || selectedMilestone.desc}
                   </p>
                 </div>
@@ -423,14 +423,14 @@ export default function Achievements() {
                 {selectedMilestone.highlights && (
                   <div className="space-y-3">
                     <h4 className="font-bold text-sm text-brand-text flex items-center gap-2">
-                      <Sparkles className="w-4 h-4 text-brand-primary" />
+                      <Sparkles className="w-4 h-4 text-brand-primary shrink-0" />
                       <span>Key Verified Deliverables & Honors</span>
                     </h4>
                     <div className="space-y-2">
                       {selectedMilestone.highlights.map((h, i) => (
                         <div
                           key={i}
-                          className="p-3.5 rounded-xl glass-panel border border-brand-border flex items-start gap-3"
+                          className="p-3 sm:p-3.5 rounded-xl glass-panel border border-brand-border flex items-start gap-3"
                         >
                           <CheckCircle className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
                           <span className="text-xs sm:text-sm text-brand-muted leading-relaxed">
@@ -447,11 +447,11 @@ export default function Achievements() {
                   <div className="font-mono text-xs font-bold uppercase tracking-wider text-brand-muted">
                     Competencies Validated
                   </div>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
                     {selectedMilestone.skills?.map((sk) => (
                       <span
                         key={sk}
-                        className="px-3 py-1 rounded-xl text-xs font-mono font-medium glass-panel border border-brand-border text-brand-text"
+                        className="px-2.5 py-1 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-mono font-medium glass-panel border border-brand-border text-brand-text"
                       >
                         {sk}
                       </span>
@@ -461,38 +461,39 @@ export default function Achievements() {
 
                 {/* Certificate Quick Preview Banner */}
                 {selectedMilestone.certificate && (
-                  <div className="p-4 rounded-2xl glass-card border border-brand-primary/30 bg-brand-primary/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
+                  <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl glass-card border border-brand-primary/30 bg-brand-primary/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+                    <div className="flex items-center gap-3 min-w-0">
                       <div className="w-10 h-10 rounded-xl bg-brand-primary/10 text-brand-primary flex items-center justify-center shrink-0">
                         <FileCheck className="w-5 h-5" />
                       </div>
-                      <div>
-                        <div className="font-bold text-xs sm:text-sm text-brand-text">
+                      <div className="min-w-0">
+                        <div className="font-bold text-xs sm:text-sm text-brand-text truncate">
                           Official Certificate Document Available
                         </div>
-                        <div className="text-[11px] font-mono text-brand-muted">
+                        <div className="text-[11px] font-mono text-brand-muted truncate">
                           Cryptographically logged • High-resolution PDF
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="grid grid-cols-2 sm:flex items-center gap-2 w-full sm:w-auto shrink-0">
                       <button
                         onClick={() => {
                           sounds.playPop();
                           setModalTab("certificate");
                         }}
-                        className="px-4 py-2 rounded-xl bg-brand-primary text-white text-xs font-semibold shadow hover:opacity-95 transition"
+                        className="w-full sm:w-auto px-4 py-2 rounded-xl bg-brand-primary text-white text-xs font-semibold shadow hover:opacity-95 transition text-center"
                       >
                         View Certificate
                       </button>
                       <a
                         href={selectedMilestone.certificate.src}
                         download
-                        className="p-2 rounded-xl glass-panel border border-brand-border text-brand-text hover:border-brand-primary transition"
+                        className="w-full sm:w-auto p-2 rounded-xl glass-panel border border-brand-border text-brand-text hover:border-brand-primary transition flex items-center justify-center gap-1 text-xs font-semibold"
                         title="Download Certificate PDF"
                       >
                         <Download className="w-4 h-4" />
+                        <span className="sm:hidden">Download</span>
                       </a>
                     </div>
                   </div>
@@ -508,15 +509,15 @@ export default function Achievements() {
               </div>
             )}
 
-            {/* Modal Bottom Close Toolbar */}
-            <div className="pt-4 border-t border-brand-border/70 flex items-center justify-between text-xs">
-              <span className="font-mono text-brand-muted">
+            {/* Modal Bottom Close Toolbar (stacks cleanly on mobile) */}
+            <div className="pt-4 border-t border-brand-border/70 flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <span className="font-mono text-brand-muted text-center sm:text-left text-[11px] sm:text-xs">
                 Official Credential Verification Record
               </span>
 
               <button
                 onClick={() => setSelectedMilestone(null)}
-                className="px-5 py-2 rounded-xl glass-card border border-brand-border text-brand-text font-semibold hover:border-brand-primary transition"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl glass-card border border-brand-border text-brand-text font-semibold hover:border-brand-primary transition text-center"
               >
                 Close Milestone
               </button>

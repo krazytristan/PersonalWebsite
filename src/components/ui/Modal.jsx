@@ -71,7 +71,7 @@ export default function Modal({
           ref={overlayRef}
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-5 overflow-y-auto"
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4 md:p-6 overflow-y-auto"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -108,11 +108,11 @@ export default function Modal({
             }}
             className={`
               relative w-full ${sizeClasses}
-              max-h-[92vh] flex flex-col
-              rounded-3xl
+              max-h-[94vh] sm:max-h-[92vh] flex flex-col
+              rounded-2xl sm:rounded-3xl
               bg-brand-surface text-brand-text
               border border-brand-border
-              shadow-2xl shadow-black/40
+              shadow-2xl shadow-black/50
               overflow-hidden
               z-10
               ${className}
@@ -124,8 +124,8 @@ export default function Modal({
                 onClick={handleClose}
                 aria-label="Close modal dialog"
                 className="
-                  absolute top-3.5 right-3.5 z-30
-                  w-9 h-9 rounded-full
+                  absolute top-2.5 right-2.5 sm:top-4 sm:right-4 z-40
+                  w-8 h-8 sm:w-9 sm:h-9 rounded-full
                   glass-panel border border-brand-border
                   text-brand-muted hover:text-brand-text
                   hover:scale-105 active:scale-95
@@ -139,7 +139,7 @@ export default function Modal({
             )}
 
             {/* Modal Body with Custom Clean Scrolling */}
-            <div className="flex-1 overflow-y-auto p-5 sm:p-8">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
               {children}
             </div>
           </motion.div>

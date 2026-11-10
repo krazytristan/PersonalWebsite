@@ -216,7 +216,7 @@ export default function BlogSection() {
           <div className="space-y-6">
             
             {/* Top Bar: Meta & Share */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-brand-border/70">
+            <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-brand-border/70 pr-8 sm:pr-12">
               <div className="flex flex-wrap items-center gap-2">
                 {activePost.tags?.map((t) => (
                   <span
