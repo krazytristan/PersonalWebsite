@@ -156,16 +156,6 @@ export default function CommandPalette({
           onClose();
         },
       },
-      {
-        id: "action-admin",
-        title: "Open Administrative Console / CMS",
-        category: "Actions",
-        icon: Shield,
-        action: () => {
-          window.location.href = "/admin";
-          onClose();
-        },
-      },
 
       // Projects
       ...projects.map((p) => ({

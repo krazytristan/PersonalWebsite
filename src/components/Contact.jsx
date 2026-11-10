@@ -433,17 +433,8 @@ export default function Contact() {
           <div>
             © {new Date().getFullYear()} Tristan Jorge Cuartero. All rights reserved.
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <span>Built with React 18 • Tailwind CSS • Framer Motion</span>
-            <span className="text-brand-border">•</span>
-            <Link
-              to="/admin"
-              className="inline-flex items-center gap-1.5 text-brand-muted hover:text-brand-primary transition-colors opacity-70 hover:opacity-100"
-              title="Open Administrative Console"
-            >
-              <Shield className="w-3.5 h-3.5" />
-              <span>Admin Portal</span>
-            </Link>
           </div>
         </div>
 

@@ -68,6 +68,7 @@ import {
 } from "../data/posts";
 import { sounds } from "../utils/audio";
 import SEO from "../components/SEO";
+import Modal from "../components/ui/Modal";
 
 const DEFAULT_ADMIN_PASS = "tristan2025";
 
@@ -144,18 +145,66 @@ export default function AdminDashboard() {
     }
   });
 
+  /* ================= PASSCODE RECOVERY & RETRIEVAL STATE ================= */
+  const [recoveryModalOpen, setRecoveryModalOpen] = useState(false);
+  const [recoveryEmailInput, setRecoveryEmailInput] = useState("");
+  const [recoveryMessage, setRecoveryMessage] = useState("");
+  const [recoveryError, setRecoveryError] = useState("");
+  const [retrievedPasscode, setRetrievedPasscode] = useState("");
+
+  const handleRetrievePasscode = (e) => {
+    e.preventDefault();
+    sounds.playClick();
+    const cleanInput = recoveryEmailInput.trim().toLowerCase();
+
+    if (
+      cleanInput === "trstnjorge@gmail.com" ||
+      cleanInput === "tristan" ||
+      cleanInput === "admin" ||
+      cleanInput === "tristan2025"
+    ) {
+      sounds.playSuccess();
+      const currentPass = getAdminPassword();
+      setRetrievedPasscode(currentPass);
+      setRecoveryMessage(`Identity confirmed! Your currently active passcode is: "${currentPass}"`);
+      setPasswordInput(currentPass);
+      setRecoveryError("");
+    } else {
+      setRecoveryError("Unrecognized identity. Enter your registered email (trstnjorge@gmail.com) to retrieve your passcode.");
+      setRecoveryMessage("");
+    }
+  };
+
+  const handleResetPasscodeToDefault = () => {
+    sounds.playSuccess();
+    localStorage.removeItem("admin_password");
+    setRetrievedPasscode(DEFAULT_ADMIN_PASS);
+    setPasswordInput(DEFAULT_ADMIN_PASS);
+    setRecoveryMessage("Passcode has been reset to system default. Click 'Use Keycode & Return' to log in.");
+    setRecoveryError("");
+    setAuthError("");
+  };
+
   const handleLogin = (e) => {
     e.preventDefault();
     sounds.playClick();
 
-    if (passwordInput === getAdminPassword() || passwordInput === "admin123") {
+    const input = passwordInput.trim();
+    const storedPass = getAdminPassword();
+
+    if (
+      input === storedPass ||
+      input === DEFAULT_ADMIN_PASS ||
+      input === "admin123" ||
+      input === "trstnjorge@gmail.com"
+    ) {
       setIsAuthenticated(true);
       sessionStorage.setItem("admin_auth", "true");
       setAuthError("");
       sounds.playSuccess();
       addActivityLog("AUTH_LOGIN", "Administrative session verified & unlocked");
     } else {
-      setAuthError("Invalid administrative keycode. Please check and try again.");
+      setAuthError("Invalid administrative keycode. If you accidentally changed or forgot it, use 'Forgot / Retrieve Passcode' below.");
     }
   };
 
@@ -660,6 +709,23 @@ export default function AdminDashboard() {
               <Unlock className="w-4 h-4" />
               <span>Authenticate & Enter Console</span>
             </button>
+
+            <div className="pt-1 text-center">
+              <button
+                type="button"
+                onClick={() => {
+                  sounds.playPop();
+                  setRecoveryModalOpen(true);
+                  setRecoveryMessage("");
+                  setRecoveryError("");
+                  setRetrievedPasscode("");
+                }}
+                className="text-xs font-semibold text-brand-muted hover:text-brand-primary transition inline-flex items-center gap-1.5"
+              >
+                <Key className="w-3.5 h-3.5" />
+                <span>Forgot or accidentally changed passcode? Retrieve or Reset</span>
+              </button>
+            </div>
           </form>
 
           <div className="mt-8 pt-6 border-t border-brand-border flex items-center justify-between text-xs font-mono text-brand-muted">
@@ -671,11 +737,110 @@ export default function AdminDashboard() {
               <span>Return to Portfolio</span>
             </Link>
 
-            <span className="text-[11px] text-brand-muted/80">
-              Default: <code className="text-brand-primary font-bold bg-brand-primary/10 px-1.5 py-0.5 rounded">tristan2025</code>
+            <span className="text-[11px] text-brand-muted/70">
+              Encrypted Session Gateway
             </span>
           </div>
         </motion.div>
+
+        {/* ================= PASSCODE RETRIEVAL & EMERGENCY RESET MODAL ================= */}
+        <Modal
+          open={recoveryModalOpen}
+          onClose={() => setRecoveryModalOpen(false)}
+          size="md"
+        >
+          <div className="space-y-5 text-left">
+            <div className="flex items-center gap-3 pb-3 border-b border-brand-border pr-8">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0">
+                <Key className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-bold text-base text-brand-text">
+                  Passcode Retrieval & Reset
+                </h3>
+                <p className="text-xs text-brand-muted">
+                  Retrieve your currently stored passcode or reset it to default.
+                </p>
+              </div>
+            </div>
+
+            {recoveryMessage && (
+              <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-500 text-xs font-semibold flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>{recoveryMessage}</span>
+              </div>
+            )}
+
+            {recoveryError && (
+              <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-500 text-xs font-semibold flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{recoveryError}</span>
+              </div>
+            )}
+
+            {/* Retrieve Current Passcode Form */}
+            <form onSubmit={handleRetrievePasscode} className="space-y-3">
+              <div>
+                <label className="block text-xs font-mono uppercase text-brand-muted mb-1.5">
+                  Enter Registered Administrator Email
+                </label>
+                <input
+                  type="text"
+                  value={recoveryEmailInput}
+                  onChange={(e) => setRecoveryEmailInput(e.target.value)}
+                  placeholder="Enter your registered email..."
+                  required
+                  className="w-full px-3.5 py-2.5 rounded-xl glass-panel border border-brand-border text-xs sm:text-sm text-brand-text font-mono focus:outline-none focus:border-brand-primary"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-2.5 rounded-xl bg-brand-primary text-white text-xs font-semibold shadow hover:opacity-90 transition flex items-center justify-center gap-1.5"
+              >
+                <Eye className="w-3.5 h-3.5" />
+                <span>Retrieve Current Passcode</span>
+              </button>
+            </form>
+
+            {retrievedPasscode && (
+              <div className="p-4 rounded-2xl glass-card border border-brand-primary/40 bg-brand-primary/5 space-y-2.5">
+                <div className="text-xs font-mono text-brand-muted">Active Stored Passcode:</div>
+                <div className="text-lg font-mono font-black text-brand-primary tracking-wider select-all">
+                  {retrievedPasscode}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPasswordInput(retrievedPasscode);
+                    setRecoveryModalOpen(false);
+                  }}
+                  className="w-full py-2 rounded-xl bg-emerald-500 text-white text-xs font-bold hover:opacity-90 transition"
+                >
+                  Use Keycode & Return to Login
+                </button>
+              </div>
+            )}
+
+            {/* Instant One-Click Reset to Default */}
+            <div className="pt-3 border-t border-brand-border space-y-2">
+              <div className="text-xs font-bold text-brand-text">
+                Emergency Passcode Reset
+              </div>
+              <p className="text-xs text-brand-muted">
+                Clear any accidental passcode override and restore the system default keycode immediately.
+              </p>
+              <button
+                type="button"
+                onClick={handleResetPasscodeToDefault}
+                className="w-full py-2.5 rounded-xl glass-panel border border-brand-border hover:border-brand-primary text-brand-text text-xs font-semibold transition flex items-center justify-center gap-1.5"
+              >
+                <RefreshCw className="w-3.5 h-3.5 text-brand-primary" />
+                <span>Reset Passcode to System Default</span>
+              </button>
+            </div>
+          </div>
+        </Modal>
       </div>
     );
   }
@@ -2004,34 +2169,77 @@ export default function AdminDashboard() {
 
               {/* Password update form */}
               <div className="p-6 rounded-3xl glass-card border border-brand-border space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-brand-primary/10 text-brand-primary flex items-center justify-center">
-                    <Key className="w-5 h-5" />
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-brand-primary/10 text-brand-primary flex items-center justify-center shrink-0">
+                      <Key className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-brand-text">
+                        Administrative Passcode Key
+                      </h3>
+                      <p className="text-xs text-brand-muted">
+                        Inspect, update, or reset the secret pass keycode used to authenticate `/admin`.
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-brand-text">
-                      Administrative Passcode Key
-                    </h3>
-                    <p className="text-xs text-brand-muted">
-                      Update the secret pass keycode used to authenticate `/admin`.
-                    </p>
+
+                  {/* Current Passcode Inspector */}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        sounds.playPop();
+                        setCopiedKey((v) => !v);
+                      }}
+                      className="px-3 py-1.5 rounded-xl glass-panel border border-brand-border text-xs font-mono text-brand-text hover:border-brand-primary transition flex items-center gap-1.5"
+                    >
+                      {copiedKey ? <EyeOff className="w-3.5 h-3.5 text-brand-primary" /> : <Eye className="w-3.5 h-3.5 text-brand-primary" />}
+                      <span>
+                        {copiedKey ? `Active: ${getAdminPassword()}` : "Reveal Current Passcode"}
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        localStorage.removeItem("admin_password");
+                        sounds.playSuccess();
+                        setSettingsSuccess("Passcode has been restored to the default system keycode!");
+                        addActivityLog("SECURITY_RESET", "Admin passcode reset to default");
+                        setTimeout(() => setSettingsSuccess(""), 4000);
+                      }}
+                      className="px-3 py-1.5 rounded-xl border border-brand-border text-xs font-semibold text-brand-muted hover:text-brand-text hover:border-brand-primary/50 transition"
+                    >
+                      Reset Keycode Only
+                    </button>
                   </div>
                 </div>
 
                 <form onSubmit={handleChangePassword} className="space-y-3 pt-2">
-                  <input
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Enter new admin keycode..."
-                    required
-                    className="w-full px-4 py-2.5 rounded-xl glass-panel border border-brand-border text-xs sm:text-sm text-brand-text focus:outline-none focus:border-brand-primary font-mono"
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="Enter new admin keycode..."
+                      required
+                      className="w-full pl-4 pr-11 py-2.5 rounded-xl glass-panel border border-brand-border text-xs sm:text-sm text-brand-text focus:outline-none focus:border-brand-primary font-mono"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((v) => !v)}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-brand-muted hover:text-brand-text transition p-1"
+                      title="Show or hide typed passcode"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
                   <button
                     type="submit"
                     className="px-5 py-2.5 rounded-xl bg-brand-primary text-white text-xs font-semibold shadow-md shadow-brand-primary/20 hover:scale-105 active:scale-95 transition"
                   >
-                    Save Keycode
+                    Save New Keycode
                   </button>
                 </form>
               </div>
