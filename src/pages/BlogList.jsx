@@ -1,19 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, BookOpen, Sparkles, Terminal } from "lucide-react";
 import Navbar from "../components/Navbar";
 import BlogSection from "../components/BlogSection";
 import SEO from "../components/SEO";
 import CommandPalette from "../components/CommandPalette";
 import Modal from "../components/ui/Modal";
 import ResumeViewer from "../components/ResumeViewer";
+import { getStoredPosts } from "../data/posts";
 
 export default function BlogList() {
   const [resumeOpen, setResumeOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [postCount, setPostCount] = useState(() => getStoredPosts().length);
+
+  useEffect(() => {
+    const onUpdate = () => setPostCount(getStoredPosts().length);
+    window.addEventListener("posts-updated", onUpdate);
+    return () => window.removeEventListener("posts-updated", onUpdate);
+  }, []);
 
   return (
-    <div className="relative min-h-screen bg-brand-bg text-brand-text overflow-x-hidden selection:bg-brand-primary/20 selection:text-brand-primary">
+    <div className="relative min-h-screen bg-brand-bg text-brand-text overflow-x-hidden selection:bg-brand-primary/20 selection:text-brand-primary flex flex-col">
       <SEO
         title="Technical Writings & Field Notes — Tristan Jorge Cuartero"
         description="Reflections on software architecture, computer science education, and real-world systems."
@@ -25,19 +33,36 @@ export default function BlogList() {
         onOpenPalette={() => setPaletteOpen(true)}
       />
 
-      <main className="relative pt-24 sm:pt-32 pb-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
+      <main className="relative pt-24 sm:pt-32 pb-20 flex-1">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4 flex flex-wrap items-center justify-between gap-4">
           <Link
             to="/"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card border border-brand-border text-xs font-semibold text-brand-muted hover:text-brand-text hover:border-brand-primary transition"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            Back to Portfolio
+            <span>Back to Portfolio Cockpit</span>
           </Link>
+
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-panel border border-brand-border text-xs font-mono text-brand-muted">
+            <Terminal className="w-3.5 h-3.5 text-brand-primary" />
+            <span>{postCount} Published Field Notes</span>
+          </div>
         </div>
 
         <BlogSection />
       </main>
+
+      {/* Synchronized Footer */}
+      <footer className="border-t border-brand-border py-8 px-4 sm:px-8 text-center text-xs font-mono text-brand-muted">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            © {new Date().getFullYear()} Tristan Jorge Cuartero. All rights reserved.
+          </div>
+          <div>
+            Engineering Journal • Systems Architecture & Pedagogy
+          </div>
+        </div>
+      </footer>
 
       {/* Command Palette */}
       <CommandPalette
